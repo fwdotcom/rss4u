@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>rss4u License</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: linear-gradient(140deg, #f8f7f4, #efeee8);
+        --panel: rgba(255, 255, 255, 0.86);
+        --line: #ccd2d8;
+        --text: #20252c;
+        --muted: #5d6873;
+        --accent: #d15731;
+        --shadow: rgba(20, 28, 33, 0.16);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        padding: 22px;
+        color: var(--text);
+        font-family: "Space Grotesk", "Segoe UI", sans-serif;
+        background: var(--bg);
+      }
+
+      .license-wrap {
+        max-width: 860px;
+        margin: 0 auto;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: var(--panel);
+        box-shadow: 0 14px 30px var(--shadow);
+        padding: 22px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(1.5rem, 2.8vw, 2.1rem);
+      }
+
+      .top-links {
+        margin-top: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        font-size: 0.88rem;
+      }
+
+      .top-links a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      .top-links a:hover {
+        text-decoration: underline;
+      }
+
+      pre {
+        margin: 16px 0 0;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #f8fafb;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.84rem;
+        line-height: 1.5;
+        overflow-x: auto;
+        white-space: pre-wrap;
+      }
+
+      .back-link {
+        margin-top: 14px;
+        font-size: 0.86rem;
+        color: var(--muted);
+      }
+
+      .back-link a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      .back-link a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="license-wrap" aria-label="Lizenztext">
+      <h1>MIT License</h1>
+      <div class="top-links">
+        <a href="./LICENSE" target="_blank" rel="noopener noreferrer">Plain-Text Datei</a>
+        <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener noreferrer">Offizielle Beschreibung</a>
+      </div>
+      <pre>MIT License
+
+Copyright (c) 2026 Frank Winter
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</pre>
+      <p class="back-link"><a href="./index.html">Zurueck zu rss4u</a></p>
+    </main>
+  </body>
+</html>

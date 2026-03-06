@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>rss4u</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+    <link id="theme-stylesheet" rel="stylesheet" href="./themes/light/theme.css" />
+  </head>
+  <body>
+    <div class="bg-glow bg-glow-a" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow-b" aria-hidden="true"></div>
+
+    <main class="app">
+      <header class="hero">
+        <div class="hero-top-row">
+          <h1 class="hero-title">
+            <img
+              class="hero-icon"
+              alt="RSS"
+              src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='4' fill='%23f57c00'/%3E%3Ccircle cx='6.5' cy='17.5' r='2' fill='white'/%3E%3Cpath d='M4.5 10.5a9 9 0 0 1 9 9' stroke='white' stroke-width='2.2' fill='none'/%3E%3Cpath d='M4.5 6a13.5 13.5 0 0 1 13.5 13.5' stroke='white' stroke-width='2.2' fill='none'/%3E%3C/svg%3E"
+            />
+            rss4u
+          </h1>
+          <div class="theme-picker">
+            <label for="theme-select" class="theme-label">Theme</label>
+            <select id="theme-select" name="theme-select" aria-label="Theme auswaehlen">
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+          </div>
+        </div>
+        <p class="subtitle">
+          Lies jeden RSS-Feed direkt im Browser. URL einfuegen, laden, fertig.
+        </p>
+      </header>
+
+      <section class="controls" aria-label="Feed-Steuerung">
+        <form id="feed-form" class="feed-form">
+          <label for="feed-url">Feed-URL</label>
+          <div class="input-row main-input-row">
+            <input
+              id="feed-url"
+              name="feed-url"
+              type="url"
+              placeholder="https://example.com/feed.xml"
+              required
+            />
+            <button id="load-btn" type="submit">Laden</button>
+            <button id="favorite-btn" type="button" aria-label="Als Favorit speichern" title="Als Favorit speichern">
+              <img
+                id="favorite-icon"
+                alt="Favorit"
+                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath d='M12 3.7l2.6 5.2 5.7.8-4.1 4 1 5.7-5.2-2.7-5.2 2.7 1-5.7-4.1-4 5.7-.8z' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E"
+              />
+            </button>
+          </div>
+        </form>
+
+        <div id="quick-feeds" class="quick-feeds" aria-label="Schnellauswahl und gespeicherte Feeds">
+        </div>
+
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="results" aria-label="Feed-Inhalte">
+        <div id="feed-meta" class="feed-meta"></div>
+        <ul id="items" class="items"></ul>
+      </section>
+
+      <footer class="site-footer" aria-label="Lizenzhinweis">
+        <p>
+          Copyright (C) 2026
+          <a class="author-link" href="https://www.frankwinter.com" target="_blank" rel="noopener noreferrer">Frank Winter</a>
+        </p>
+        <div class="footer-links" aria-label="Footer-Links">
+          <a href="./license.html" target="_blank" rel="noopener noreferrer">License</a>
+          <span class="footer-divider" aria-hidden="true">|</span>
+          <button id="reset-app-btn" class="footer-action-btn" type="button" aria-label="Reset to defaults">
+            Reset to defaults
+          </button>
+        </div>
+      </footer>
+    </main>
+
+    <script type="module" src="./script.js"></script>
+  </body>
+</html>
