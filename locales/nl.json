@@ -1,0 +1,81 @@
+{
+  "app": {
+    "name": "rss4u",
+    "subtitle": "Lees elke RSS-feed direct in je browser. Plak de URL, laad en klaar."
+  },
+  "labels": {
+    "theme": "Thema",
+    "language": "Taal",
+    "feedUrl": "Feed-URL"
+  },
+  "placeholders": {
+    "feedUrl": "https://example.com/feed.xml"
+  },
+  "buttons": {
+    "load": "Laden",
+    "website": "Website",
+    "license": "Licentie",
+    "reset": "Standaard herstellen"
+  },
+  "themes": {
+    "light": "Licht",
+    "dark": "Donker"
+  },
+  "languages": {
+    "en": "Engels",
+    "de": "Duits",
+    "fr": "Frans",
+    "es": "Spaans",
+    "it": "Italiaans",
+    "pl": "Pools",
+    "cs": "Tsjechisch",
+    "nl": "Nederlands"
+  },
+  "aria": {
+    "themeSelect": "Selecteer thema",
+    "languageSelect": "Selecteer taal",
+    "saveFavorite": "Opslaan als favoriet",
+    "removeFavorite": "Verwijder favoriet",
+    "quickFeeds": "Snelle selectie en opgeslagen feeds",
+    "controls": "Feed-bediening",
+    "results": "Feed-inhoud",
+    "footer": "Footer-links",
+    "deleteFeed": "Feed verwijderen",
+    "resetToDefaults": "Standaard herstellen",
+    "favoriteIcon": "Favoriet"
+  },
+  "feed": {
+    "websiteLink": "Website openen",
+    "noDescription": "Geen beschrijving beschikbaar.",
+    "noEntries": "Geen items gevonden.",
+    "noPreview": "Geen voorbeeld beschikbaar.",
+    "noDate": "Geen datum",
+    "articleLink": "Artikel lezen"
+  },
+  "status": {
+    "loadingFeed": "Feed laden...",
+    "feedLoaded": "Feed geladen: {{count}} items gevonden.",
+    "errorPrefix": "Fout:",
+    "themeTemplateFallback": "Thema-template voor '{{theme}}' niet gevonden, fallback geactiveerd.",
+    "themeChanged": "Thema gewijzigd: {{theme}}.",
+    "favoriteSaved": "Favoriet opgeslagen.",
+    "favoriteRemoved": "Favoriet verwijderd.",
+    "feedRemoved": "Feed verwijderd uit de lijst.",
+    "resetDone": "App hersteld. Standaardfeeds worden geladen...",
+    "languageChanged": "Taal gewijzigd: {{language}}.",
+    "templateLoadFailed": "Template kon niet worden geladen (HTTP {{status}}).",
+    "templateEmpty": "Template-bestand is leeg."
+  },
+  "confirm": {
+    "reset": "Alles herstellen? Opgeslagen feeds en thema-/taalinstellingen worden verwijderd."
+  },
+  "rss": {
+    "emptyUrl": "Voer een feed-URL in.",
+    "invalidUrl": "Ongeldige URL. Voorbeeld: https://example.com/feed.xml",
+    "invalidXml": "Feed-XML kon niet worden verwerkt.",
+    "unnamedFeed": "Naamloze feed",
+    "emptyResponse": "Leeg antwoord ontvangen.",
+    "unknownError": "Onbekende fout",
+    "loadFailed": "Feed kon niet worden geladen. Details: {{details}}"
+  }
+}

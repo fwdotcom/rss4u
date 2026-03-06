@@ -14,10 +14,21 @@ See [LICENSE](./LICENSE).
 
 - Load RSS and Atom feeds from a URL input
 - Quick feed buttons for common sources
-- Theme support (`light` and `dark`)
-- Per-theme tile templates with placeholders (`#headline#`, `#description#`, `#date#`, `#link#`, `#image#`, `#theme#`)
+- Theme support (`dark` and `light`)
+- Language support (`en` default) with JSON locale files
+- Per-theme tile templates with placeholders (`{{headline}}`, `{{description}}`, `{{date}}`, `{{link}}`, `{{image}}`, `{{theme}}`, `{{article_label}}`)
 - CORS fallback strategy via proxy attempts
 - Feed sanitization for URL-only descriptions (for example common Hacker News feed edge cases)
+
+## Screenshots
+
+### Dark Theme
+
+![rss4u dark theme screenshot](./themes/dark/screenshot.webp)
+
+### Light Theme
+
+![rss4u light theme screenshot](./themes/light/screenshot.webp)
 
 ## Project Structure
 
@@ -25,6 +36,7 @@ See [LICENSE](./LICENSE).
 - `style.css`: base/global styling and shared CSS variables
 - `script.js`: UI behavior, theme loading, rendering
 - `rss.js`: RSS logic (URL normalization, fetch, parse)
+- `locales/`: translation files (`en`, `de`, `fr`, `es`, `it`, `pl`, `cs`, `nl`)
 - `themes/`: theme-specific CSS, templates, and theme documentation
 - `themes/README.md`: detailed theming guide
 
@@ -44,8 +56,14 @@ Theme definitions are in `themes/<theme-name>/` and are registered in `script.js
 
 Available themes:
 
-- `light`
 - `dark`
+- `light`
 
 For full details, see `themes/README.md`.
+
+## Localization
+
+- Default language is English (`en`).
+- Available languages: `en`, `de`, `fr`, `es`, `it`, `pl`, `cs`, `nl`.
+- Translation resources live in `locales/*.json`.
 

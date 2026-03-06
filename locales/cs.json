@@ -1,0 +1,81 @@
+{
+  "app": {
+    "name": "rss4u",
+    "subtitle": "Cti libovolny RSS feed primo v prohlizeci. Vloz URL, nacti, hotovo."
+  },
+  "labels": {
+    "theme": "Motiv",
+    "language": "Jazyk",
+    "feedUrl": "URL feedu"
+  },
+  "placeholders": {
+    "feedUrl": "https://example.com/feed.xml"
+  },
+  "buttons": {
+    "load": "Nacist",
+    "website": "Web",
+    "license": "Licence",
+    "reset": "Obnovit vychozi"
+  },
+  "themes": {
+    "light": "Svetly",
+    "dark": "Tmavy"
+  },
+  "languages": {
+    "en": "Anglictina",
+    "de": "Nemcina",
+    "fr": "Francouzstina",
+    "es": "Spanelstina",
+    "it": "Italstina",
+    "pl": "Polstina",
+    "cs": "Cestina",
+    "nl": "Nizozemstina"
+  },
+  "aria": {
+    "themeSelect": "Vyber motiv",
+    "languageSelect": "Vyber jazyk",
+    "saveFavorite": "Ulozit do oblibenych",
+    "removeFavorite": "Odebrat z oblibenych",
+    "quickFeeds": "Rychly vyber a ulozene feedy",
+    "controls": "Ovladani feedu",
+    "results": "Obsah feedu",
+    "footer": "Odkazy v paticce",
+    "deleteFeed": "Smazat feed",
+    "resetToDefaults": "Obnovit vychozi",
+    "favoriteIcon": "Oblibene"
+  },
+  "feed": {
+    "websiteLink": "Otevrit web",
+    "noDescription": "Popis neni k dispozici.",
+    "noEntries": "Nenalezeny zadne polozky.",
+    "noPreview": "Nahled neni k dispozici.",
+    "noDate": "Bez data",
+    "articleLink": "Cist clanek"
+  },
+  "status": {
+    "loadingFeed": "Nacitam feed...",
+    "feedLoaded": "Feed nacten: nalezeno {{count}} polozek.",
+    "errorPrefix": "Chyba:",
+    "themeTemplateFallback": "Sablona motivu '{{theme}}' nebyla nalezena, pouzit fallback.",
+    "themeChanged": "Motiv zmenen: {{theme}}.",
+    "favoriteSaved": "Oblibene ulozeno.",
+    "favoriteRemoved": "Odebrano z oblibenych.",
+    "feedRemoved": "Feed odebran ze seznamu.",
+    "resetDone": "Aplikace byla obnovena. Nacitam vychozi feedy...",
+    "languageChanged": "Jazyk zmenen: {{language}}.",
+    "templateLoadFailed": "Sablonu se nepodarilo nacist (HTTP {{status}}).",
+    "templateEmpty": "Soubor sablony je prazdny."
+  },
+  "confirm": {
+    "reset": "Obnovit vse? Ulozene feedy a nastaveni motivu/jazyka budou smazany."
+  },
+  "rss": {
+    "emptyUrl": "Zadej URL feedu.",
+    "invalidUrl": "Neplatna URL. Priklad: https://example.com/feed.xml",
+    "invalidXml": "XML feedu se nepodarilo zpracovat.",
+    "unnamedFeed": "Feed bez nazvu",
+    "emptyResponse": "Byla prijata prazdna odpoved.",
+    "unknownError": "Neznama chyba",
+    "loadFailed": "Feed se nepodarilo nacist. Podrobnosti: {{details}}"
+  }
+}

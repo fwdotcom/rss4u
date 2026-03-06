@@ -1,0 +1,81 @@
+{
+  "app": {
+    "name": "rss4u",
+    "subtitle": "Read any RSS feed right in your browser. Paste URL, load, done."
+  },
+  "labels": {
+    "theme": "Theme",
+    "language": "Language",
+    "feedUrl": "Feed URL"
+  },
+  "placeholders": {
+    "feedUrl": "https://example.com/feed.xml"
+  },
+  "buttons": {
+    "load": "Load",
+    "website": "Website",
+    "license": "License",
+    "reset": "Reset to defaults"
+  },
+  "themes": {
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "languages": {
+    "en": "English",
+    "de": "German",
+    "fr": "French",
+    "es": "Spanish",
+    "it": "Italian",
+    "pl": "Polish",
+    "cs": "Czech",
+    "nl": "Dutch"
+  },
+  "aria": {
+    "themeSelect": "Select theme",
+    "languageSelect": "Select language",
+    "saveFavorite": "Save as favorite",
+    "removeFavorite": "Remove favorite",
+    "quickFeeds": "Quick selection and saved feeds",
+    "controls": "Feed controls",
+    "results": "Feed content",
+    "footer": "Footer links",
+    "deleteFeed": "Delete feed",
+    "resetToDefaults": "Reset to defaults",
+    "favoriteIcon": "Favorite"
+  },
+  "feed": {
+    "websiteLink": "Open website",
+    "noDescription": "No description available.",
+    "noEntries": "No entries found.",
+    "noPreview": "No preview available.",
+    "noDate": "No date",
+    "articleLink": "Read article"
+  },
+  "status": {
+    "loadingFeed": "Loading feed...",
+    "feedLoaded": "Feed loaded: {{count}} entries found.",
+    "errorPrefix": "Error:",
+    "themeTemplateFallback": "Theme template for '{{theme}}' not found, fallback enabled.",
+    "themeChanged": "Theme switched: {{theme}}.",
+    "favoriteSaved": "Favorite saved.",
+    "favoriteRemoved": "Favorite removed.",
+    "feedRemoved": "Feed removed from the list.",
+    "resetDone": "App reset. Loading default feeds...",
+    "languageChanged": "Language switched: {{language}}.",
+    "templateLoadFailed": "Template could not be loaded (HTTP {{status}}).",
+    "templateEmpty": "Template file is empty."
+  },
+  "confirm": {
+    "reset": "Reset everything? Saved feeds and theme/language settings will be deleted."
+  },
+  "rss": {
+    "emptyUrl": "Please enter a feed URL.",
+    "invalidUrl": "Invalid URL. Example: https://example.com/feed.xml",
+    "invalidXml": "Feed XML could not be parsed.",
+    "unnamedFeed": "Untitled feed",
+    "emptyResponse": "Received an empty response.",
+    "unknownError": "Unknown error",
+    "loadFailed": "Feed could not be loaded. Details: {{details}}"
+  }
+}

@@ -4,36 +4,39 @@ Template contract for tile rendering (light theme).
 This file is loaded dynamically by script.js and then receives token replacements.
 Every token is optional at runtime, but the following placeholders are supported:
 
-- #theme#:
+- {{theme}}:
   The current theme key (for example: "light" or "dark").
 
-- #image#:
+- {{image}}:
   Full <img> markup or an empty string when the feed item has no media.
 
-- #headline#:
+- {{headline}}:
   Escaped article title text.
 
-- #description#:
+- {{description}}:
   Escaped preview text, pre-truncated in script.js.
 
-- #date#:
+- {{date}}:
   Localized publication date text (or fallback text like "Kein Datum").
 
-- #link#:
+- {{link}}:
   Escaped destination URL for the article link.
+
+- {{article_label}}:
+  Localized label text for the article link.
 
 Important:
 - Keep the "tile-*" class names if you want existing theme.css files to keep working.
 - Avoid inline scripts/events; templates are meant for presentation markup only.
 -->
-<article class="tile tile-light" data-theme="#theme#">
-  #image#
+<article class="tile tile-light" data-theme="{{theme}}">
+  {{image}}
   <div class="tile-content">
-    <h3 class="tile-headline">#headline#</h3>
-    <p class="tile-description">#description#</p>
+    <h3 class="tile-headline">{{headline}}</h3>
+    <p class="tile-description">{{description}}</p>
     <div class="tile-meta">
-      <span class="tile-date">#date#</span>
-      <a class="tile-link" href="#link#" target="_blank" rel="noopener noreferrer">Zum Artikel</a>
+      <span class="tile-date">{{date}}</span>
+      <a class="tile-link" href="{{link}}" target="_blank" rel="noopener noreferrer">{{article_label}}</a>
     </div>
   </div>
 </article>

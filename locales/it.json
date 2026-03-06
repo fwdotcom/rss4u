@@ -1,0 +1,81 @@
+{
+  "app": {
+    "name": "rss4u",
+    "subtitle": "Leggi qualsiasi feed RSS direttamente nel browser. Incolla l'URL, carica, fatto."
+  },
+  "labels": {
+    "theme": "Tema",
+    "language": "Lingua",
+    "feedUrl": "URL del feed"
+  },
+  "placeholders": {
+    "feedUrl": "https://example.com/feed.xml"
+  },
+  "buttons": {
+    "load": "Carica",
+    "website": "Sito web",
+    "license": "Licenza",
+    "reset": "Reimposta predefiniti"
+  },
+  "themes": {
+    "light": "Chiaro",
+    "dark": "Scuro"
+  },
+  "languages": {
+    "en": "Inglese",
+    "de": "Tedesco",
+    "fr": "Francese",
+    "es": "Spagnolo",
+    "it": "Italiano",
+    "pl": "Polacco",
+    "cs": "Ceco",
+    "nl": "Olandese"
+  },
+  "aria": {
+    "themeSelect": "Seleziona tema",
+    "languageSelect": "Seleziona lingua",
+    "saveFavorite": "Salva nei preferiti",
+    "removeFavorite": "Rimuovi dai preferiti",
+    "quickFeeds": "Selezione rapida e feed salvati",
+    "controls": "Controlli del feed",
+    "results": "Contenuto del feed",
+    "footer": "Link del footer",
+    "deleteFeed": "Elimina feed",
+    "resetToDefaults": "Reimposta predefiniti",
+    "favoriteIcon": "Preferito"
+  },
+  "feed": {
+    "websiteLink": "Apri sito web",
+    "noDescription": "Nessuna descrizione disponibile.",
+    "noEntries": "Nessuna voce trovata.",
+    "noPreview": "Nessuna anteprima disponibile.",
+    "noDate": "Nessuna data",
+    "articleLink": "Leggi articolo"
+  },
+  "status": {
+    "loadingFeed": "Caricamento feed...",
+    "feedLoaded": "Feed caricato: trovate {{count}} voci.",
+    "errorPrefix": "Errore:",
+    "themeTemplateFallback": "Template del tema '{{theme}}' non trovato, fallback attivo.",
+    "themeChanged": "Tema cambiato: {{theme}}.",
+    "favoriteSaved": "Preferito salvato.",
+    "favoriteRemoved": "Preferito rimosso.",
+    "feedRemoved": "Feed rimosso dalla lista.",
+    "resetDone": "App reimpostata. Caricamento feed predefiniti...",
+    "languageChanged": "Lingua cambiata: {{language}}.",
+    "templateLoadFailed": "Impossibile caricare il template (HTTP {{status}}).",
+    "templateEmpty": "Il file template e vuoto."
+  },
+  "confirm": {
+    "reset": "Reimpostare tutto? I feed salvati e le impostazioni tema/lingua verranno eliminati."
+  },
+  "rss": {
+    "emptyUrl": "Inserisci un URL feed.",
+    "invalidUrl": "URL non valido. Esempio: https://example.com/feed.xml",
+    "invalidXml": "Impossibile analizzare l'XML del feed.",
+    "unnamedFeed": "Feed senza nome",
+    "emptyResponse": "Ricevuta una risposta vuota.",
+    "unknownError": "Errore sconosciuto",
+    "loadFailed": "Impossibile caricare il feed. Dettagli: {{details}}"
+  }
+}

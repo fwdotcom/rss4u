@@ -85,6 +85,14 @@ body {
   gap: 10px;
 }
 
+.header-pickers {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .theme-picker {
   display: inline-flex;
   align-items: center;
@@ -461,6 +469,10 @@ button {
 
   .theme-picker {
     margin-top: 0;
+  }
+
+  .header-pickers {
+    justify-content: flex-start;
   }
 
   .input-row {

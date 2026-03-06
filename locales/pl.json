@@ -1,0 +1,81 @@
+{
+  "app": {
+    "name": "rss4u",
+    "subtitle": "Czytaj dowolny kanal RSS bezposrednio w przegladarce. Wklej URL, zaladuj, gotowe."
+  },
+  "labels": {
+    "theme": "Motyw",
+    "language": "Jezyk",
+    "feedUrl": "URL kanalu"
+  },
+  "placeholders": {
+    "feedUrl": "https://example.com/feed.xml"
+  },
+  "buttons": {
+    "load": "Zaladuj",
+    "website": "Strona",
+    "license": "Licencja",
+    "reset": "Przywroc domyslne"
+  },
+  "themes": {
+    "light": "Jasny",
+    "dark": "Ciemny"
+  },
+  "languages": {
+    "en": "Angielski",
+    "de": "Niemiecki",
+    "fr": "Francuski",
+    "es": "Hiszpanski",
+    "it": "Wloski",
+    "pl": "Polski",
+    "cs": "Czeski",
+    "nl": "Niderlandzki"
+  },
+  "aria": {
+    "themeSelect": "Wybierz motyw",
+    "languageSelect": "Wybierz jezyk",
+    "saveFavorite": "Zapisz jako ulubione",
+    "removeFavorite": "Usun z ulubionych",
+    "quickFeeds": "Szybki wybor i zapisane kanaly",
+    "controls": "Sterowanie kanalem",
+    "results": "Zawartosc kanalu",
+    "footer": "Linki stopki",
+    "deleteFeed": "Usun kanal",
+    "resetToDefaults": "Przywroc domyslne",
+    "favoriteIcon": "Ulubione"
+  },
+  "feed": {
+    "websiteLink": "Otworz strone",
+    "noDescription": "Brak opisu.",
+    "noEntries": "Nie znaleziono wpisow.",
+    "noPreview": "Brak podgladu.",
+    "noDate": "Brak daty",
+    "articleLink": "Czytaj artykul"
+  },
+  "status": {
+    "loadingFeed": "Ladowanie kanalu...",
+    "feedLoaded": "Kanal zaladowany: znaleziono {{count}} wpisow.",
+    "errorPrefix": "Blad:",
+    "themeTemplateFallback": "Nie znaleziono szablonu motywu '{{theme}}', wlaczono tryb zapasowy.",
+    "themeChanged": "Zmieniono motyw: {{theme}}.",
+    "favoriteSaved": "Zapisano ulubione.",
+    "favoriteRemoved": "Usunieto z ulubionych.",
+    "feedRemoved": "Kanal usunieto z listy.",
+    "resetDone": "Aplikacja zresetowana. Ladowanie domyslnych kanalow...",
+    "languageChanged": "Zmieniono jezyk: {{language}}.",
+    "templateLoadFailed": "Nie mozna zaladowac szablonu (HTTP {{status}}).",
+    "templateEmpty": "Plik szablonu jest pusty."
+  },
+  "confirm": {
+    "reset": "Zresetowac wszystko? Zapisane kanaly oraz ustawienia motywu/jezyka zostana usuniete."
+  },
+  "rss": {
+    "emptyUrl": "Wpisz URL kanalu.",
+    "invalidUrl": "Nieprawidlowy URL. Przyklad: https://example.com/feed.xml",
+    "invalidXml": "Nie mozna przetworzyc XML kanalu.",
+    "unnamedFeed": "Kanal bez nazwy",
+    "emptyResponse": "Otrzymano pusta odpowiedz.",
+    "unknownError": "Nieznany blad",
+    "loadFailed": "Nie mozna zaladowac kanalu. Szczegoly: {{details}}"
+  }
+}

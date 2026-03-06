@@ -1,0 +1,81 @@
+{
+  "app": {
+    "name": "rss4u",
+    "subtitle": "Lies jeden RSS-Feed direkt im Browser. URL einfügen, laden, fertig."
+  },
+  "labels": {
+    "theme": "Theme",
+    "language": "Sprache",
+    "feedUrl": "Feed-URL"
+  },
+  "placeholders": {
+    "feedUrl": "https://example.com/feed.xml"
+  },
+  "buttons": {
+    "load": "Laden",
+    "website": "Website",
+    "license": "Lizenz",
+    "reset": "Auf Standard zurücksetzen"
+  },
+  "themes": {
+    "light": "Hell",
+    "dark": "Dunkel"
+  },
+  "languages": {
+    "en": "Englisch",
+    "de": "Deutsch",
+    "fr": "Franzoesisch",
+    "es": "Spanisch",
+    "it": "Italienisch",
+    "pl": "Polnisch",
+    "cs": "Tschechisch",
+    "nl": "Niederlaendisch"
+  },
+  "aria": {
+    "themeSelect": "Theme auswählen",
+    "languageSelect": "Sprache auswählen",
+    "saveFavorite": "Als Favorit speichern",
+    "removeFavorite": "Favorit entfernen",
+    "quickFeeds": "Schnellauswahl und gespeicherte Feeds",
+    "controls": "Feed-Steuerung",
+    "results": "Feed-Inhalte",
+    "footer": "Footer-Links",
+    "deleteFeed": "Feed löschen",
+    "resetToDefaults": "Auf Standard zurücksetzen",
+    "favoriteIcon": "Favorit"
+  },
+  "feed": {
+    "websiteLink": "Zur Website",
+    "noDescription": "Keine Beschreibung vorhanden.",
+    "noEntries": "Keine Einträge gefunden.",
+    "noPreview": "Keine Vorschau verfügbar.",
+    "noDate": "Kein Datum",
+    "articleLink": "Zum Artikel"
+  },
+  "status": {
+    "loadingFeed": "Lade Feed...",
+    "feedLoaded": "Feed geladen: {{count}} Einträge gefunden.",
+    "errorPrefix": "Fehler:",
+    "themeTemplateFallback": "Theme-Template für '{{theme}}' nicht gefunden, Fallback aktiv.",
+    "themeChanged": "Theme gewechselt: {{theme}}.",
+    "favoriteSaved": "Favorit gespeichert.",
+    "favoriteRemoved": "Favorit entfernt.",
+    "feedRemoved": "Feed aus der Liste entfernt.",
+    "resetDone": "App wurde zurückgesetzt. Standardfeeds werden geladen...",
+    "languageChanged": "Sprache gewechselt: {{language}}.",
+    "templateLoadFailed": "Template konnte nicht geladen werden (HTTP {{status}}).",
+    "templateEmpty": "Template-Datei ist leer."
+  },
+  "confirm": {
+    "reset": "Wirklich alles zurücksetzen? Gespeicherte Feeds und Theme-/Spracheinstellung werden gelöscht."
+  },
+  "rss": {
+    "emptyUrl": "Bitte eine Feed-URL eingeben.",
+    "invalidUrl": "Ungültige URL. Beispiel: https://example.com/feed.xml",
+    "invalidXml": "Feed konnte nicht als XML gelesen werden.",
+    "unnamedFeed": "Unbenannter Feed",
+    "emptyResponse": "Leere Antwort erhalten.",
+    "unknownError": "Unbekannter Fehler",
+    "loadFailed": "Feed konnte nicht geladen werden. Details: {{details}}"
+  }
+}

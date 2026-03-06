@@ -1,4 +1,4 @@
-import { loadFeed as loadRssFeed, normalizeFeedUrl } from "./rss.js";
+import { loadFeed as loadRssFeed, normalizeFeedUrl, setRssMessages } from "./rss.js";
 
 const form = document.getElementById("feed-form");
 const feedUrlInput = document.getElementById("feed-url");
@@ -8,12 +8,37 @@ const statusEl = document.getElementById("status");
 const feedMetaEl = document.getElementById("feed-meta");
 const itemsEl = document.getElementById("items");
 const themeSelect = document.getElementById("theme-select");
+const languageSelect = document.getElementById("language-select");
 const themeStylesheet = document.getElementById("theme-stylesheet");
 const quickFeedsEl = document.getElementById("quick-feeds");
 const resetAppBtn = document.getElementById("reset-app-btn");
+const appTitleText = document.getElementById("app-title-text");
+const appSubtitle = document.getElementById("app-subtitle");
+const themeLabel = document.getElementById("theme-label");
+const languageLabel = document.getElementById("language-label");
+const feedUrlLabel = document.getElementById("feed-url-label");
+const loadBtn = document.getElementById("load-btn");
+const controlsSection = document.getElementById("controls-section");
+const resultsSection = document.getElementById("results-section");
+const siteFooter = document.getElementById("site-footer");
+const footerWebsiteLink = document.getElementById("footer-website-link");
+const footerLicenseLink = document.getElementById("footer-license-link");
 
 const SAVED_FEEDS_KEY = "rss-saved-feeds";
 const FEED_SEED_DONE_KEY = "rss-feeds-seeded-v1";
+const LANGUAGE_KEY = "rss-language";
+const DEFAULT_LANGUAGE = "en";
+const LOCALE_PATHS = {
+	en: "./locales/en.json",
+	de: "./locales/de.json",
+	fr: "./locales/fr.json",
+	es: "./locales/es.json",
+	it: "./locales/it.json",
+	pl: "./locales/pl.json",
+	cs: "./locales/cs.json",
+	nl: "./locales/nl.json"
+};
+const localeCache = {};
 const INITIAL_FEEDS = [
 	{ label: "Mozilla Blog", url: "https://blog.mozilla.org/feed/" },
 	{ label: "xkcd", url: "https://xkcd.com/atom.xml" },
@@ -40,29 +65,144 @@ const THEMES = {
 /**
  * Fallback card template used whenever a theme template fails to load.
  *
- * Tokens are replaced at runtime in renderFeed().
+	* Mustache-style placeholders are replaced at runtime in renderFeed().
  */
 const FALLBACK_TEMPLATE = `
 <article class="tile">
-	#image#
+	{{image}}
 	<div class="tile-content">
-		<h3 class="tile-headline">#headline#</h3>
-		<p class="tile-description">#description#</p>
+		<h3 class="tile-headline">{{headline}}</h3>
+		<p class="tile-description">{{description}}</p>
 		<div class="tile-meta">
-			<span class="tile-date">#date#</span>
-			<a class="tile-link" href="#link#" target="_blank" rel="noopener noreferrer">Zum Artikel</a>
+			<span class="tile-date">{{date}}</span>
+			<a class="tile-link" href="{{link}}" target="_blank" rel="noopener noreferrer">{{article_label}}</a>
 		</div>
 	</div>
 </article>
 `;
 
 let currentTheme = "light";
+let currentLanguage = DEFAULT_LANGUAGE;
+let activeLocale = {};
 let currentTileTemplate = FALLBACK_TEMPLATE;
 let lastParsedFeed = null;
 let currentLoadedUrl = "";
 
 const STAR_OUTLINE_ICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath d='M12 3.7l2.6 5.2 5.7.8-4.1 4 1 5.7-5.2-2.7-5.2 2.7 1-5.7-4.1-4 5.7-.8z' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E";
 const STAR_FILLED_ICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath d='M12 3.7l2.6 5.2 5.7.8-4.1 4 1 5.7-5.2-2.7-5.2 2.7 1-5.7-4.1-4 5.7-.8z' fill='%23ffffff'/%3E%3C/svg%3E";
+
+function getNestedValue(obj, dottedPath) {
+	return dottedPath.split(".").reduce((value, key) => {
+		if (value && typeof value === "object") {
+			return value[key];
+		}
+		return undefined;
+	}, obj);
+}
+
+function formatTranslation(template, replacements = {}) {
+	return Object.entries(replacements).reduce((text, [key, value]) => {
+		return text.replaceAll(`{{${key}}}`, String(value));
+	}, template);
+}
+
+function t(key, replacements = {}) {
+	const translated =
+		getNestedValue(activeLocale, key) ||
+		getNestedValue(localeCache[DEFAULT_LANGUAGE], key) ||
+		key;
+
+	if (typeof translated !== "string") {
+		return key;
+	}
+
+	return formatTranslation(translated, replacements);
+}
+
+async function loadLocale(languageCode) {
+	const safeLanguage = LOCALE_PATHS[languageCode] ? languageCode : DEFAULT_LANGUAGE;
+	if (!localeCache[safeLanguage]) {
+		const response = await fetch(LOCALE_PATHS[safeLanguage], { cache: "no-store" });
+		if (!response.ok) {
+			throw new Error(`Locale could not be loaded (HTTP ${response.status}).`);
+		}
+
+		localeCache[safeLanguage] = await response.json();
+	}
+
+	if (!localeCache[DEFAULT_LANGUAGE]) {
+		const fallbackResponse = await fetch(LOCALE_PATHS[DEFAULT_LANGUAGE], { cache: "no-store" });
+		if (fallbackResponse.ok) {
+			localeCache[DEFAULT_LANGUAGE] = await fallbackResponse.json();
+		}
+	}
+
+	activeLocale = localeCache[safeLanguage] || localeCache[DEFAULT_LANGUAGE] || {};
+	currentLanguage = safeLanguage;
+	document.documentElement.lang = safeLanguage;
+	setRssMessages(activeLocale.rss || {});
+}
+
+function applyStaticTranslations() {
+	document.title = t("app.name");
+	appTitleText.textContent = t("app.name");
+	appSubtitle.textContent = t("app.subtitle");
+
+	themeLabel.textContent = t("labels.theme");
+	languageLabel.textContent = t("labels.language");
+	feedUrlLabel.textContent = t("labels.feedUrl");
+	loadBtn.textContent = t("buttons.load");
+	feedUrlInput.placeholder = t("placeholders.feedUrl");
+
+	themeSelect.setAttribute("aria-label", t("aria.themeSelect"));
+	languageSelect.setAttribute("aria-label", t("aria.languageSelect"));
+	quickFeedsEl.setAttribute("aria-label", t("aria.quickFeeds"));
+	controlsSection.setAttribute("aria-label", t("aria.controls"));
+	resultsSection.setAttribute("aria-label", t("aria.results"));
+	siteFooter.setAttribute("aria-label", t("aria.footer"));
+	resetAppBtn.setAttribute("aria-label", t("aria.resetToDefaults"));
+
+	footerWebsiteLink.textContent = t("buttons.website");
+	footerLicenseLink.textContent = t("buttons.license");
+	resetAppBtn.textContent = t("buttons.reset");
+	favoriteIcon.alt = t("aria.favoriteIcon");
+
+	const lightOption = themeSelect.querySelector('option[value="light"]');
+	const darkOption = themeSelect.querySelector('option[value="dark"]');
+	if (lightOption) lightOption.textContent = t("themes.light");
+	if (darkOption) darkOption.textContent = t("themes.dark");
+
+	languageSelect.querySelectorAll("option").forEach((optionEl) => {
+		const key = optionEl.value;
+		optionEl.textContent = t(`languages.${key}`);
+	});
+
+	updateFavoriteButtonState();
+	renderFeedPills();
+	if (lastParsedFeed) {
+		renderFeed(lastParsedFeed);
+	}
+}
+
+function getPreferredLanguage() {
+	const stored = (localStorage.getItem(LANGUAGE_KEY) || "").toLowerCase();
+	if (LOCALE_PATHS[stored]) {
+		return stored;
+	}
+
+	return DEFAULT_LANGUAGE;
+}
+
+async function applyLanguage(languageCode, options = {}) {
+	const { persist = true } = options;
+	await loadLocale(languageCode);
+	languageSelect.value = currentLanguage;
+	applyStaticTranslations();
+
+	if (persist) {
+		localStorage.setItem(LANGUAGE_KEY, currentLanguage);
+	}
+}
 
 /**
  * Creates a short pill label from URL data.
@@ -201,8 +341,8 @@ function updateFavoriteButtonState() {
 	const rawInput = feedUrlInput.value.trim();
 	if (!rawInput) {
 		favoriteIcon.src = STAR_OUTLINE_ICON;
-		favoriteBtn.setAttribute("title", "Als Favorit speichern");
-		favoriteBtn.setAttribute("aria-label", "Als Favorit speichern");
+		favoriteBtn.setAttribute("title", t("aria.saveFavorite"));
+		favoriteBtn.setAttribute("aria-label", t("aria.saveFavorite"));
 		return;
 	}
 
@@ -210,12 +350,12 @@ function updateFavoriteButtonState() {
 		const normalized = normalizeFeedUrl(rawInput);
 		const isFavorite = isSavedFeed(normalized);
 		favoriteIcon.src = isFavorite ? STAR_FILLED_ICON : STAR_OUTLINE_ICON;
-		favoriteBtn.setAttribute("title", isFavorite ? "Favorit entfernen" : "Als Favorit speichern");
-		favoriteBtn.setAttribute("aria-label", isFavorite ? "Favorit entfernen" : "Als Favorit speichern");
+		favoriteBtn.setAttribute("title", isFavorite ? t("aria.removeFavorite") : t("aria.saveFavorite"));
+		favoriteBtn.setAttribute("aria-label", isFavorite ? t("aria.removeFavorite") : t("aria.saveFavorite"));
 	} catch {
 		favoriteIcon.src = STAR_OUTLINE_ICON;
-		favoriteBtn.setAttribute("title", "Als Favorit speichern");
-		favoriteBtn.setAttribute("aria-label", "Als Favorit speichern");
+		favoriteBtn.setAttribute("title", t("aria.saveFavorite"));
+		favoriteBtn.setAttribute("aria-label", t("aria.saveFavorite"));
 	}
 }
 
@@ -231,7 +371,7 @@ function renderFeedPills() {
 		return `
 			<div class="feed-pill deletable" data-url="${safeUrl}">
 				<button type="button" class="feed-chip" data-feed-action="load" title="${safeUrl}">${safeLabel}</button>
-				<button type="button" class="feed-chip-delete" data-feed-action="delete" aria-label="Feed loeschen" title="Feed loeschen">x</button>
+				<button type="button" class="feed-chip-delete" data-feed-action="delete" aria-label="${escapeHtml(t("aria.deleteFeed"))}" title="${escapeHtml(t("aria.deleteFeed"))}">x</button>
 			</div>
 		`;
 	}).join("");
@@ -268,7 +408,8 @@ function formatDate(value) {
 	if (!value) return "";
 	const date = new Date(value);
 	if (Number.isNaN(date.getTime())) return "";
-	return new Intl.DateTimeFormat("de-DE", {
+	const localeTag = currentLanguage === "de" ? "de-DE" : "en-US";
+	return new Intl.DateTimeFormat(localeTag, {
 		day: "2-digit",
 		month: "2-digit",
 		year: "numeric"
@@ -287,12 +428,12 @@ function buildImageMarkup(mediaUrl) {
 }
 
 /**
- * Replaces all placeholder tokens in a template string.
+ * Replaces all {{placeholder}} markers in a template string.
  */
 function fillTemplate(template, replacements) {
 	let output = template;
-	Object.entries(replacements).forEach(([token, value]) => {
-		output = output.split(token).join(value);
+	Object.entries(replacements).forEach(([placeholder, value]) => {
+		output = output.split(placeholder).join(value);
 	});
 	return output;
 }
@@ -303,12 +444,12 @@ function fillTemplate(template, replacements) {
 async function loadThemeTemplate(templatePath) {
 	const response = await fetch(templatePath, { cache: "no-store" });
 	if (!response.ok) {
-		throw new Error(`Template konnte nicht geladen werden (HTTP ${response.status}).`);
+		throw new Error(t("status.templateLoadFailed", { status: response.status }));
 	}
 
 	const text = await response.text();
 	if (!text.trim()) {
-		throw new Error("Template-Datei ist leer.");
+		throw new Error(t("status.templateEmpty"));
 	}
 
 	return text;
@@ -328,7 +469,7 @@ async function applyTheme(themeName) {
 		currentTileTemplate = await loadThemeTemplate(themeConfig.templatePath);
 	} catch {
 		currentTileTemplate = FALLBACK_TEMPLATE;
-		setStatus(`Theme-Template fuer '${safeTheme}' nicht gefunden, Fallback aktiv.`, true);
+		setStatus(t("status.themeTemplateFallback", { theme: safeTheme }), true);
 	}
 
 	currentTheme = safeTheme;
@@ -345,7 +486,7 @@ async function applyTheme(themeName) {
 function renderFeed(feed) {
 	lastParsedFeed = feed;
 	const channelLinkMarkup = feed.channelLink
-		? `<a class="feed-meta-site-link" href="${escapeHtml(feed.channelLink)}" target="_blank" rel="noopener noreferrer">Zur Website</a>`
+		? `<a class="feed-meta-site-link" href="${escapeHtml(feed.channelLink)}" target="_blank" rel="noopener noreferrer">${escapeHtml(t("feed.websiteLink"))}</a>`
 		: "";
 
 	feedMetaEl.innerHTML = `
@@ -353,11 +494,11 @@ function renderFeed(feed) {
 			<h2>${escapeHtml(feed.channelTitle)}</h2>
 			${channelLinkMarkup}
 		</div>
-		<p>${escapeHtml(feed.channelDescription || "Keine Beschreibung vorhanden.")}</p>
+		<p>${escapeHtml(feed.channelDescription || t("feed.noDescription"))}</p>
 	`;
 
 	if (!feed.items.length) {
-		itemsEl.innerHTML = '<li class="empty-state">Keine Eintraege gefunden.</li>';
+		itemsEl.innerHTML = `<li class="empty-state">${escapeHtml(t("feed.noEntries"))}</li>`;
 		return;
 	}
 
@@ -365,16 +506,17 @@ function renderFeed(feed) {
 		.slice(0, 24)
 		.map((item, index) => {
 			const imageMarkup = buildImageMarkup(item.mediaUrl);
-			const excerpt = escapeHtml(item.description.slice(0, 190) || "Keine Vorschau verfuegbar.");
-			const formattedDate = formatDate(item.pubDate) || "Kein Datum";
+			const excerpt = escapeHtml(item.description.slice(0, 190) || t("feed.noPreview"));
+			const formattedDate = formatDate(item.pubDate) || t("feed.noDate");
 			const safeLink = escapeHtml(item.link || "#");
 			const tileMarkup = fillTemplate(currentTileTemplate, {
-				"#date#": formattedDate,
-				"#headline#": escapeHtml(item.title),
-				"#description#": excerpt,
-				"#link#": safeLink,
-				"#image#": imageMarkup,
-				"#theme#": escapeHtml(currentTheme)
+				"{{date}}": formattedDate,
+				"{{headline}}": escapeHtml(item.title),
+				"{{description}}": excerpt,
+				"{{link}}": safeLink,
+				"{{image}}": imageMarkup,
+				"{{theme}}": escapeHtml(currentTheme),
+				"{{article_label}}": escapeHtml(t("feed.articleLink"))
 			});
 
 			return `
@@ -390,7 +532,7 @@ function renderFeed(feed) {
  * Loads and renders a feed URL through the RSS module.
  */
 async function loadAndRenderFeed(url) {
-	setStatus("Lade Feed...");
+	setStatus(t("status.loadingFeed"));
 	itemsEl.innerHTML = "";
 	feedMetaEl.innerHTML = "";
 
@@ -403,10 +545,10 @@ async function loadAndRenderFeed(url) {
 		renderFeed(parsed);
 		renderFeedPills();
 		updateFavoriteButtonState();
-		setStatus(`Feed geladen: ${parsed.items.length} Eintraege gefunden.`);
+		setStatus(t("status.feedLoaded", { count: parsed.items.length }));
 		return parsed;
 	} catch (error) {
-		setStatus(`Fehler: ${error.message}`, true);
+		setStatus(`${t("status.errorPrefix")} ${error.message}`, true);
 		return null;
 	}
 }
@@ -439,7 +581,7 @@ form.addEventListener("submit", (event) => {
 		const url = getNormalizedInputUrl();
 		loadAndRenderFeed(url);
 	} catch (error) {
-		setStatus(`Fehler: ${error.message}`, true);
+		setStatus(`${t("status.errorPrefix")} ${error.message}`, true);
 	}
 });
 
@@ -453,7 +595,7 @@ favoriteBtn.addEventListener("click", () => {
 			removeFeed(url);
 			renderFeedPills();
 			updateFavoriteButtonState();
-			setStatus("Favorit entfernt.");
+			setStatus(t("status.favoriteRemoved"));
 			return;
 		}
 
@@ -461,9 +603,9 @@ favoriteBtn.addEventListener("click", () => {
 		upsertSavedFeed(url, label);
 		renderFeedPills();
 		updateFavoriteButtonState();
-		setStatus("Favorit gespeichert.");
+		setStatus(t("status.favoriteSaved"));
 	} catch (error) {
-		setStatus(`Fehler: ${error.message}`, true);
+		setStatus(`${t("status.errorPrefix")} ${error.message}`, true);
 	}
 });
 
@@ -497,7 +639,7 @@ quickFeedsEl.addEventListener("click", (event) => {
 		removeFeed(rawUrl);
 		renderFeedPills();
 		updateFavoriteButtonState();
-		setStatus("Feed aus der Liste entfernt.");
+		setStatus(t("status.feedRemoved"));
 		return;
 	}
 
@@ -508,7 +650,7 @@ quickFeedsEl.addEventListener("click", (event) => {
 			updateFavoriteButtonState();
 			loadAndRenderFeed(normalized);
 		} catch (error) {
-			setStatus(`Fehler: ${error.message}`, true);
+			setStatus(`${t("status.errorPrefix")} ${error.message}`, true);
 		}
 	}
 });
@@ -518,7 +660,12 @@ quickFeedsEl.addEventListener("click", (event) => {
  */
 themeSelect.addEventListener("change", async () => {
 	await applyTheme(themeSelect.value);
-	setStatus(`Theme gewechselt: ${themeSelect.value}`);
+	setStatus(t("status.themeChanged", { theme: themeSelect.value }));
+});
+
+languageSelect.addEventListener("change", async () => {
+	await applyLanguage(languageSelect.value);
+	setStatus(t("status.languageChanged", { language: t(`languages.${currentLanguage}`) }));
 });
 
 feedUrlInput.addEventListener("input", () => {
@@ -530,7 +677,7 @@ feedUrlInput.addEventListener("input", () => {
  */
 async function handleResetApp() {
 	const confirmed = window.confirm(
-		"Wirklich alles zuruecksetzen? Gespeicherte Feeds und Theme-Einstellung werden geloescht."
+		t("confirm.reset")
 	);
 
 	if (!confirmed) {
@@ -544,13 +691,14 @@ async function handleResetApp() {
 	localStorage.removeItem(SAVED_FEEDS_KEY);
 	localStorage.removeItem(FEED_SEED_DONE_KEY);
 	localStorage.removeItem("rss-theme");
+	localStorage.removeItem(LANGUAGE_KEY);
 
 	lastParsedFeed = null;
 	currentLoadedUrl = "";
 	feedMetaEl.innerHTML = "";
 	itemsEl.innerHTML = "";
 
-	setStatus("App wurde zurueckgesetzt. Standardfeeds werden geladen...");
+	setStatus(t("status.resetDone"));
 
 	try {
 		await initializeApp();
@@ -571,6 +719,7 @@ if (resetAppBtn) {
  * Bootstraps the app: restore theme preference and load default feed.
  */
 async function initializeApp() {
+	await applyLanguage(getPreferredLanguage(), { persist: false });
 	seedInitialFeedsIfNeeded();
 	renderFeedPills();
 

@@ -33,12 +33,13 @@ If a template cannot be loaded, the app uses an internal fallback tile template.
 
 A theme template is plain HTML with placeholders. Supported placeholders:
 
-- `#theme#`: current theme key
-- `#image#`: complete `<img>` markup or an empty string
-- `#headline#`: escaped article title
-- `#description#`: escaped article excerpt
-- `#date#`: localized date string or fallback text
-- `#link#`: escaped article URL
+- `{{theme}}`: current theme key
+- `{{image}}`: complete `<img>` markup or an empty string
+- `{{headline}}`: escaped article title
+- `{{description}}`: escaped article excerpt
+- `{{date}}`: localized date string or fallback text
+- `{{link}}`: escaped article URL
+- `{{article_label}}`: localized label text for the article link
 
 Important expectations:
 

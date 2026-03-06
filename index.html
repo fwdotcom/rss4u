@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -26,24 +26,39 @@
               alt="RSS"
               src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='4' fill='%23f57c00'/%3E%3Ccircle cx='6.5' cy='17.5' r='2' fill='white'/%3E%3Cpath d='M4.5 10.5a9 9 0 0 1 9 9' stroke='white' stroke-width='2.2' fill='none'/%3E%3Cpath d='M4.5 6a13.5 13.5 0 0 1 13.5 13.5' stroke='white' stroke-width='2.2' fill='none'/%3E%3C/svg%3E"
             />
-            rss4u
+            <span id="app-title-text">rss4u</span>
           </h1>
-          <div class="theme-picker">
-            <label for="theme-select" class="theme-label">Theme</label>
-            <select id="theme-select" name="theme-select" aria-label="Theme auswaehlen">
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
-            </select>
+          <div class="header-pickers">
+            <div class="theme-picker">
+              <label id="theme-label" for="theme-select" class="theme-label">Theme</label>
+              <select id="theme-select" name="theme-select" aria-label="Select theme">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </div>
+            <div class="theme-picker">
+              <label id="language-label" for="language-select" class="theme-label">Language</label>
+              <select id="language-select" name="language-select" aria-label="Select language">
+                <option value="en">English</option>
+                <option value="de">Deutsch</option>
+                <option value="fr">Francais</option>
+                <option value="es">Espanol</option>
+                <option value="it">Italiano</option>
+                <option value="pl">Polski</option>
+                <option value="cs">Cestina</option>
+                <option value="nl">Nederlands</option>
+              </select>
+            </div>
           </div>
         </div>
-        <p class="subtitle">
-          Lies jeden RSS-Feed direkt im Browser. URL einfuegen, laden, fertig.
+        <p id="app-subtitle" class="subtitle">
+          Read any RSS feed right in your browser. Paste URL, load, done.
         </p>
       </header>
 
-      <section class="controls" aria-label="Feed-Steuerung">
+      <section id="controls-section" class="controls" aria-label="Feed controls">
         <form id="feed-form" class="feed-form">
-          <label for="feed-url">Feed-URL</label>
+          <label id="feed-url-label" for="feed-url">Feed URL</label>
           <div class="input-row main-input-row">
             <input
               id="feed-url"
@@ -52,8 +67,8 @@
               placeholder="https://example.com/feed.xml"
               required
             />
-            <button id="load-btn" type="submit">Laden</button>
-            <button id="favorite-btn" type="button" aria-label="Als Favorit speichern" title="Als Favorit speichern">
+            <button id="load-btn" type="submit">Load</button>
+            <button id="favorite-btn" type="button" aria-label="Save as favorite" title="Save as favorite">
               <img
                 id="favorite-icon"
                 alt="Favorit"
@@ -63,24 +78,26 @@
           </div>
         </form>
 
-        <div id="quick-feeds" class="quick-feeds" aria-label="Schnellauswahl und gespeicherte Feeds">
+        <div id="quick-feeds" class="quick-feeds" aria-label="Quick selection and saved feeds">
         </div>
 
         <p id="status" class="status" role="status" aria-live="polite"></p>
       </section>
 
-      <section class="results" aria-label="Feed-Inhalte">
+      <section id="results-section" class="results" aria-label="Feed content">
         <div id="feed-meta" class="feed-meta"></div>
         <ul id="items" class="items"></ul>
       </section>
 
-      <footer class="site-footer" aria-label="Lizenzhinweis">
+      <footer id="site-footer" class="site-footer" aria-label="Footer links">
         <p>
           Copyright (C) 2026
           <a class="author-link" href="https://www.frankwinter.com" target="_blank" rel="noopener noreferrer">Frank Winter</a>
         </p>
-        <div class="footer-links" aria-label="Footer-Links">
-          <a href="./license.html" target="_blank" rel="noopener noreferrer">License</a>
+        <div class="footer-links" aria-label="Footer links">
+          <a id="footer-website-link" href="https://github.com/fwdotcom/rss4u" target="_blank" rel="noopener noreferrer">Website</a>
+          <span class="footer-divider" aria-hidden="true">|</span>
+          <a id="footer-license-link" href="./license.html" target="_blank" rel="noopener noreferrer">License</a>
           <span class="footer-divider" aria-hidden="true">|</span>
           <button id="reset-app-btn" class="footer-action-btn" type="button" aria-label="Reset to defaults">
             Reset to defaults

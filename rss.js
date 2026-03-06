@@ -9,6 +9,34 @@ export const DEFAULT_PROXIES = [
 	(url) => `https://corsproxy.io/?${encodeURIComponent(url)}`
 ];
 
+const DEFAULT_RSS_MESSAGES = {
+	emptyUrl: "Please enter a feed URL.",
+	invalidUrl: "Invalid URL. Example: https://example.com/feed.xml",
+	invalidXml: "Feed XML could not be parsed.",
+	unnamedFeed: "Untitled feed",
+	emptyResponse: "Received an empty response.",
+	unknownError: "Unknown error",
+	loadFailed: "Feed could not be loaded. Details: {{details}}"
+};
+
+let rssMessages = { ...DEFAULT_RSS_MESSAGES };
+
+function formatMessage(template, values = {}) {
+	return Object.entries(values).reduce((output, [key, value]) => {
+		return output.replaceAll(`{{${key}}}`, String(value));
+	}, template);
+}
+
+/**
+ * Updates localized message texts used by this module.
+ */
+export function setRssMessages(nextMessages = {}) {
+	rssMessages = {
+		...DEFAULT_RSS_MESSAGES,
+		...nextMessages
+	};
+}
+
 /**
  * Validates and normalizes user input into an absolute feed URL.
  *
@@ -20,7 +48,7 @@ export const DEFAULT_PROXIES = [
 export function normalizeFeedUrl(rawUrl) {
 	const candidate = (rawUrl || "").trim();
 	if (!candidate) {
-		throw new Error("Bitte eine Feed-URL eingeben.");
+		throw new Error(rssMessages.emptyUrl);
 	}
 
 	const withProtocol = /^https?:\/\//i.test(candidate)
@@ -30,7 +58,7 @@ export function normalizeFeedUrl(rawUrl) {
 	try {
 		return new URL(withProtocol).toString();
 	} catch {
-		throw new Error("Ungueltige URL. Beispiel: https://example.com/feed.xml");
+		throw new Error(rssMessages.invalidUrl);
 	}
 }
 
@@ -182,13 +210,13 @@ export function parseFeed(xmlText) {
 	const parserError = doc.querySelector("parsererror");
 
 	if (parserError) {
-		throw new Error("Feed konnte nicht als XML gelesen werden.");
+		throw new Error(rssMessages.invalidXml);
 	}
 
 	const channelTitle =
 		doc.querySelector("channel > title")?.textContent?.trim() ||
 		doc.querySelector("feed > title")?.textContent?.trim() ||
-		"Unbenannter Feed";
+		rssMessages.unnamedFeed;
 
 	const channelDescription =
 		doc.querySelector("channel > description")?.textContent?.trim() ||
@@ -292,19 +320,17 @@ export async function fetchFeedXml(url, proxyFactories = DEFAULT_PROXIES) {
 
 			const text = await response.text();
 			if (!text.trim()) {
-				throw new Error("Leere Antwort erhalten.");
+				throw new Error(rssMessages.emptyResponse);
 			}
 
 			return text;
 		} catch (error) {
-			attemptErrors.push(error?.message || "Unbekannter Fehler");
+			attemptErrors.push(error?.message || rssMessages.unknownError);
 		}
 	}
 
 	const compactErrors = [...new Set(attemptErrors)].slice(0, 3).join(" | ");
-	throw new Error(
-		`Feed konnte nicht geladen werden. Details: ${compactErrors || "Keine Rueckmeldung vom Server."}`
-	);
+	throw new Error(formatMessage(rssMessages.loadFailed, { details: compactErrors || rssMessages.unknownError }));
 }
 
 /**

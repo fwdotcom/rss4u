@@ -1,0 +1,81 @@
+{
+  "app": {
+    "name": "rss4u",
+    "subtitle": "Lisez n'importe quel flux RSS directement dans votre navigateur. Collez l'URL, chargez, c'est fait."
+  },
+  "labels": {
+    "theme": "Theme",
+    "language": "Langue",
+    "feedUrl": "URL du flux"
+  },
+  "placeholders": {
+    "feedUrl": "https://example.com/feed.xml"
+  },
+  "buttons": {
+    "load": "Charger",
+    "website": "Site web",
+    "license": "Licence",
+    "reset": "Reinitialiser par defaut"
+  },
+  "themes": {
+    "light": "Clair",
+    "dark": "Sombre"
+  },
+  "languages": {
+    "en": "Anglais",
+    "de": "Allemand",
+    "fr": "Francais",
+    "es": "Espagnol",
+    "it": "Italien",
+    "pl": "Polonais",
+    "cs": "Tcheque",
+    "nl": "Neerlandais"
+  },
+  "aria": {
+    "themeSelect": "Selectionner le theme",
+    "languageSelect": "Selectionner la langue",
+    "saveFavorite": "Enregistrer comme favori",
+    "removeFavorite": "Supprimer des favoris",
+    "quickFeeds": "Selection rapide et flux enregistres",
+    "controls": "Controles du flux",
+    "results": "Contenu du flux",
+    "footer": "Liens de pied de page",
+    "deleteFeed": "Supprimer le flux",
+    "resetToDefaults": "Reinitialiser par defaut",
+    "favoriteIcon": "Favori"
+  },
+  "feed": {
+    "websiteLink": "Ouvrir le site web",
+    "noDescription": "Aucune description disponible.",
+    "noEntries": "Aucune entree trouvee.",
+    "noPreview": "Aucun apercu disponible.",
+    "noDate": "Pas de date",
+    "articleLink": "Lire l'article"
+  },
+  "status": {
+    "loadingFeed": "Chargement du flux...",
+    "feedLoaded": "Flux charge : {{count}} entrees trouvees.",
+    "errorPrefix": "Erreur :",
+    "themeTemplateFallback": "Template du theme '{{theme}}' introuvable, mode de secours active.",
+    "themeChanged": "Theme change : {{theme}}.",
+    "favoriteSaved": "Favori enregistre.",
+    "favoriteRemoved": "Favori supprime.",
+    "feedRemoved": "Flux supprime de la liste.",
+    "resetDone": "Application reinitialisee. Chargement des flux par defaut...",
+    "languageChanged": "Langue changee : {{language}}.",
+    "templateLoadFailed": "Le template n'a pas pu etre charge (HTTP {{status}}).",
+    "templateEmpty": "Le fichier template est vide."
+  },
+  "confirm": {
+    "reset": "Tout reinitialiser ? Les flux enregistres et les parametres de theme/langue seront supprimes."
+  },
+  "rss": {
+    "emptyUrl": "Veuillez saisir une URL de flux.",
+    "invalidUrl": "URL invalide. Exemple : https://example.com/feed.xml",
+    "invalidXml": "Le XML du flux n'a pas pu etre analyse.",
+    "unnamedFeed": "Flux sans titre",
+    "emptyResponse": "Reponse vide recue.",
+    "unknownError": "Erreur inconnue",
+    "loadFailed": "Le flux n'a pas pu etre charge. Details : {{details}}"
+  }
+}
