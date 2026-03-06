@@ -5,17 +5,17 @@
   },
   "labels": {
     "theme": "Motyw",
-    "language": "Jezyk",
+    "language": "Język",
     "feedUrl": "URL kanalu"
   },
   "placeholders": {
     "feedUrl": "https://example.com/feed.xml"
   },
   "buttons": {
-    "load": "Zaladuj",
+    "load": "Załaduj",
     "website": "Strona",
     "license": "Licencja",
-    "reset": "Przywroc domyslne"
+    "reset": "Przywróć domyślne"
   },
   "themes": {
     "light": "Jasny",
@@ -25,57 +25,68 @@
     "en": "Angielski",
     "de": "Niemiecki",
     "fr": "Francuski",
-    "es": "Hiszpanski",
-    "it": "Wloski",
+    "es": "Hiszpański",
+    "it": "Włoski",
     "pl": "Polski",
     "cs": "Czeski",
     "nl": "Niderlandzki"
   },
   "aria": {
     "themeSelect": "Wybierz motyw",
-    "languageSelect": "Wybierz jezyk",
+    "languageSelect": "Wybierz język",
     "saveFavorite": "Zapisz jako ulubione",
-    "removeFavorite": "Usun z ulubionych",
-    "quickFeeds": "Szybki wybor i zapisane kanaly",
-    "controls": "Sterowanie kanalem",
-    "results": "Zawartosc kanalu",
+    "removeFavorite": "Usuń z ulubionych",
+    "quickFeeds": "Szybki wybór i zapisane kanały",
+    "controls": "Sterowanie kanałem",
+    "results": "Zawartość kanału",
     "footer": "Linki stopki",
-    "deleteFeed": "Usun kanal",
-    "resetToDefaults": "Przywroc domyslne",
+    "deleteFeed": "Usuń kanał",
+    "resetToDefaults": "Przywróć domyślne",
     "favoriteIcon": "Ulubione"
   },
   "feed": {
-    "websiteLink": "Otworz strone",
+    "websiteLink": "Otwórz stronę",
     "noDescription": "Brak opisu.",
-    "noEntries": "Nie znaleziono wpisow.",
-    "noPreview": "Brak podgladu.",
+    "noEntries": "Nie znaleziono wpisów.",
+    "noPreview": "Brak podglądu.",
     "noDate": "Brak daty",
-    "articleLink": "Czytaj artykul"
+    "articleLink": "Czytaj artykuł"
   },
   "status": {
-    "loadingFeed": "Ladowanie kanalu...",
-    "feedLoaded": "Kanal zaladowany: znaleziono {{count}} wpisow.",
-    "errorPrefix": "Blad:",
-    "themeTemplateFallback": "Nie znaleziono szablonu motywu '{{theme}}', wlaczono tryb zapasowy.",
+    "loadingFeed": "Ładowanie kanału...",
+    "feedLoaded": "Kanał załadowany: znaleziono {{count}} wpisów.",
+    "errorPrefix": "Błąd:",
+    "themeTemplateFallback": "Nie znaleziono szablonu motywu '{{theme}}', włączono tryb zapasowy.",
     "themeChanged": "Zmieniono motyw: {{theme}}.",
     "favoriteSaved": "Zapisano ulubione.",
-    "favoriteRemoved": "Usunieto z ulubionych.",
-    "feedRemoved": "Kanal usunieto z listy.",
-    "resetDone": "Aplikacja zresetowana. Ladowanie domyslnych kanalow...",
-    "languageChanged": "Zmieniono jezyk: {{language}}.",
-    "templateLoadFailed": "Nie mozna zaladowac szablonu (HTTP {{status}}).",
+    "favoriteRemoved": "Usunięto z ulubionych.",
+    "feedRemoved": "Kanał usunięto z listy.",
+    "resetDone": "Aplikacja zresetowana. Ładowanie domyślnych kanałów...",
+    "languageChanged": "Zmieniono język: {{language}}.",
+    "templateLoadFailed": "Nie można załadować szablonu (HTTP {{status}}).",
     "templateEmpty": "Plik szablonu jest pusty."
   },
   "confirm": {
-    "reset": "Zresetowac wszystko? Zapisane kanaly oraz ustawienia motywu/jezyka zostana usuniete."
+    "reset": "Zresetować wszystko? Zapisane kanały oraz ustawienia motywu/języka zostaną usunięte."
   },
   "rss": {
-    "emptyUrl": "Wpisz URL kanalu.",
-    "invalidUrl": "Nieprawidlowy URL. Przyklad: https://example.com/feed.xml",
-    "invalidXml": "Nie mozna przetworzyc XML kanalu.",
-    "unnamedFeed": "Kanal bez nazwy",
-    "emptyResponse": "Otrzymano pusta odpowiedz.",
-    "unknownError": "Nieznany blad",
-    "loadFailed": "Nie mozna zaladowac kanalu. Szczegoly: {{details}}"
+    "emptyUrl": "Wpisz URL kanału.",
+    "invalidUrl": "Nieprawidłowy URL. Przykład: https://example.com/feed.xml",
+    "invalidXml": "Nie można przetworzyć XML kanału.",
+    "unnamedFeed": "Kanał bez nazwy",
+    "emptyResponse": "Otrzymano pustą odpowiedź.",
+    "unknownError": "Nieznany błąd",
+    "loadFailed": "Nie można załadować kanału. Szczegóły: {{details}}"
+  },
+  "legal": {
+    "pageTitle": "Informacje prawne rss4u",
+    "heading": "Informacje prawne",
+    "intro": "Wiążący tekst prawny jest ładowany z pliku LICENSE.",
+    "openLicenseFile": "Otwórz plik LICENSE",
+    "mitReference": "Odniesienie MIT",
+    "backToApp": "Wróć do rss4u",
+    "loading": "Ładowanie LICENSE...",
+    "emptyFile": "Plik LICENSE jest pusty.",
+    "loadFailed": "Nie można załadować LICENSE ({{details}})."
   }
 }

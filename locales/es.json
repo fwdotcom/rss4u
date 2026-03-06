@@ -22,21 +22,21 @@
     "dark": "Oscuro"
   },
   "languages": {
-    "en": "Ingles",
-    "de": "Aleman",
-    "fr": "Frances",
-    "es": "Espanol",
+    "en": "Inglés",
+    "de": "Alemán",
+    "fr": "Francés",
+    "es": "Español",
     "it": "Italiano",
     "pl": "Polaco",
     "cs": "Checo",
-    "nl": "Neerlandes"
+    "nl": "Neerlandés"
   },
   "aria": {
     "themeSelect": "Seleccionar tema",
     "languageSelect": "Seleccionar idioma",
     "saveFavorite": "Guardar como favorito",
     "removeFavorite": "Quitar de favoritos",
-    "quickFeeds": "Seleccion rapida y feeds guardados",
+    "quickFeeds": "Selección rápida y feeds guardados",
     "controls": "Controles del feed",
     "results": "Contenido del feed",
     "footer": "Enlaces del pie",
@@ -46,7 +46,7 @@
   },
   "feed": {
     "websiteLink": "Abrir sitio web",
-    "noDescription": "No hay descripcion disponible.",
+    "noDescription": "No hay descripción disponible.",
     "noEntries": "No se encontraron entradas.",
     "noPreview": "No hay vista previa disponible.",
     "noDate": "Sin fecha",
@@ -56,26 +56,37 @@
     "loadingFeed": "Cargando feed...",
     "feedLoaded": "Feed cargado: {{count}} entradas encontradas.",
     "errorPrefix": "Error:",
-    "themeTemplateFallback": "No se encontro la plantilla del tema '{{theme}}', modo de respaldo activo.",
+    "themeTemplateFallback": "No se encontró la plantilla del tema '{{theme}}', modo de respaldo activo.",
     "themeChanged": "Tema cambiado: {{theme}}.",
     "favoriteSaved": "Favorito guardado.",
     "favoriteRemoved": "Favorito eliminado.",
     "feedRemoved": "Feed eliminado de la lista.",
-    "resetDone": "Aplicacion restablecida. Cargando feeds predeterminados...",
+    "resetDone": "Aplicación restablecida. Cargando feeds predeterminados...",
     "languageChanged": "Idioma cambiado: {{language}}.",
     "templateLoadFailed": "No se pudo cargar la plantilla (HTTP {{status}}).",
-    "templateEmpty": "El archivo de plantilla esta vacio."
+    "templateEmpty": "El archivo de plantilla está vacío."
   },
   "confirm": {
-    "reset": "¿Restablecer todo? Se eliminaran los feeds guardados y la configuracion de tema/idioma."
+    "reset": "¿Restablecer todo? Se eliminarán los feeds guardados y la configuración de tema/idioma."
   },
   "rss": {
     "emptyUrl": "Introduce una URL de feed.",
-    "invalidUrl": "URL no valida. Ejemplo: https://example.com/feed.xml",
+    "invalidUrl": "URL no válida. Ejemplo: https://example.com/feed.xml",
     "invalidXml": "No se pudo analizar el XML del feed.",
     "unnamedFeed": "Feed sin nombre",
-    "emptyResponse": "Se recibio una respuesta vacia.",
+    "emptyResponse": "Se recibió una respuesta vacía.",
     "unknownError": "Error desconocido",
     "loadFailed": "No se pudo cargar el feed. Detalles: {{details}}"
+  },
+  "legal": {
+    "pageTitle": "Información legal de rss4u",
+    "heading": "Información legal",
+    "intro": "El texto legal oficial se carga desde LICENSE.",
+    "openLicenseFile": "Abrir archivo LICENSE",
+    "mitReference": "Referencia MIT",
+    "backToApp": "Volver a rss4u",
+    "loading": "Cargando LICENSE...",
+    "emptyFile": "El archivo LICENSE está vacío.",
+    "loadFailed": "No se pudo cargar LICENSE ({{details}})."
   }
 }

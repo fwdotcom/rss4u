@@ -77,5 +77,16 @@
     "emptyResponse": "Leeg antwoord ontvangen.",
     "unknownError": "Onbekende fout",
     "loadFailed": "Feed kon niet worden geladen. Details: {{details}}"
+  },
+  "legal": {
+    "pageTitle": "rss4u Juridische informatie",
+    "heading": "Juridische informatie",
+    "intro": "De gezaghebbende juridische tekst wordt geladen uit LICENSE.",
+    "openLicenseFile": "Open LICENSE-bestand",
+    "mitReference": "MIT-referentie",
+    "backToApp": "Terug naar rss4u",
+    "loading": "LICENSE laden...",
+    "emptyFile": "LICENSE-bestand is leeg.",
+    "loadFailed": "LICENSE kon niet worden geladen ({{details}})."
   }
 }

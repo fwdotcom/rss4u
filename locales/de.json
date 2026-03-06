@@ -24,12 +24,12 @@
   "languages": {
     "en": "Englisch",
     "de": "Deutsch",
-    "fr": "Franzoesisch",
+    "fr": "Französisch",
     "es": "Spanisch",
     "it": "Italienisch",
     "pl": "Polnisch",
     "cs": "Tschechisch",
-    "nl": "Niederlaendisch"
+    "nl": "Niederländisch"
   },
   "aria": {
     "themeSelect": "Theme auswählen",
@@ -77,5 +77,16 @@
     "emptyResponse": "Leere Antwort erhalten.",
     "unknownError": "Unbekannter Fehler",
     "loadFailed": "Feed konnte nicht geladen werden. Details: {{details}}"
+  },
+  "legal": {
+    "pageTitle": "rss4u Rechtliche Hinweise",
+    "heading": "Rechtliche Hinweise",
+    "intro": "Der maßgebliche Rechtstext wird aus LICENSE geladen.",
+    "openLicenseFile": "LICENSE-Datei öffnen",
+    "mitReference": "MIT-Referenz",
+    "backToApp": "Zurück zu rss4u",
+    "loading": "LICENSE wird geladen...",
+    "emptyFile": "LICENSE-Datei ist leer.",
+    "loadFailed": "LICENSE konnte nicht geladen werden ({{details}})."
   }
 }

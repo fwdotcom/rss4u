@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>rss4u Legal Information</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: linear-gradient(140deg, #f8f7f4, #efeee8);
+        --panel: rgba(255, 255, 255, 0.86);
+        --line: #ccd2d8;
+        --text: #20252c;
+        --muted: #5d6873;
+        --accent: #d15731;
+        --shadow: rgba(20, 28, 33, 0.16);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        padding: 22px;
+        color: var(--text);
+        font-family: "Space Grotesk", "Segoe UI", sans-serif;
+        background: var(--bg);
+      }
+
+      .wrap {
+        max-width: 860px;
+        margin: 0 auto;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: var(--panel);
+        box-shadow: 0 14px 30px var(--shadow);
+        padding: 22px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(1.5rem, 2.8vw, 2.1rem);
+      }
+
+      p {
+        margin: 12px 0 0;
+        color: var(--muted);
+      }
+
+      pre {
+        margin: 16px 0 0;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #f8fafb;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.84rem;
+        line-height: 1.5;
+        overflow-x: auto;
+        white-space: pre-wrap;
+      }
+
+      .links {
+        margin-top: 12px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.8rem;
+      }
+
+      .links .divider {
+        color: var(--line);
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap" aria-label="Legal information">
+      <h1 id="legal-heading">Legal Information</h1>
+      <p id="legal-intro">The authoritative legal text is loaded from LICENSE.</p>
+      <pre id="license-content" aria-live="polite">Loading LICENSE...</pre>
+      <div class="links">
+        <a id="link-open-license" href="./LICENSE" target="_blank" rel="noopener noreferrer">Open LICENSE file</a>
+        <span class="divider" aria-hidden="true">|</span>
+        <a id="link-mit-reference" href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener noreferrer">MIT reference</a>
+        <span class="divider" aria-hidden="true">|</span>
+        <a id="link-back" href="./index.html">Back to rss4u</a>
+      </div>
+    </main>
+
+    <script>
+      const LANGUAGE_KEY = "rss-language";
+      const DEFAULT_LANGUAGE = "en";
+      const LOCALE_PATHS = {
+        en: "./locales/en.json",
+        de: "./locales/de.json",
+        fr: "./locales/fr.json",
+        es: "./locales/es.json",
+        it: "./locales/it.json",
+        pl: "./locales/pl.json",
+        cs: "./locales/cs.json",
+        nl: "./locales/nl.json"
+      };
+
+      const licenseContentEl = document.getElementById("license-content");
+      const legalHeadingEl = document.getElementById("legal-heading");
+      const legalIntroEl = document.getElementById("legal-intro");
+      const linkOpenLicenseEl = document.getElementById("link-open-license");
+      const linkMitReferenceEl = document.getElementById("link-mit-reference");
+      const linkBackEl = document.getElementById("link-back");
+
+      let legalMessages = {
+        pageTitle: "rss4u Legal Information",
+        heading: "Legal Information",
+        intro: "The authoritative legal text is loaded from LICENSE.",
+        openLicenseFile: "Open LICENSE file",
+        mitReference: "MIT reference",
+        backToApp: "Back to rss4u",
+        loading: "Loading LICENSE...",
+        emptyFile: "LICENSE file is empty.",
+        loadFailed: "Could not load LICENSE ({{details}})."
+      };
+
+      function formatTemplate(template, replacements = {}) {
+        return Object.entries(replacements).reduce((output, [key, value]) => {
+          return output.replaceAll(`{{${key}}}`, String(value));
+        }, template);
+      }
+
+      async function loadLegalLocale() {
+        const stored = (localStorage.getItem(LANGUAGE_KEY) || "").toLowerCase();
+        const selectedLanguage = LOCALE_PATHS[stored] ? stored : DEFAULT_LANGUAGE;
+        const selectedPath = LOCALE_PATHS[selectedLanguage];
+        const fallbackPath = LOCALE_PATHS[DEFAULT_LANGUAGE];
+
+        let fallbackLegal = {};
+        try {
+          const fallbackResponse = await fetch(fallbackPath, { cache: "no-store" });
+          if (fallbackResponse.ok) {
+            const fallbackLocale = await fallbackResponse.json();
+            fallbackLegal = fallbackLocale.legal || {};
+          }
+        } catch {
+          fallbackLegal = {};
+        }
+
+        let selectedLegal = {};
+        if (selectedPath) {
+          try {
+            const response = await fetch(selectedPath, { cache: "no-store" });
+            if (response.ok) {
+              const locale = await response.json();
+              selectedLegal = locale.legal || {};
+              document.documentElement.lang = selectedLanguage;
+            }
+          } catch {
+            selectedLegal = {};
+          }
+        }
+
+        legalMessages = {
+          ...legalMessages,
+          ...fallbackLegal,
+          ...selectedLegal
+        };
+      }
+
+      function applyLegalTranslations() {
+        document.title = legalMessages.pageTitle;
+        legalHeadingEl.textContent = legalMessages.heading;
+        legalIntroEl.textContent = legalMessages.intro;
+        linkOpenLicenseEl.textContent = legalMessages.openLicenseFile;
+        linkMitReferenceEl.textContent = legalMessages.mitReference;
+        linkBackEl.textContent = legalMessages.backToApp;
+        licenseContentEl.textContent = legalMessages.loading;
+      }
+
+      async function loadLicenseText() {
+        try {
+          const response = await fetch("./LICENSE", { cache: "no-store" });
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+
+          const text = await response.text();
+          const trimmed = text.trim();
+          licenseContentEl.textContent = trimmed || legalMessages.emptyFile;
+        } catch (error) {
+          licenseContentEl.textContent = formatTemplate(legalMessages.loadFailed, {
+            details: error.message
+          });
+        }
+      }
+
+      async function initializeLegalPage() {
+        await loadLegalLocale();
+        applyLegalTranslations();
+        await loadLicenseText();
+      }
+
+      initializeLegalPage();
+    </script>
+  </body>
+</html>

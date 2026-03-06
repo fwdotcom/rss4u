@@ -4,7 +4,7 @@
     "subtitle": "Lisez n'importe quel flux RSS directement dans votre navigateur. Collez l'URL, chargez, c'est fait."
   },
   "labels": {
-    "theme": "Theme",
+    "theme": "Thème",
     "language": "Langue",
     "feedUrl": "URL du flux"
   },
@@ -15,7 +15,7 @@
     "load": "Charger",
     "website": "Site web",
     "license": "Licence",
-    "reset": "Reinitialiser par defaut"
+    "reset": "Réinitialiser par défaut"
   },
   "themes": {
     "light": "Clair",
@@ -24,58 +24,69 @@
   "languages": {
     "en": "Anglais",
     "de": "Allemand",
-    "fr": "Francais",
+    "fr": "Français",
     "es": "Espagnol",
     "it": "Italien",
     "pl": "Polonais",
-    "cs": "Tcheque",
-    "nl": "Neerlandais"
+    "cs": "Tchèque",
+    "nl": "Néerlandais"
   },
   "aria": {
-    "themeSelect": "Selectionner le theme",
-    "languageSelect": "Selectionner la langue",
+    "themeSelect": "Sélectionner le thème",
+    "languageSelect": "Sélectionner la langue",
     "saveFavorite": "Enregistrer comme favori",
     "removeFavorite": "Supprimer des favoris",
-    "quickFeeds": "Selection rapide et flux enregistres",
-    "controls": "Controles du flux",
+    "quickFeeds": "Sélection rapide et flux enregistrés",
+    "controls": "Contrôles du flux",
     "results": "Contenu du flux",
     "footer": "Liens de pied de page",
     "deleteFeed": "Supprimer le flux",
-    "resetToDefaults": "Reinitialiser par defaut",
+    "resetToDefaults": "Réinitialiser par défaut",
     "favoriteIcon": "Favori"
   },
   "feed": {
     "websiteLink": "Ouvrir le site web",
     "noDescription": "Aucune description disponible.",
-    "noEntries": "Aucune entree trouvee.",
-    "noPreview": "Aucun apercu disponible.",
+    "noEntries": "Aucune entrée trouvée.",
+    "noPreview": "Aucun aperçu disponible.",
     "noDate": "Pas de date",
     "articleLink": "Lire l'article"
   },
   "status": {
     "loadingFeed": "Chargement du flux...",
-    "feedLoaded": "Flux charge : {{count}} entrees trouvees.",
+    "feedLoaded": "Flux chargé : {{count}} entrées trouvées.",
     "errorPrefix": "Erreur :",
-    "themeTemplateFallback": "Template du theme '{{theme}}' introuvable, mode de secours active.",
-    "themeChanged": "Theme change : {{theme}}.",
-    "favoriteSaved": "Favori enregistre.",
-    "favoriteRemoved": "Favori supprime.",
-    "feedRemoved": "Flux supprime de la liste.",
-    "resetDone": "Application reinitialisee. Chargement des flux par defaut...",
-    "languageChanged": "Langue changee : {{language}}.",
+    "themeTemplateFallback": "Template du thème '{{theme}}' introuvable, mode de secours activé.",
+    "themeChanged": "Thème changé : {{theme}}.",
+    "favoriteSaved": "Favori enregistré.",
+    "favoriteRemoved": "Favori supprimé.",
+    "feedRemoved": "Flux supprimé de la liste.",
+    "resetDone": "Application réinitialisée. Chargement des flux par défaut...",
+    "languageChanged": "Langue changée : {{language}}.",
     "templateLoadFailed": "Le template n'a pas pu etre charge (HTTP {{status}}).",
-    "templateEmpty": "Le fichier template est vide."
+    "templateEmpty": "Le fichier de template est vide."
   },
   "confirm": {
-    "reset": "Tout reinitialiser ? Les flux enregistres et les parametres de theme/langue seront supprimes."
+    "reset": "Tout réinitialiser ? Les flux enregistrés et les paramètres de thème/langue seront supprimés."
   },
   "rss": {
     "emptyUrl": "Veuillez saisir une URL de flux.",
     "invalidUrl": "URL invalide. Exemple : https://example.com/feed.xml",
-    "invalidXml": "Le XML du flux n'a pas pu etre analyse.",
+    "invalidXml": "Le XML du flux n'a pas pu être analysé.",
     "unnamedFeed": "Flux sans titre",
-    "emptyResponse": "Reponse vide recue.",
+    "emptyResponse": "Réponse vide reçue.",
     "unknownError": "Erreur inconnue",
-    "loadFailed": "Le flux n'a pas pu etre charge. Details : {{details}}"
+    "loadFailed": "Le flux n'a pas pu être chargé. Détails : {{details}}"
+  },
+  "legal": {
+    "pageTitle": "Informations légales rss4u",
+    "heading": "Informations légales",
+    "intro": "Le texte légal de référence est chargé depuis LICENSE.",
+    "openLicenseFile": "Ouvrir le fichier LICENSE",
+    "mitReference": "Référence MIT",
+    "backToApp": "Retour à rss4u",
+    "loading": "Chargement de LICENSE...",
+    "emptyFile": "Le fichier LICENSE est vide.",
+    "loadFailed": "Impossible de charger LICENSE ({{details}})."
   }
 }

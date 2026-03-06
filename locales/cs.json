@@ -12,70 +12,81 @@
     "feedUrl": "https://example.com/feed.xml"
   },
   "buttons": {
-    "load": "Nacist",
+    "load": "Načíst",
     "website": "Web",
     "license": "Licence",
-    "reset": "Obnovit vychozi"
+    "reset": "Obnovit výchozí"
   },
   "themes": {
     "light": "Svetly",
     "dark": "Tmavy"
   },
   "languages": {
-    "en": "Anglictina",
-    "de": "Nemcina",
-    "fr": "Francouzstina",
-    "es": "Spanelstina",
-    "it": "Italstina",
-    "pl": "Polstina",
-    "cs": "Cestina",
-    "nl": "Nizozemstina"
+    "en": "Angličtina",
+    "de": "Němčina",
+    "fr": "Francouzština",
+    "es": "Španělština",
+    "it": "Italština",
+    "pl": "Polština",
+    "cs": "Čeština",
+    "nl": "Nizozemština"
   },
   "aria": {
     "themeSelect": "Vyber motiv",
     "languageSelect": "Vyber jazyk",
-    "saveFavorite": "Ulozit do oblibenych",
-    "removeFavorite": "Odebrat z oblibenych",
-    "quickFeeds": "Rychly vyber a ulozene feedy",
-    "controls": "Ovladani feedu",
+    "saveFavorite": "Uložit do oblíbených",
+    "removeFavorite": "Odebrat z oblíbených",
+    "quickFeeds": "Rychlý výběr a uložené feedy",
+    "controls": "Ovládání feedu",
     "results": "Obsah feedu",
     "footer": "Odkazy v paticce",
     "deleteFeed": "Smazat feed",
-    "resetToDefaults": "Obnovit vychozi",
-    "favoriteIcon": "Oblibene"
+    "resetToDefaults": "Obnovit výchozí",
+    "favoriteIcon": "Oblíbené"
   },
   "feed": {
-    "websiteLink": "Otevrit web",
-    "noDescription": "Popis neni k dispozici.",
-    "noEntries": "Nenalezeny zadne polozky.",
-    "noPreview": "Nahled neni k dispozici.",
+    "websiteLink": "Otevřít web",
+    "noDescription": "Popis není k dispozici.",
+    "noEntries": "Nenalezeny žádné položky.",
+    "noPreview": "Náhled není k dispozici.",
     "noDate": "Bez data",
-    "articleLink": "Cist clanek"
+    "articleLink": "Číst článek"
   },
   "status": {
-    "loadingFeed": "Nacitam feed...",
-    "feedLoaded": "Feed nacten: nalezeno {{count}} polozek.",
+    "loadingFeed": "Načítám feed...",
+    "feedLoaded": "Feed načten: nalezeno {{count}} položek.",
     "errorPrefix": "Chyba:",
-    "themeTemplateFallback": "Sablona motivu '{{theme}}' nebyla nalezena, pouzit fallback.",
-    "themeChanged": "Motiv zmenen: {{theme}}.",
-    "favoriteSaved": "Oblibene ulozeno.",
-    "favoriteRemoved": "Odebrano z oblibenych.",
-    "feedRemoved": "Feed odebran ze seznamu.",
-    "resetDone": "Aplikace byla obnovena. Nacitam vychozi feedy...",
-    "languageChanged": "Jazyk zmenen: {{language}}.",
-    "templateLoadFailed": "Sablonu se nepodarilo nacist (HTTP {{status}}).",
-    "templateEmpty": "Soubor sablony je prazdny."
+    "themeTemplateFallback": "Šablona motivu '{{theme}}' nebyla nalezena, použit fallback.",
+    "themeChanged": "Motiv změněn: {{theme}}.",
+    "favoriteSaved": "Oblíbené uloženo.",
+    "favoriteRemoved": "Odebráno z oblíbených.",
+    "feedRemoved": "Feed odebrán ze seznamu.",
+    "resetDone": "Aplikace byla obnovena. Načítám výchozí feedy...",
+    "languageChanged": "Jazyk změněn: {{language}}.",
+    "templateLoadFailed": "Šablonu se nepodařilo načíst (HTTP {{status}}).",
+    "templateEmpty": "Soubor šablony je prázdný."
   },
   "confirm": {
-    "reset": "Obnovit vse? Ulozene feedy a nastaveni motivu/jazyka budou smazany."
+    "reset": "Obnovit vše? Uložené feedy a nastavení motivu/jazyka budou smazány."
   },
   "rss": {
     "emptyUrl": "Zadej URL feedu.",
-    "invalidUrl": "Neplatna URL. Priklad: https://example.com/feed.xml",
-    "invalidXml": "XML feedu se nepodarilo zpracovat.",
-    "unnamedFeed": "Feed bez nazvu",
-    "emptyResponse": "Byla prijata prazdna odpoved.",
-    "unknownError": "Neznama chyba",
-    "loadFailed": "Feed se nepodarilo nacist. Podrobnosti: {{details}}"
+    "invalidUrl": "Neplatná URL. Příklad: https://example.com/feed.xml",
+    "invalidXml": "XML feedu se nepodařilo zpracovat.",
+    "unnamedFeed": "Feed bez názvu",
+    "emptyResponse": "Byla přijata prázdná odpověď.",
+    "unknownError": "Neznámá chyba",
+    "loadFailed": "Feed se nepodařilo načíst. Podrobnosti: {{details}}"
+  },
+  "legal": {
+    "pageTitle": "Právní informace rss4u",
+    "heading": "Právní informace",
+    "intro": "Závazný právní text je načten ze souboru LICENSE.",
+    "openLicenseFile": "Otevřít soubor LICENSE",
+    "mitReference": "MIT odkaz",
+    "backToApp": "Zpět na rss4u",
+    "loading": "Načítám LICENSE...",
+    "emptyFile": "Soubor LICENSE je prázdný.",
+    "loadFailed": "Soubor LICENSE se nepodařilo načíst ({{details}})."
   }
 }

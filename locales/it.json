@@ -64,7 +64,7 @@
     "resetDone": "App reimpostata. Caricamento feed predefiniti...",
     "languageChanged": "Lingua cambiata: {{language}}.",
     "templateLoadFailed": "Impossibile caricare il template (HTTP {{status}}).",
-    "templateEmpty": "Il file template e vuoto."
+    "templateEmpty": "Il file template è vuoto."
   },
   "confirm": {
     "reset": "Reimpostare tutto? I feed salvati e le impostazioni tema/lingua verranno eliminati."
@@ -77,5 +77,16 @@
     "emptyResponse": "Ricevuta una risposta vuota.",
     "unknownError": "Errore sconosciuto",
     "loadFailed": "Impossibile caricare il feed. Dettagli: {{details}}"
+  },
+  "legal": {
+    "pageTitle": "Informazioni legali rss4u",
+    "heading": "Informazioni legali",
+    "intro": "Il testo legale autorevole viene caricato da LICENSE.",
+    "openLicenseFile": "Apri file LICENSE",
+    "mitReference": "Riferimento MIT",
+    "backToApp": "Torna a rss4u",
+    "loading": "Caricamento LICENSE...",
+    "emptyFile": "Il file LICENSE è vuoto.",
+    "loadFailed": "Impossibile caricare LICENSE ({{details}})."
   }
 }
