@@ -4,6 +4,12 @@ A browser-based RSS reader built with plain HTML, CSS, and JavaScript.
 
 Copyright (C) 2026 Frank Winter.
 
+## Live Demo
+
+Try rss4u on GitHub Pages:
+
+- https://fwdotcom.github.io/rss4u/
+
 ## License
 
 This project is licensed under the MIT License.
