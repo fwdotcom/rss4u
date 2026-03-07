@@ -92,18 +92,37 @@ export function normalizeFeedUrl(rawUrl) {
 	}
 
 	const hasExplicitScheme = /^[a-z][a-z\d+\-.]*:/i.test(candidate);
-	if (hasExplicitScheme && !/^https?:\/\//i.test(candidate)) {
-		throw new Error(rssMessages.invalidUrl);
+	if (hasExplicitScheme) {
+		try {
+			const parsed = new URL(candidate);
+			const isHttp = parsed.protocol === "http:" || parsed.protocol === "https:";
+			const isExtensionLocal = parsed.protocol === "chrome-extension:" || parsed.protocol === "moz-extension:";
+
+			if (!isHttp && !isExtensionLocal) {
+				throw new Error(rssMessages.invalidUrl);
+			}
+
+			return parsed.toString();
+		} catch {
+			throw new Error(rssMessages.invalidUrl);
+		}
 	}
 
-	const withProtocol = /^https?:\/\//i.test(candidate)
-		? candidate
-		: `https://${candidate}`;
+	const withProtocol = `https://${candidate}`;
 
 	try {
 		return new URL(withProtocol).toString();
 	} catch {
 		throw new Error(rssMessages.invalidUrl);
+	}
+}
+
+function isHttpProtocolUrl(value) {
+	try {
+		const parsed = new URL(value);
+		return parsed.protocol === "http:" || parsed.protocol === "https:";
+	} catch {
+		return false;
 	}
 }
 
@@ -158,25 +177,36 @@ function plainTextFromHtml(html) {
 	return (temp.textContent || "").trim();
 }
 
-/**
- * Löst relative oder absolute URL-Werte gegen eine optionale Basis-URL auf.
- *
- * Gibt nur gültige HTTP(S)-URLs zurück, sonst einen leeren String.
- */
-function resolveHttpUrl(value, baseUrl = "") {
+const HTTP_PROTOCOLS = new Set(["http:", "https:"]);
+const MEDIA_PROTOCOLS = new Set(["http:", "https:", "chrome-extension:", "moz-extension:"]);
+
+function resolveUrlByProtocols(value, baseUrl = "", allowedProtocols = HTTP_PROTOCOLS) {
 	if (!value) return "";
 	const candidate = String(value).trim();
 	if (!candidate) return "";
 
 	try {
 		const parsed = baseUrl ? new URL(candidate, baseUrl) : new URL(candidate);
-		if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+		if (allowedProtocols.has(parsed.protocol)) {
 			return parsed.toString();
 		}
 		return "";
 	} catch {
 		return "";
 	}
+}
+
+/**
+ * Löst relative oder absolute URL-Werte gegen eine optionale Basis-URL auf.
+ *
+ * Gibt nur gültige HTTP(S)-URLs zurück, sonst einen leeren String.
+ */
+function resolveHttpUrl(value, baseUrl = "") {
+	return resolveUrlByProtocols(value, baseUrl, HTTP_PROTOCOLS);
+}
+
+function resolveMediaUrl(value, baseUrl = "") {
+	return resolveUrlByProtocols(value, baseUrl, MEDIA_PROTOCOLS);
 }
 
 /**
@@ -221,15 +251,15 @@ function extractMediaUrl(itemNode, baseUrl) {
 		}
 
 		const candidateUrl = element.getAttribute("url") || "";
-		return Boolean(resolveHttpUrl(candidateUrl, baseUrl));
+		return Boolean(resolveMediaUrl(candidateUrl, baseUrl));
 	});
 
 	if (mediaElement) {
-		return resolveHttpUrl(mediaElement.getAttribute("url") || "", baseUrl);
+		return resolveMediaUrl(mediaElement.getAttribute("url") || "", baseUrl);
 	}
 
 	const enclosureUrl = itemNode.querySelector("enclosure")?.getAttribute("url") || "";
-	const safeEnclosureUrl = resolveHttpUrl(enclosureUrl, baseUrl);
+	const safeEnclosureUrl = resolveMediaUrl(enclosureUrl, baseUrl);
 	if (safeEnclosureUrl) {
 		return safeEnclosureUrl;
 	}
@@ -299,19 +329,19 @@ function extractChannelLink(doc, baseUrl) {
  */
 function extractChannelImage(doc, baseUrl) {
 	const rssImageUrl = doc.querySelector("channel > image > url")?.textContent?.trim() || "";
-	const safeRssImageUrl = resolveHttpUrl(rssImageUrl, baseUrl);
+	const safeRssImageUrl = resolveMediaUrl(rssImageUrl, baseUrl);
 	if (safeRssImageUrl) {
 		return safeRssImageUrl;
 	}
 
 	const atomLogo = doc.querySelector("feed > logo")?.textContent?.trim() || "";
-	const safeAtomLogo = resolveHttpUrl(atomLogo, baseUrl);
+	const safeAtomLogo = resolveMediaUrl(atomLogo, baseUrl);
 	if (safeAtomLogo) {
 		return safeAtomLogo;
 	}
 
 	const atomIcon = doc.querySelector("feed > icon")?.textContent?.trim() || "";
-	const safeAtomIcon = resolveHttpUrl(atomIcon, baseUrl);
+	const safeAtomIcon = resolveMediaUrl(atomIcon, baseUrl);
 	if (safeAtomIcon) {
 		return safeAtomIcon;
 	}
@@ -328,11 +358,11 @@ function extractChannelImage(doc, baseUrl) {
 		}
 
 		const candidateUrl = element.getAttribute("url") || "";
-		return Boolean(resolveHttpUrl(candidateUrl, baseUrl));
+		return Boolean(resolveMediaUrl(candidateUrl, baseUrl));
 	});
 
 	if (channelLevelMedia) {
-		return resolveHttpUrl(channelLevelMedia.getAttribute("url") || "", baseUrl);
+		return resolveMediaUrl(channelLevelMedia.getAttribute("url") || "", baseUrl);
 	}
 
 	return "";
@@ -433,7 +463,9 @@ export async function fetchFeedXml(url, proxyFactories = DEFAULT_PROXIES) {
 		return cachedXml;
 	}
 
-	const attempts = [...new Set([url, ...proxyFactories.map((proxy) => proxy(url))])];
+	const attempts = isHttpProtocolUrl(url)
+		? [...new Set([url, ...proxyFactories.map((proxy) => proxy(url))])]
+		: [url];
 
 	try {
 		const xmlText = await Promise.any(

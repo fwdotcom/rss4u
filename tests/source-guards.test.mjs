@@ -7,8 +7,8 @@ import { fileURLToPath } from "node:url";
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDir = path.dirname(currentFilePath);
 const rootDir = path.resolve(currentDir, "..");
-const scriptSource = fs.readFileSync(path.join(rootDir, "script.js"), "utf8");
-const rssSource = fs.readFileSync(path.join(rootDir, "rss.js"), "utf8");
+const scriptSource = fs.readFileSync(path.join(rootDir, "public", "script.js"), "utf8");
+const rssSource = fs.readFileSync(path.join(rootDir, "public", "rss.js"), "utf8");
 
 test("race-condition guard exists for feed loading", () => {
 	assert.match(scriptSource, /let\s+latestFeedRequestId\s*=\s*0\s*;/, "missing request id state");
@@ -28,9 +28,10 @@ test("rss parser sanitizes non-http links and localizes untitled items", () => {
 	assert.match(rssSource, /const\s+safeArticleLink\s*=\s*resolveHttpUrl\(link,\s*baseUrl\)\s*;/, "article link is not sanitized");
 });
 
-test("feed URL normalization rejects explicit non-http schemes", () => {
+test("feed URL normalization rejects unsupported schemes but allows extension-local URLs", () => {
 	assert.match(rssSource, /const\s+hasExplicitScheme\s*=\s*\/\^\[a-z\]\[a-z\\d\+\\-\.\]\*:/, "missing explicit scheme detection");
-	assert.match(rssSource, /hasExplicitScheme\s*&&\s*!\/\^https\?:\\\/\\\//, "missing non-http scheme rejection");
+	assert.match(rssSource, /const\s+isExtensionLocal\s*=\s*parsed\.protocol\s*===\s*"chrome-extension:"\s*\|\|\s*parsed\.protocol\s*===\s*"moz-extension:"\s*;/, "missing extension-local scheme allowance");
+	assert.match(rssSource, /if\s*\(!isHttp\s*&&\s*!isExtensionLocal\)/, "missing unsupported scheme rejection");
 });
 
 test("atom entry links prefer rel=alternate", () => {

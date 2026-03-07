@@ -39,21 +39,23 @@ See [LICENSE](./LICENSE).
 
 ### Dark Theme
 
-![rss4u dark theme screenshot](./themes/dark/screenshot.webp)
+![rss4u dark theme screenshot](./public/themes/dark/screenshot.webp)
 
 ### Light Theme
 
-![rss4u light theme screenshot](./themes/light/screenshot.webp)
+![rss4u light theme screenshot](./public/themes/light/screenshot.webp)
 
 ## Project Structure
 
-- `index.html`: app shell and UI layout
-- `style.css`: base/global styling and shared CSS variables
-- `script.js`: UI behavior, theme loading, rendering
-- `rss.js`: RSS logic (URL normalization, fetch, parse)
-- `locales/`: translation files (`en`, `de`, `fr`, `es`, `it`, `pl`, `cs`, `nl`)
-- `themes/`: theme-specific CSS, templates, and theme documentation
-- `themes/README.md`: detailed theming guide
+- `public/`: web root for app runtime and Pages deployment
+- `public/index.html`: app shell and UI layout
+- `public/style.css`: base/global styling and shared CSS variables
+- `public/script.js`: UI behavior, theme loading, rendering
+- `public/rss.js`: RSS logic (URL normalization, fetch, parse)
+- `public/locales/`: translation files (`en`, `de`, `fr`, `es`, `it`, `pl`, `cs`, `nl`)
+- `public/themes/`: theme-specific CSS, templates, and theme documentation
+- `public/themes/README.md`: detailed theming guide
+- `build/background.js`: extension click handler (opens app in tab)
 - `tests/`: lightweight Node test suite for locale consistency and source guards
 
 ## Run Locally
@@ -63,7 +65,7 @@ Use a local web server (recommended) so dynamic template loading and fetch calls
 Example with VS Code Live Server:
 
 1. Open the project in VS Code
-2. Start `Live Server` on `index.html`
+2. Start `Live Server` on `public/index.html`
 3. Open the shown local URL in your browser
 
 ## Run Tests
@@ -76,21 +78,58 @@ Run from the project root:
 node --test tests/*.test.mjs
 ```
 
+## Browser Extension Packaging
+
+Build artifacts are created in `build/dist/`.
+
+Chromium (Chrome/Edge):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ./build/package-chromium.ps1
+```
+
+Firefox:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ./build/package-firefox.ps1
+```
+
+Build both packages in one step:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ./build/package-all.ps1
+```
+
+The scripts package browser-specific manifests from:
+
+- `build/manifests/manifest.chrome.json`
+- `build/manifests/manifest.firefox.json`
+
+## GitHub Pages Deployment
+
+The repository includes `.github/workflows/deploy-pages.yml`.
+On each push to `main`, the workflow:
+
+1. Uploads `public/` as Pages artifact
+2. Deploys to GitHub Pages
+
+In repository settings, set **Pages Source** to **GitHub Actions**.
+
 ## Theming
 
-Theme definitions are in `themes/<theme-name>/` and are registered in `script.js`.
+Theme definitions are in `public/themes/<theme-name>/` and are registered in `public/script.js`.
 
 Available themes:
 
 - `dark`
 - `light`
 
-For full details, see `themes/README.md`.
+For full details, see `public/themes/README.md`.
 
 ## Localization
 
 - Default language is English (`en`).
 - Available languages: `en`, `de`, `fr`, `es`, `it`, `pl`, `cs`, `nl`.
-- Translation resources live in `locales/*.json`.
+- Translation resources live in `public/locales/*.json`.
 - Date formatting locale is configured per language in `formats.dateLocale`.
 

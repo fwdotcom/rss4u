@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "rss4u",
+  "short_name": "rss4u",
+  "description": "A lightweight RSS/Atom reader that runs in your browser.",
+  "version": "1.0.0",
+  "action": {
+    "default_title": "Open rss4u"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:"
+  }
+}
