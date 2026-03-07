@@ -30,7 +30,7 @@ See [LICENSE](./LICENSE).
 - Theme support
 - Language support
 - Locale-driven date formatting via translation files
-- Per-theme tile templates with placeholders (`{{headline}}`, `{{description}}`, `{{date}}`, `{{link}}`, `{{image}}`, `{{theme}}`, `{{article_label}}`)
+- Per-theme tile templates with placeholders (`{{headline}}`, `{{description}}`, `{{date}}`, `{{image}}`, `{{theme}}`, `{{article_action}}`)
 - CORS fallback strategy via proxy attempts
 - Feed sanitization for URL-only descriptions
 

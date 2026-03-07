@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Example RSS Feed (Parser Fixture)</title>
+    <description>
+      This fixture explains each RSS test case inline so parser behavior can be verified visually.
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis,
+      dapibus posuere velit aliquet.
+    </description>
+    <link>https://example.com/</link>
+    <image>
+      <url>./images/rss-channel.svg</url>
+      <title>Example RSS Feed (Parser Fixture)</title>
+      <link>https://example.com/</link>
+    </image>
+
+    <item>
+      <title>Case 1: Valid article + media:content image</title>
+      <link>https://example.com/articles/1</link>
+      <description><![CDATA[
+        <p><strong>Expected:</strong> title, excerpt, date, and image are rendered.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+      ]]></description>
+      <pubDate>Sat, 07 Mar 2026 10:00:00 GMT</pubDate>
+      <media:content url="./images/rss-item-hero.svg" type="image/svg+xml" />
+    </item>
+
+    <item>
+      <title>Case 2: Missing article link</title>
+      <description><![CDATA[
+        <p><strong>Expected:</strong> disabled article action text is shown.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</p>
+      ]]></description>
+      <pubDate>Sat, 07 Mar 2026 11:00:00 GMT</pubDate>
+    </item>
+
+    <item>
+      <title>Case 3: Invalid link scheme</title>
+      <link>javascript:alert('xss')</link>
+      <description><![CDATA[
+        <p><strong>Expected:</strong> link is sanitized and treated as unavailable.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras mattis consectetur purus sit amet fermentum.</p>
+      ]]></description>
+      <pubDate>Sat, 07 Mar 2026 12:00:00 GMT</pubDate>
+    </item>
+
+    <item>
+      <title>Case 4: Reference-only description</title>
+      <link>https://example.com/articles/4</link>
+      <description>https://example.com/articles/4</description>
+      <pubDate>Sat, 07 Mar 2026 13:00:00 GMT</pubDate>
+    </item>
+
+    <item>
+      <title>Case 5: Enclosure image fallback</title>
+      <link>https://example.com/articles/5</link>
+      <description><![CDATA[
+        <p><strong>Expected:</strong> image is read from enclosure URL.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+      ]]></description>
+      <enclosure url="./images/rss-item-enclosure.svg" type="image/svg+xml" />
+      <pubDate>Sat, 07 Mar 2026 14:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

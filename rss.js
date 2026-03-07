@@ -52,6 +52,11 @@ export function normalizeFeedUrl(rawUrl) {
 		throw new Error(rssMessages.emptyUrl);
 	}
 
+	const hasExplicitScheme = /^[a-z][a-z\d+\-.]*:/i.test(candidate);
+	if (hasExplicitScheme && !/^https?:\/\//i.test(candidate)) {
+		throw new Error(rssMessages.invalidUrl);
+	}
+
 	const withProtocol = /^https?:\/\//i.test(candidate)
 		? candidate
 		: `https://${candidate}`;
@@ -61,6 +66,45 @@ export function normalizeFeedUrl(rawUrl) {
 	} catch {
 		throw new Error(rssMessages.invalidUrl);
 	}
+}
+
+/**
+ * Wählt für Atom-Entries bevorzugt rel="alternate" statt rel="self".
+ */
+function extractEntryLink(itemNode, baseUrl) {
+	const linkNodes = [...itemNode.querySelectorAll("link")];
+
+	const preferred = linkNodes.find((linkEl) => {
+		const rel = (linkEl.getAttribute("rel") || "alternate").toLowerCase();
+		const href = (linkEl.getAttribute("href") || "").trim();
+		return rel === "alternate" && Boolean(resolveHttpUrl(href, baseUrl));
+	});
+
+	if (preferred) {
+		return resolveHttpUrl(preferred.getAttribute("href")?.trim() || "", baseUrl);
+	}
+
+	const firstHttpHref = linkNodes
+		.map((linkEl) => (linkEl.getAttribute("href") || "").trim())
+		.find((href) => Boolean(resolveHttpUrl(href, baseUrl)));
+
+	if (firstHttpHref) {
+		return resolveHttpUrl(firstHttpHref, baseUrl);
+	}
+
+	const textLink = itemNode.querySelector("link")?.textContent?.trim() || "";
+	const safeTextLink = resolveHttpUrl(textLink, baseUrl);
+	if (safeTextLink) {
+		return safeTextLink;
+	}
+
+	const idLink = itemNode.querySelector("id")?.textContent?.trim() || "";
+	const safeIdLink = resolveHttpUrl(idLink, baseUrl);
+	if (safeIdLink) {
+		return safeIdLink;
+	}
+
+	return "";
 }
 
 /**
@@ -76,16 +120,31 @@ function plainTextFromHtml(html) {
 }
 
 /**
+ * Löst relative oder absolute URL-Werte gegen eine optionale Basis-URL auf.
+ *
+ * Gibt nur gültige HTTP(S)-URLs zurück, sonst einen leeren String.
+ */
+function resolveHttpUrl(value, baseUrl = "") {
+	if (!value) return "";
+	const candidate = String(value).trim();
+	if (!candidate) return "";
+
+	try {
+		const parsed = baseUrl ? new URL(candidate, baseUrl) : new URL(candidate);
+		if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+			return parsed.toString();
+		}
+		return "";
+	} catch {
+		return "";
+	}
+}
+
+/**
  * Prüft, ob ein Wert eine gültige HTTP(S)-URL ist.
  */
 function isHttpUrl(value) {
-	if (!value) return false;
-	try {
-		const parsed = new URL(value);
-		return parsed.protocol === "http:" || parsed.protocol === "https:";
-	} catch {
-		return false;
-	}
+	return Boolean(resolveHttpUrl(value));
 }
 
 /**
@@ -113,7 +172,7 @@ function extractFirstUrl(value) {
 /**
  * Liest eine Bild-URL robust aus RSS/Atom Item-Knoten (inkl. Namespaces).
  */
-function extractMediaUrl(itemNode) {
+function extractMediaUrl(itemNode, baseUrl) {
 	const allElements = [...itemNode.getElementsByTagName("*")];
 
 	const mediaElement = allElements.find((element) => {
@@ -123,16 +182,17 @@ function extractMediaUrl(itemNode) {
 		}
 
 		const candidateUrl = element.getAttribute("url") || "";
-		return isHttpUrl(candidateUrl);
+		return Boolean(resolveHttpUrl(candidateUrl, baseUrl));
 	});
 
 	if (mediaElement) {
-		return mediaElement.getAttribute("url") || "";
+		return resolveHttpUrl(mediaElement.getAttribute("url") || "", baseUrl);
 	}
 
 	const enclosureUrl = itemNode.querySelector("enclosure")?.getAttribute("url") || "";
-	if (isHttpUrl(enclosureUrl)) {
-		return enclosureUrl;
+	const safeEnclosureUrl = resolveHttpUrl(enclosureUrl, baseUrl);
+	if (safeEnclosureUrl) {
+		return safeEnclosureUrl;
 	}
 
 	return "";
@@ -169,48 +229,52 @@ function isReferenceOnlyDescription(description, articleLink) {
 /**
  * Liest eine Website-URL auf Kanalebene aus RSS- oder Atom-Metadaten.
  */
-function extractChannelLink(doc) {
+function extractChannelLink(doc, baseUrl) {
 	const rssLink = doc.querySelector("channel > link")?.textContent?.trim() || "";
-	if (isHttpUrl(rssLink)) {
-		return rssLink;
+	const safeRssLink = resolveHttpUrl(rssLink, baseUrl);
+	if (safeRssLink) {
+		return safeRssLink;
 	}
 
 	const atomLinks = [...doc.querySelectorAll("feed > link")];
 	const preferredAtomLink = atomLinks.find((linkEl) => {
 		const rel = (linkEl.getAttribute("rel") || "alternate").toLowerCase();
 		const href = (linkEl.getAttribute("href") || "").trim();
-		return rel === "alternate" && isHttpUrl(href);
+		return rel === "alternate" && Boolean(resolveHttpUrl(href, baseUrl));
 	});
 
 	if (preferredAtomLink) {
-		return preferredAtomLink.getAttribute("href")?.trim() || "";
+		return resolveHttpUrl(preferredAtomLink.getAttribute("href")?.trim() || "", baseUrl);
 	}
 
 	const fallbackAtomLink = atomLinks.find((linkEl) => {
 		const href = (linkEl.getAttribute("href") || "").trim();
-		return isHttpUrl(href);
+		return Boolean(resolveHttpUrl(href, baseUrl));
 	});
 
-	return fallbackAtomLink?.getAttribute("href")?.trim() || "";
+	return resolveHttpUrl(fallbackAtomLink?.getAttribute("href")?.trim() || "", baseUrl);
 }
 
 /**
  * Liest eine optionale Thumbnail-/Logo-URL auf Kanalebene.
  */
-function extractChannelImage(doc) {
+function extractChannelImage(doc, baseUrl) {
 	const rssImageUrl = doc.querySelector("channel > image > url")?.textContent?.trim() || "";
-	if (isHttpUrl(rssImageUrl)) {
-		return rssImageUrl;
+	const safeRssImageUrl = resolveHttpUrl(rssImageUrl, baseUrl);
+	if (safeRssImageUrl) {
+		return safeRssImageUrl;
 	}
 
 	const atomLogo = doc.querySelector("feed > logo")?.textContent?.trim() || "";
-	if (isHttpUrl(atomLogo)) {
-		return atomLogo;
+	const safeAtomLogo = resolveHttpUrl(atomLogo, baseUrl);
+	if (safeAtomLogo) {
+		return safeAtomLogo;
 	}
 
 	const atomIcon = doc.querySelector("feed > icon")?.textContent?.trim() || "";
-	if (isHttpUrl(atomIcon)) {
-		return atomIcon;
+	const safeAtomIcon = resolveHttpUrl(atomIcon, baseUrl);
+	if (safeAtomIcon) {
+		return safeAtomIcon;
 	}
 
 	const channelLevelMedia = [...doc.getElementsByTagName("*")].find((element) => {
@@ -225,11 +289,11 @@ function extractChannelImage(doc) {
 		}
 
 		const candidateUrl = element.getAttribute("url") || "";
-		return isHttpUrl(candidateUrl);
+		return Boolean(resolveHttpUrl(candidateUrl, baseUrl));
 	});
 
 	if (channelLevelMedia) {
-		return channelLevelMedia.getAttribute("url") || "";
+		return resolveHttpUrl(channelLevelMedia.getAttribute("url") || "", baseUrl);
 	}
 
 	return "";
@@ -246,7 +310,8 @@ function extractChannelImage(doc) {
  *   items: Array<{ title, link, description, pubDate, mediaUrl }>
  * }
  */
-export function parseFeed(xmlText) {
+export function parseFeed(xmlText, options = {}) {
+	const { baseUrl = "" } = options;
 	const parser = new DOMParser();
 	const doc = parser.parseFromString(xmlText, "application/xml");
 	const parserError = doc.querySelector("parsererror");
@@ -265,8 +330,8 @@ export function parseFeed(xmlText) {
 		doc.querySelector("feed > subtitle")?.textContent?.trim() ||
 		"";
 
-	const channelLink = extractChannelLink(doc);
-	const channelImageUrl = extractChannelImage(doc);
+	const channelLink = extractChannelLink(doc, baseUrl);
+	const channelImageUrl = extractChannelImage(doc, baseUrl);
 
 	const rssItems = [...doc.querySelectorAll("item")];
 	const atomEntries = [...doc.querySelectorAll("entry")];
@@ -275,14 +340,7 @@ export function parseFeed(xmlText) {
 	const items = rawItems
 		.map((itemNode) => {
 			const title = itemNode.querySelector("title")?.textContent?.trim() || rssMessages.untitledItem;
-
-			let link = itemNode.querySelector("link")?.textContent?.trim() || "";
-			if (!link) {
-				link =
-					itemNode.querySelector("link")?.getAttribute("href") ||
-					itemNode.querySelector("id")?.textContent?.trim() ||
-					"";
-			}
+			const link = extractEntryLink(itemNode, baseUrl);
 
 			const rawDescription =
 				itemNode.querySelector("description")?.textContent ||
@@ -291,7 +349,7 @@ export function parseFeed(xmlText) {
 				"";
 
 			const plainDescription = plainTextFromHtml(rawDescription);
-			const safeArticleLink = isHttpUrl(link) ? link : "";
+			const safeArticleLink = resolveHttpUrl(link, baseUrl);
 
 			const description = isReferenceOnlyDescription(plainDescription, safeArticleLink)
 				? ""
@@ -303,7 +361,7 @@ export function parseFeed(xmlText) {
 				itemNode.querySelector("updated")?.textContent ||
 				"";
 
-			const mediaUrl = extractMediaUrl(itemNode);
+			const mediaUrl = extractMediaUrl(itemNode, baseUrl);
 
 			return {
 				title,
@@ -366,5 +424,5 @@ export async function fetchFeedXml(url, proxyFactories = DEFAULT_PROXIES) {
  */
 export async function loadFeed(url, options = {}) {
 	const xmlText = await fetchFeedXml(url, options.proxies || DEFAULT_PROXIES);
-	return parseFeed(xmlText);
+	return parseFeed(xmlText, { baseUrl: url });
 }

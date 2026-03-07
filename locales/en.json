@@ -56,7 +56,8 @@
     "noEntries": "No entries found.",
     "noPreview": "No preview available.",
     "noDate": "No date",
-    "articleLink": "Read article"
+    "articleLink": "Read article",
+    "noArticleLink": "(No article link)"
   },
   "status": {
     "loadingFeed": "Loading feed...",

@@ -25,5 +25,16 @@ test("date localization uses locale file configuration", () => {
 test("rss parser sanitizes non-http links and localizes untitled items", () => {
 	assert.match(rssSource, /untitledItem\s*:\s*"/m, "missing untitledItem default message");
 	assert.match(rssSource, /\|\|\s*rssMessages\.untitledItem\s*;/, "parser does not use localized untitled item fallback");
-	assert.match(rssSource, /const\s+safeArticleLink\s*=\s*isHttpUrl\(link\)\s*\?\s*link\s*:\s*""\s*;/, "article link is not sanitized");
+	assert.match(rssSource, /const\s+safeArticleLink\s*=\s*resolveHttpUrl\(link,\s*baseUrl\)\s*;/, "article link is not sanitized");
+});
+
+test("feed URL normalization rejects explicit non-http schemes", () => {
+	assert.match(rssSource, /const\s+hasExplicitScheme\s*=\s*\/\^\[a-z\]\[a-z\\d\+\\-\.\]\*:/, "missing explicit scheme detection");
+	assert.match(rssSource, /hasExplicitScheme\s*&&\s*!\/\^https\?:\\\/\\\//, "missing non-http scheme rejection");
+});
+
+test("atom entry links prefer rel=alternate", () => {
+	assert.match(rssSource, /function\s+extractEntryLink\s*\(/, "missing atom entry link helper");
+	assert.match(rssSource, /rel\s*===\s*"alternate"/, "missing rel=alternate preference");
+	assert.match(rssSource, /const\s+link\s*=\s*extractEntryLink\(itemNode\)\s*;/, "parser does not use atom link helper");
 });

@@ -43,10 +43,9 @@ const LOCALE_PATHS = {
 	nl: "./locales/nl.json"
 };
 const localeCache = {};
-const INITIAL_FEEDS = [
+const STATIC_INITIAL_FEEDS = [
 	{ label: "Mozilla Blog", url: "https://blog.mozilla.org/feed/" },
-	{ label: "xkcd", url: "https://xkcd.com/atom.xml" },
-	{ label: "Hacker News", url: "https://hnrss.org/frontpage" }
+	{ label: "BlenderNation", url: "https://www.blendernation.com/feed/" }
 ];
 
 /**
@@ -79,7 +78,7 @@ const FALLBACK_TEMPLATE = `
 		<p class="tile-description">{{description}}</p>
 		<div class="tile-meta">
 			<span class="tile-date">{{date}}</span>
-			<a class="tile-link" href="{{link}}" target="_blank" rel="noopener noreferrer">{{article_label}}</a>
+			{{article_action}}
 		</div>
 	</div>
 </article>
@@ -92,6 +91,27 @@ let currentTileTemplate = FALLBACK_TEMPLATE;
 let lastParsedFeed = null;
 let currentLoadedUrl = "";
 let latestFeedRequestId = 0;
+
+/**
+ * Erzeugt die initiale Feedliste inkl. lokaler XML-Fixtures als absolute URLs.
+ */
+function getInitialFeeds() {
+	const fixtureFeeds = [
+		{ label: "Test RSS (XML)", path: "./test-feeds/example-rss.xml" },
+		{ label: "Test Atom (XML)", path: "./test-feeds/example-atom.xml" }
+	].map((entry) => {
+		try {
+			return {
+				label: entry.label,
+				url: new URL(entry.path, window.location.href).toString()
+			};
+		} catch {
+			return null;
+		}
+	}).filter(Boolean);
+
+	return [...STATIC_INITIAL_FEEDS, ...fixtureFeeds];
+}
 
 const STAR_OUTLINE_ICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath d='M12 3.7l2.6 5.2 5.7.8-4.1 4 1 5.7-5.2-2.7-5.2 2.7 1-5.7-4.1-4 5.7-.8z' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E";
 const STAR_FILLED_ICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath d='M12 3.7l2.6 5.2 5.7.8-4.1 4 1 5.7-5.2-2.7-5.2 2.7 1-5.7-4.1-4 5.7-.8z' fill='%23ffffff'/%3E%3C/svg%3E";
@@ -384,7 +404,7 @@ function seedInitialFeedsIfNeeded() {
 	const existingFeeds = getSavedFeeds();
 	const existingUrls = new Set(existingFeeds.map((entry) => entry.url));
 	const seededFeeds = [
-		...INITIAL_FEEDS.filter((entry) => !existingUrls.has(entry.url)),
+		...getInitialFeeds().filter((entry) => !existingUrls.has(entry.url)),
 		...existingFeeds
 	].map((entry) => ({
 		url: entry.url,
@@ -571,6 +591,7 @@ async function loadThemeTemplate(templatePath) {
 async function applyTheme(themeName) {
 	const safeTheme = THEMES[themeName] ? themeName : "light";
 	const themeConfig = THEMES[safeTheme];
+	let templateLoaded = true;
 
 	themeStylesheet.setAttribute("href", themeConfig.cssPath);
 	document.body.dataset.theme = safeTheme;
@@ -578,6 +599,7 @@ async function applyTheme(themeName) {
 	try {
 		currentTileTemplate = await loadThemeTemplate(themeConfig.templatePath);
 	} catch {
+		templateLoaded = false;
 		currentTileTemplate = FALLBACK_TEMPLATE;
 		setStatus(t("status.themeTemplateFallback", { theme: safeTheme }), true);
 	}
@@ -588,6 +610,8 @@ async function applyTheme(themeName) {
 	if (lastParsedFeed) {
 		renderFeed(lastParsedFeed);
 	}
+
+	return templateLoaded;
 }
 
 /**
@@ -624,15 +648,16 @@ function renderFeed(feed) {
 			const imageMarkup = buildImageMarkup(item.mediaUrl);
 			const excerpt = escapeHtml(item.description.slice(0, 190) || t("feed.noPreview"));
 			const formattedDate = formatDate(item.pubDate) || t("feed.noDate");
-			const safeLink = escapeHtml(item.link || "#");
+			const articleActionMarkup = item.link
+				? `<a class="tile-link" href="${escapeHtml(item.link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(t("feed.articleLink"))}</a>`
+				: `<span class="tile-link tile-link-disabled" aria-disabled="true">${escapeHtml(t("feed.noArticleLink"))}</span>`;
 			const tileMarkup = fillTemplate(currentTileTemplate, {
 				"{{date}}": formattedDate,
 				"{{headline}}": escapeHtml(item.title),
 				"{{description}}": excerpt,
-				"{{link}}": safeLink,
 				"{{image}}": imageMarkup,
 				"{{theme}}": escapeHtml(currentTheme),
-				"{{article_label}}": escapeHtml(t("feed.articleLink"))
+				"{{article_action}}": articleActionMarkup
 			});
 
 			return `
@@ -784,8 +809,10 @@ quickFeedsEl.addEventListener("click", (event) => {
  * Theme-Wechsel aktualisiert Stile und rendert sichtbare Karten neu.
  */
 themeSelect.addEventListener("change", async () => {
-	await applyTheme(themeSelect.value);
-	setStatus(t("status.themeChanged", { theme: themeSelect.value }));
+	const didLoadThemeTemplate = await applyTheme(themeSelect.value);
+	if (didLoadThemeTemplate) {
+		setStatus(t("status.themeChanged", { theme: themeSelect.value }));
+	}
 });
 
 languageSelect.addEventListener("change", async () => {

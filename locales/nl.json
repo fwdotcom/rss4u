@@ -56,7 +56,8 @@
     "noEntries": "Geen items gevonden.",
     "noPreview": "Geen voorbeeld beschikbaar.",
     "noDate": "Geen datum",
-    "articleLink": "Artikel lezen"
+    "articleLink": "Artikel lezen",
+    "noArticleLink": "(Geen artikellink)"
   },
   "status": {
     "loadingFeed": "Feed laden...",

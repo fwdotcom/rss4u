@@ -56,7 +56,8 @@
     "noEntries": "Aucune entrée trouvée.",
     "noPreview": "Aucun aperçu disponible.",
     "noDate": "Pas de date",
-    "articleLink": "Lire l'article"
+    "articleLink": "Lire l'article",
+    "noArticleLink": "(Aucun lien d'article)"
   },
   "status": {
     "loadingFeed": "Chargement du flux...",

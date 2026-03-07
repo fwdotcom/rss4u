@@ -56,7 +56,8 @@
     "noEntries": "Nessuna voce trovata.",
     "noPreview": "Nessuna anteprima disponibile.",
     "noDate": "Nessuna data",
-    "articleLink": "Leggi articolo"
+    "articleLink": "Leggi articolo",
+    "noArticleLink": "(Nessun link articolo)"
   },
   "status": {
     "loadingFeed": "Caricamento feed...",

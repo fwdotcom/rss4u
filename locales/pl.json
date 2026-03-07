@@ -56,7 +56,8 @@
     "noEntries": "Nie znaleziono wpisów.",
     "noPreview": "Brak podglądu.",
     "noDate": "Brak daty",
-    "articleLink": "Czytaj artykuł"
+    "articleLink": "Czytaj artykuł",
+    "noArticleLink": "(Brak linku do artykułu)"
   },
   "status": {
     "loadingFeed": "Ładowanie kanału...",

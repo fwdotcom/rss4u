@@ -56,3 +56,10 @@ test("untitled item RSS key is present in all locales", () => {
 		assert.equal(typeof getNestedValue(locale, "rss.untitledItem"), "string", `${code}: missing rss.untitledItem`);
 	}
 });
+
+test("feed noArticleLink key is present in all locales", () => {
+	for (const code of localeFiles) {
+		const locale = readLocale(code);
+		assert.equal(typeof getNestedValue(locale, "feed.noArticleLink"), "string", `${code}: missing feed.noArticleLink`);
+	}
+});

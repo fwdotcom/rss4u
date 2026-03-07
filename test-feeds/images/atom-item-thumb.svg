@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="atomThumb" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e8590c"/>
+      <stop offset="100%" stop-color="#ffd43b"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#atomThumb)"/>
+  <path d="M80 520 C260 330, 420 330, 600 520" stroke="#ffffff" stroke-width="18" fill="none" opacity="0.75"/>
+  <path d="M320 520 C500 330, 660 330, 840 520" stroke="#ffffff" stroke-width="18" fill="none" opacity="0.75"/>
+  <text x="90" y="210" fill="#ffffff" font-size="62" font-family="Segoe UI, Arial, sans-serif" font-weight="700">Fixture: media:thumbnail</text>
+  <text x="90" y="292" fill="#ffffff" font-size="34" font-family="Segoe UI, Arial, sans-serif">Used by Atom entry with alternate link preference</text>
+</svg>

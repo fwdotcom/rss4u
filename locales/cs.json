@@ -56,7 +56,8 @@
     "noEntries": "Nenalezeny žádné položky.",
     "noPreview": "Náhled není k dispozici.",
     "noDate": "Bez data",
-    "articleLink": "Číst článek"
+    "articleLink": "Číst článek",
+    "noArticleLink": "(Bez odkazu na článek)"
   },
   "status": {
     "loadingFeed": "Načítám feed...",

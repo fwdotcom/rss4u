@@ -99,3 +99,10 @@
 .tile-link:hover {
   text-decoration: underline;
 }
+
+.tile-link-disabled {
+  color: var(--muted);
+  font-weight: 500;
+  text-decoration: none;
+  cursor: default;
+}

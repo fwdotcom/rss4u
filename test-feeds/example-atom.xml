@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+  <title>Example Atom Feed (Parser Fixture)</title>
+  <subtitle>
+    This fixture combines Atom-specific link edge cases and fallback behavior in one feed.
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+  </subtitle>
+  <id>https://example.com/atom</id>
+  <updated>2026-03-07T09:00:00Z</updated>
+
+  <link rel="self" href="https://example.com/atom.xml" />
+  <link rel="alternate" href="https://example.com/" />
+
+  <logo>./images/atom-channel.svg</logo>
+  <icon>./images/atom-channel.svg</icon>
+
+  <entry>
+    <title>Case A: Prefer rel=alternate over rel=self</title>
+    <id>https://example.com/entries/1</id>
+    <updated>2026-03-07T10:00:00Z</updated>
+    <link rel="self" href="https://example.com/api/entries/1" />
+    <link rel="alternate" href="https://example.com/articles/atom-1" />
+    <summary>
+      Expected result: parser uses alternate article URL.
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.
+    </summary>
+    <media:thumbnail url="./images/atom-item-thumb.svg" />
+  </entry>
+
+  <entry>
+    <title>Case B: Missing link, HTTP id fallback</title>
+    <id>https://example.com/articles/atom-2</id>
+    <updated>2026-03-07T11:00:00Z</updated>
+    <summary>
+      Expected result: parser falls back to id as article URL.
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sed diam eget risus varius blandit sit amet non magna.
+    </summary>
+  </entry>
+
+  <entry>
+    <title>Case C: Missing usable URL</title>
+    <id>urn:uuid:12345678-90ab-cdef-1234-567890abcdef</id>
+    <updated>2026-03-07T12:00:00Z</updated>
+    <summary>
+      Expected result: no active article link can be rendered.
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    </summary>
+  </entry>
+
+  <entry>
+    <title>Case D: Reference-only summary</title>
+    <id>https://example.com/articles/atom-4</id>
+    <updated>2026-03-07T13:00:00Z</updated>
+    <link rel="alternate" href="https://example.com/articles/atom-4" />
+    <summary>https://example.com/articles/atom-4</summary>
+  </entry>
+</feed>

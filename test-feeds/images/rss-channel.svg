@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="360" viewBox="0 0 720 360">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b7285"/>
+      <stop offset="100%" stop-color="#f08c00"/>
+    </linearGradient>
+  </defs>
+  <rect width="720" height="360" fill="url(#bg)"/>
+  <circle cx="130" cy="230" r="28" fill="#ffffff" opacity="0.95"/>
+  <path d="M95 180 A85 85 0 0 1 180 265" stroke="#ffffff" stroke-width="18" fill="none" stroke-linecap="round"/>
+  <path d="M85 140 A125 125 0 0 1 210 265" stroke="#ffffff" stroke-width="18" fill="none" stroke-linecap="round"/>
+  <text x="260" y="170" fill="#ffffff" font-size="44" font-family="Segoe UI, Arial, sans-serif" font-weight="700">RSS Channel Image</text>
+  <text x="260" y="220" fill="#ffffff" font-size="24" font-family="Segoe UI, Arial, sans-serif">Generated local fixture graphic</text>
+</svg>

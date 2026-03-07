@@ -38,8 +38,7 @@ A theme template is plain HTML with placeholders. Supported placeholders:
 - `{{headline}}`: escaped article title
 - `{{description}}`: escaped article excerpt
 - `{{date}}`: localized date string or fallback text
-- `{{link}}`: escaped and validated article URL (`http`/`https` only)
-- `{{article_label}}`: localized label text for the article link
+- `{{article_action}}`: full article action markup (active link or disabled fallback)
 
 Important expectations:
 
