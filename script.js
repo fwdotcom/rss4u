@@ -27,6 +27,7 @@ const resultsSection = document.getElementById("results-section");
 const siteFooter = document.getElementById("site-footer");
 const footerWebsiteLink = document.getElementById("footer-website-link");
 const footerLicenseLink = document.getElementById("footer-license-link");
+const copyrightYearEl = document.getElementById("copyright-year");
 
 const SAVED_FEEDS_KEY = "rss-saved-feeds";
 const FEED_SEED_DONE_KEY = "rss-feeds-seeded-v2";
@@ -226,6 +227,9 @@ function applyStaticTranslations() {
 
 	footerWebsiteLink.textContent = t("buttons.website");
 	footerLicenseLink.textContent = t("buttons.license");
+	if (copyrightYearEl) {
+		copyrightYearEl.textContent = String(new Date().getFullYear());
+	}
 	resetAppBtn.textContent = t("buttons.reset");
 	if (importFavoritesBtn) {
 		importFavoritesBtn.setAttribute("title", t("aria.importFavorites"));
