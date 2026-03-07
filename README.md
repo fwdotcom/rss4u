@@ -82,28 +82,15 @@ node --test tests/*.test.mjs
 
 Build artifacts are created in `build/dist/`.
 
-Chromium (Chrome/Edge):
+For the detailed packaging guide, see `build/README.md`.
 
-```powershell
-powershell -ExecutionPolicy Bypass -File ./build/package-chromium.ps1
+Recommended one-command build:
+
+```bat
+build-browser-extensions.bat
 ```
 
-Firefox:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File ./build/package-firefox.ps1
-```
-
-Build both packages in one step:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File ./build/package-all.ps1
-```
-
-The scripts package browser-specific manifests from:
-
-- `build/manifests/manifest.chrome.json`
-- `build/manifests/manifest.firefox.json`
+Browser-specific commands and packaging details are documented in `build/README.md`.
 
 ## GitHub Pages Deployment
 
