@@ -16,7 +16,7 @@ All commands should be run from the repository root.
 ## Build All (recommended)
 
 ```bat
-build-browser-extensions.bat
+build\build-browser-extensions.bat
 ```
 
 Alternative (PowerShell):

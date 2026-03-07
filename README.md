@@ -87,7 +87,7 @@ For the detailed packaging guide, see `build/README.md`.
 Recommended one-command build:
 
 ```bat
-build-browser-extensions.bat
+build\build-browser-extensions.bat
 ```
 
 Browser-specific commands and packaging details are documented in `build/README.md`.

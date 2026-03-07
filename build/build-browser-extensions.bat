@@ -1,10 +1,10 @@
 @echo off
 setlocal
 
-rem Run from repository root regardless of where the .bat is launched.
+rem Run from the build directory regardless of where the .bat is launched.
 pushd "%~dp0"
 
-powershell -NoProfile -ExecutionPolicy Bypass -File ".\build\package-all.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File ".\package-all.ps1"
 set "EXITCODE=%ERRORLEVEL%"
 
 if not "%EXITCODE%"=="0" (
