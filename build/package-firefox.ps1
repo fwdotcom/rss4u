@@ -1,5 +1,8 @@
 $ErrorActionPreference = "Stop"
 
+Add-Type -AssemblyName System.IO.Compression
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 $distRoot = Join-Path $PSScriptRoot "dist"
 $tempRoot = Join-Path $env:TEMP "rss4u-packaging"
@@ -47,5 +50,30 @@ if (!(Test-Path $manifestSource)) {
 }
 Copy-Item -Path $manifestSource -Destination $manifestTarget -Force
 
-Compress-Archive -Path (Join-Path $stagingRoot "*") -DestinationPath $zipPath -CompressionLevel Optimal
+function New-ZipFromFolderWithUnixPaths {
+  param(
+    [Parameter(Mandatory = $true)]
+    [string]$SourceFolder,
+    [Parameter(Mandatory = $true)]
+    [string]$DestinationZip
+  )
+
+  if (Test-Path $DestinationZip) {
+    Remove-Item $DestinationZip -Force
+  }
+
+  $sourceFull = (Resolve-Path $SourceFolder).Path
+  $zipArchive = [System.IO.Compression.ZipFile]::Open($DestinationZip, [System.IO.Compression.ZipArchiveMode]::Create)
+  try {
+    $files = Get-ChildItem -Path $sourceFull -File -Recurse
+    foreach ($file in $files) {
+      $relativePath = ($file.FullName.Substring($sourceFull.Length + 1) -replace "\\", "/")
+      [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zipArchive, $file.FullName, $relativePath, [System.IO.Compression.CompressionLevel]::Optimal) | Out-Null
+    }
+  } finally {
+    $zipArchive.Dispose()
+  }
+}
+
+New-ZipFromFolderWithUnixPaths -SourceFolder $stagingRoot -DestinationZip $zipPath
 Write-Output "Created $zipPath"

@@ -521,19 +521,32 @@ function updateFavoriteButtonState() {
  */
 function renderFeedPills() {
 	const savedFeeds = getSavedFeeds();
+	const pills = savedFeeds.map((entry) => {
+		const wrapper = document.createElement("div");
+		wrapper.className = "feed-pill deletable";
+		wrapper.dataset.url = entry.url;
 
-	const feedMarkup = savedFeeds.map((entry) => {
-		const safeUrl = escapeHtml(entry.url);
-		const safeLabel = escapeHtml(entry.label);
-		return `
-			<div class="feed-pill deletable" data-url="${safeUrl}">
-				<button type="button" class="feed-chip" data-feed-action="load" title="${safeUrl}">${safeLabel}</button>
-				<button type="button" class="feed-chip-delete" data-feed-action="delete" aria-label="${escapeHtml(t("aria.deleteFeed"))}" title="${escapeHtml(t("aria.deleteFeed"))}">x</button>
-			</div>
-		`;
-	}).join("");
+		const chipButton = document.createElement("button");
+		chipButton.type = "button";
+		chipButton.className = "feed-chip";
+		chipButton.dataset.feedAction = "load";
+		chipButton.title = entry.url;
+		chipButton.textContent = entry.label;
 
-	quickFeedsEl.innerHTML = feedMarkup;
+		const deleteLabel = t("aria.deleteFeed");
+		const deleteButton = document.createElement("button");
+		deleteButton.type = "button";
+		deleteButton.className = "feed-chip-delete";
+		deleteButton.dataset.feedAction = "delete";
+		deleteButton.setAttribute("aria-label", deleteLabel);
+		deleteButton.title = deleteLabel;
+		deleteButton.textContent = "x";
+
+		wrapper.append(chipButton, deleteButton);
+		return wrapper;
+	});
+
+	quickFeedsEl.replaceChildren(...pills);
 }
 
 /**
@@ -556,6 +569,19 @@ function escapeHtml(value) {
 		.replaceAll(">", "&gt;")
 		.replaceAll('"', "&quot;")
 		.replaceAll("'", "&#39;");
+}
+
+/**
+ * Konvertiert HTML-Strings in DOM-Fragmente ohne direkte innerHTML-Zuweisung.
+ */
+function htmlToFragment(htmlValue) {
+	const parser = new DOMParser();
+	const parsed = parser.parseFromString(String(htmlValue || ""), "text/html");
+	const fragment = document.createDocumentFragment();
+	[...parsed.body.childNodes].forEach((node) => {
+		fragment.appendChild(node);
+	});
+	return fragment;
 }
 
 /**
@@ -646,30 +672,51 @@ async function applyTheme(themeName) {
  */
 function renderFeed(feed) {
 	lastParsedFeed = feed;
-	const channelLinkMarkup = feed.channelLink
-		? `<a class="feed-meta-site-link" href="${escapeHtml(feed.channelLink)}" target="_blank" rel="noopener noreferrer">${escapeHtml(t("feed.websiteLink"))}</a>`
-		: "";
-	const channelImageMarkup = feed.channelImageUrl
-		? `<img class="feed-meta-thumb" src="${escapeHtml(feed.channelImageUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer" />`
-		: "";
+	const metaTopRow = document.createElement("div");
+	metaTopRow.className = "feed-meta-top-row";
 
-	feedMetaEl.innerHTML = `
-		<div class="feed-meta-top-row">
-			<div class="feed-meta-title-wrap">
-				${channelImageMarkup}
-				<h2>${escapeHtml(feed.channelTitle)}</h2>
-			</div>
-			${channelLinkMarkup}
-		</div>
-		<p>${escapeHtml(feed.channelDescription || t("feed.noDescription"))}</p>
-	`;
+	const titleWrap = document.createElement("div");
+	titleWrap.className = "feed-meta-title-wrap";
+
+	if (feed.channelImageUrl) {
+		const channelImage = document.createElement("img");
+		channelImage.className = "feed-meta-thumb";
+		channelImage.src = feed.channelImageUrl;
+		channelImage.alt = "";
+		channelImage.loading = "lazy";
+		channelImage.referrerPolicy = "no-referrer";
+		titleWrap.appendChild(channelImage);
+	}
+
+	const heading = document.createElement("h2");
+	heading.textContent = feed.channelTitle;
+	titleWrap.appendChild(heading);
+	metaTopRow.appendChild(titleWrap);
+
+	if (feed.channelLink) {
+		const siteLink = document.createElement("a");
+		siteLink.className = "feed-meta-site-link";
+		siteLink.href = feed.channelLink;
+		siteLink.target = "_blank";
+		siteLink.rel = "noopener noreferrer";
+		siteLink.textContent = t("feed.websiteLink");
+		metaTopRow.appendChild(siteLink);
+	}
+
+	const description = document.createElement("p");
+	description.textContent = feed.channelDescription || t("feed.noDescription");
+
+	feedMetaEl.replaceChildren(metaTopRow, description);
 
 	if (!feed.items.length) {
-		itemsEl.innerHTML = `<li class="empty-state">${escapeHtml(t("feed.noEntries"))}</li>`;
+		const emptyState = document.createElement("li");
+		emptyState.className = "empty-state";
+		emptyState.textContent = t("feed.noEntries");
+		itemsEl.replaceChildren(emptyState);
 		return;
 	}
 
-	itemsEl.innerHTML = feed.items
+	const itemNodes = feed.items
 		.slice(0, 24)
 		.map((item, index) => {
 			const imageMarkup = buildImageMarkup(item.mediaUrl);
@@ -687,13 +734,14 @@ function renderFeed(feed) {
 				"{{article_action}}": articleActionMarkup
 			});
 
-			return `
-			<li class="item" style="animation-delay: ${Math.min(index * 45, 420)}ms">
-				${tileMarkup}
-			</li>
-		`;
-		})
-		.join("");
+			const listItem = document.createElement("li");
+			listItem.className = "item";
+			listItem.style.animationDelay = `${Math.min(index * 45, 420)}ms`;
+			listItem.appendChild(htmlToFragment(tileMarkup));
+			return listItem;
+		});
+
+	itemsEl.replaceChildren(...itemNodes);
 }
 
 /**
@@ -702,8 +750,8 @@ function renderFeed(feed) {
 async function loadAndRenderFeed(url) {
 	const requestId = ++latestFeedRequestId;
 	setStatus(t("status.loadingFeed"));
-	itemsEl.innerHTML = "";
-	feedMetaEl.innerHTML = "";
+	itemsEl.replaceChildren();
+	feedMetaEl.replaceChildren();
 
 	try {
 		const parsed = await loadRssFeed(url);
@@ -905,8 +953,8 @@ async function handleResetApp() {
 
 	lastParsedFeed = null;
 	currentLoadedUrl = "";
-	feedMetaEl.innerHTML = "";
-	itemsEl.innerHTML = "";
+	feedMetaEl.replaceChildren();
+	itemsEl.replaceChildren();
 
 	setStatus(t("status.resetDone"));
 

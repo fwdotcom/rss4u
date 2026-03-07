@@ -75,7 +75,7 @@
     "feedRemoved": "Flux supprimé de la liste.",
     "resetDone": "Application réinitialisée. Chargement des flux par défaut...",
     "languageChanged": "Langue changée : {{language}}.",
-    "templateLoadFailed": "Le template n'a pas pu etre charge (HTTP {{status}}).",
+    "templateLoadFailed": "Le template n'a pas pu être chargé (HTTP {{status}}).",
     "templateEmpty": "Le fichier de template est vide."
   },
   "confirm": {

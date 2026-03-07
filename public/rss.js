@@ -172,9 +172,9 @@ function extractEntryLink(itemNode, baseUrl) {
  * über einen temporären DOM-Knoten liefert vorhersehbaren Text für Vorschauen.
  */
 function plainTextFromHtml(html) {
-	const temp = document.createElement("div");
-	temp.innerHTML = html || "";
-	return (temp.textContent || "").trim();
+	const parser = new DOMParser();
+	const parsed = parser.parseFromString(String(html || ""), "text/html");
+	return (parsed.body.textContent || "").trim();
 }
 
 const HTTP_PROTOCOLS = new Set(["http:", "https:"]);

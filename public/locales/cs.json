@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "rss4u",
-    "subtitle": "Cti libovolny RSS feed primo v prohlizeci. Vloz URL, nacti, hotovo."
+    "subtitle": "Čti libovolný RSS feed přímo v prohlížeči. Vlož URL, načti, hotovo."
   },
   "labels": {
     "theme": "Motiv",
@@ -21,8 +21,8 @@
     "reset": "Obnovit výchozí"
   },
   "themes": {
-    "light": "Svetly",
-    "dark": "Tmavy"
+    "light": "Světlý",
+    "dark": "Tmavý"
   },
   "languages": {
     "en": "Angličtina",
@@ -35,8 +35,8 @@
     "nl": "Nizozemština"
   },
   "aria": {
-    "themeSelect": "Vyber motiv",
-    "languageSelect": "Vyber jazyk",
+    "themeSelect": "Vyberte motiv",
+    "languageSelect": "Vyberte jazyk",
     "saveFavorite": "Uložit do oblíbených",
     "removeFavorite": "Odebrat z oblíbených",
     "importFavorites": "Importovat oblíbené z JSON",
@@ -45,7 +45,7 @@
     "quickFeeds": "Rychlý výběr a uložené feedy",
     "controls": "Ovládání feedu",
     "results": "Obsah feedu",
-    "footer": "Odkazy v paticce",
+    "footer": "Odkazy v patičce",
     "deleteFeed": "Smazat feed",
     "resetToDefaults": "Obnovit výchozí",
     "favoriteIcon": "Oblíbené"
@@ -69,7 +69,7 @@
     "favoriteRemoved": "Odebráno z oblíbených.",
     "favoritesExported": "Oblíbené exportováno: {{count}} položek.",
     "favoritesImported": "Oblíbené importováno: {{count}} položek ({{invalid}} přeskočeno).",
-    "importInvalidJson": "Importovaný soubor není platné JSON.",
+    "importInvalidJson": "Importovaný soubor není platný JSON.",
     "importInvalidFormat": "Importovaný soubor musí být pole oblíbených.",
     "importNoValidEntries": "V importovaném souboru nebyly nalezeny platné položky.",
     "feedRemoved": "Feed odebrán ze seznamu.",

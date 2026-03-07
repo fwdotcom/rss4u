@@ -1,12 +1,12 @@
 {
   "app": {
     "name": "rss4u",
-    "subtitle": "Czytaj dowolny kanal RSS bezposrednio w przegladarce. Wklej URL, zaladuj, gotowe."
+    "subtitle": "Czytaj dowolny kanał RSS bezpośrednio w przeglądarce. Wklej URL, załaduj, gotowe."
   },
   "labels": {
     "theme": "Motyw",
     "language": "Język",
-    "feedUrl": "URL kanalu"
+    "feedUrl": "URL kanału"
   },
   "placeholders": {
     "feedUrl": "https://example.com/feed.xml"

@@ -3,7 +3,7 @@
   "name": "rss4u",
   "short_name": "rss4u",
   "description": "A lightweight RSS/Atom reader that runs in your browser.",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "icons": {
     "16": "public/icon-16.png",
     "32": "public/icon-32.png",
@@ -36,7 +36,15 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "rss4u@fwdotcom.github.io",
-      "strict_min_version": "121.0"
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    },
+    "gecko_android": {
+      "strict_min_version": "142.0"
     }
   }
 }
