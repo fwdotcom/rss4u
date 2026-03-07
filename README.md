@@ -2,6 +2,12 @@
 
 A browser-based RSS reader built with plain HTML, CSS, and JavaScript.
 
+## short description
+
+rss4u is a privacy-friendly RSS reader that runs entirely in the browser.
+It only needs a simple static web server and does not require server-side scripts or a database.
+Your data and feed files stay in your browser, not on some cloud service.
+
 Copyright (C) 2026 Frank Winter.
 
 ## Live Demo
@@ -20,8 +26,8 @@ See [LICENSE](./LICENSE).
 
 - Load RSS and Atom feeds from a URL input
 - Quick feed buttons for common sources
-- Theme support (`dark` and `light`)
-- Language support (`en` default) with JSON locale files
+- Theme support
+- Language support
 - Per-theme tile templates with placeholders (`{{headline}}`, `{{description}}`, `{{date}}`, `{{link}}`, `{{image}}`, `{{theme}}`, `{{article_label}}`)
 - CORS fallback strategy via proxy attempts
 - Feed sanitization for URL-only descriptions (for example common Hacker News feed edge cases)
