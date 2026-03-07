@@ -88,18 +88,13 @@
     "unnamedFeed": "Unbenannter Feed",
     "untitledItem": "Unbenannter Eintrag",
     "emptyResponse": "Leere Antwort erhalten.",
-    "unknownError": "Unbekannter Fehler",
-    "loadFailed": "Feed konnte nicht geladen werden. Details: {{details}}"
+    "unknownError": "Unbekannter Fehler"
   },
   "legal": {
     "pageTitle": "rss4u Rechtliche Hinweise",
     "heading": "Rechtliche Hinweise",
-    "intro": "Der maßgebliche Rechtstext wird aus LICENSE geladen.",
-    "openLicenseFile": "LICENSE-Datei öffnen",
+    "intro": "Der maßgebliche Rechtstext ist unten aufgeführt.",
     "mitReference": "MIT-Referenz",
-    "backToApp": "Zurück zu rss4u",
-    "loading": "LICENSE wird geladen...",
-    "emptyFile": "LICENSE-Datei ist leer.",
-    "loadFailed": "LICENSE konnte nicht geladen werden ({{details}})."
+    "backToApp": "Zurück zu rss4u"
   }
 }

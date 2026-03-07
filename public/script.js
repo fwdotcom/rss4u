@@ -29,9 +29,10 @@ const footerWebsiteLink = document.getElementById("footer-website-link");
 const footerLicenseLink = document.getElementById("footer-license-link");
 const copyrightYearEl = document.getElementById("copyright-year");
 
-const SAVED_FEEDS_KEY = "rss-saved-feeds";
-const FEED_SEED_DONE_KEY = "rss-feeds-seeded-v2";
-const LANGUAGE_KEY = "rss-language";
+const SAVED_FEEDS_KEY = "rss4u-saved-feeds";
+const FEED_SEED_DONE_KEY = "rss4u-feeds-seeded";
+const LANGUAGE_KEY = "rss4u-language";
+const THEME_KEY = "rss4u-theme";
 const DEFAULT_LANGUAGE = "en";
 const LOCALE_PATHS = {
 	en: "./locales/en.json",
@@ -631,7 +632,7 @@ async function applyTheme(themeName) {
 	}
 
 	currentTheme = safeTheme;
-	localStorage.setItem("rss-theme", safeTheme);
+	localStorage.setItem(THEME_KEY, safeTheme);
 
 	if (lastParsedFeed) {
 		renderFeed(lastParsedFeed);
@@ -899,13 +900,8 @@ async function handleResetApp() {
 
 	// Remove all app-owned keys to avoid stale state across deployments.
 	Object.keys(localStorage)
-		.filter((key) => key.startsWith("rss-"))
+		.filter((key) => key.startsWith("rss4u-"))
 		.forEach((key) => localStorage.removeItem(key));
-
-	localStorage.removeItem(SAVED_FEEDS_KEY);
-	localStorage.removeItem(FEED_SEED_DONE_KEY);
-	localStorage.removeItem("rss-theme");
-	localStorage.removeItem(LANGUAGE_KEY);
 
 	lastParsedFeed = null;
 	currentLoadedUrl = "";
@@ -932,7 +928,7 @@ async function initializeApp() {
 	seedInitialFeedsIfNeeded();
 	renderFeedPills();
 
-	const preferredTheme = localStorage.getItem("rss-theme") || "light";
+	const preferredTheme = localStorage.getItem(THEME_KEY) || "light";
 	themeSelect.value = THEMES[preferredTheme] ? preferredTheme : "light";
 	await applyTheme(themeSelect.value);
 

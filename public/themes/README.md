@@ -25,7 +25,7 @@ Current themes:
 2. The `<link id="theme-stylesheet">` element is updated to `./themes/<theme>/theme.css`.
 3. `script.js` loads `./themes/<theme>/tile.template.html` via `fetch`.
 4. Feed items are rendered by replacing placeholders in the template.
-5. The selected theme is persisted in `localStorage` (`rss-theme`).
+5. The selected theme is persisted in `localStorage` (`rss4u-theme`).
 
 If a template cannot be loaded, the app uses an internal fallback tile template.
 
@@ -114,5 +114,5 @@ Date formatting note:
 - Switch between `light` and `dark` and confirm style + template update.
 - Load at least one RSS feed and verify all placeholders render.
 - Verify cards without images still look correct.
-- Confirm `rss-theme` persists after page refresh.
+- Confirm `rss4u-theme` persists after page refresh.
 - Confirm mobile layout still works for card content and links.

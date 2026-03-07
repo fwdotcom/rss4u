@@ -88,18 +88,13 @@
     "unnamedFeed": "Kanał bez nazwy",
     "untitledItem": "Wpis bez tytułu",
     "emptyResponse": "Otrzymano pustą odpowiedź.",
-    "unknownError": "Nieznany błąd",
-    "loadFailed": "Nie można załadować kanału. Szczegóły: {{details}}"
+    "unknownError": "Nieznany błąd"
   },
   "legal": {
     "pageTitle": "Informacje prawne rss4u",
     "heading": "Informacje prawne",
-    "intro": "Wiążący tekst prawny jest ładowany z pliku LICENSE.",
-    "openLicenseFile": "Otwórz plik LICENSE",
+    "intro": "Wiążący tekst prawny znajduje się poniżej.",
     "mitReference": "Odniesienie MIT",
-    "backToApp": "Wróć do rss4u",
-    "loading": "Ładowanie LICENSE...",
-    "emptyFile": "Plik LICENSE jest pusty.",
-    "loadFailed": "Nie można załadować LICENSE ({{details}})."
+    "backToApp": "Wróć do rss4u"
   }
 }

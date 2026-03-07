@@ -88,18 +88,13 @@
     "unnamedFeed": "Feed bez názvu",
     "untitledItem": "Položka bez názvu",
     "emptyResponse": "Byla přijata prázdná odpověď.",
-    "unknownError": "Neznámá chyba",
-    "loadFailed": "Feed se nepodařilo načíst. Podrobnosti: {{details}}"
+    "unknownError": "Neznámá chyba"
   },
   "legal": {
     "pageTitle": "Právní informace rss4u",
     "heading": "Právní informace",
-    "intro": "Závazný právní text je načten ze souboru LICENSE.",
-    "openLicenseFile": "Otevřít soubor LICENSE",
+    "intro": "Závazný právní text je uveden níže.",
     "mitReference": "MIT odkaz",
-    "backToApp": "Zpět na rss4u",
-    "loading": "Načítám LICENSE...",
-    "emptyFile": "Soubor LICENSE je prázdný.",
-    "loadFailed": "Soubor LICENSE se nepodařilo načíst ({{details}})."
+    "backToApp": "Zpět na rss4u"
   }
 }

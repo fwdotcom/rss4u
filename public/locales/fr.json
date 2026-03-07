@@ -88,18 +88,13 @@
     "unnamedFeed": "Flux sans titre",
     "untitledItem": "Entrée sans titre",
     "emptyResponse": "Réponse vide reçue.",
-    "unknownError": "Erreur inconnue",
-    "loadFailed": "Le flux n'a pas pu être chargé. Détails : {{details}}"
+    "unknownError": "Erreur inconnue"
   },
   "legal": {
     "pageTitle": "Informations légales rss4u",
     "heading": "Informations légales",
-    "intro": "Le texte légal de référence est chargé depuis LICENSE.",
-    "openLicenseFile": "Ouvrir le fichier LICENSE",
+    "intro": "Le texte légal de référence est indiqué ci-dessous.",
     "mitReference": "Référence MIT",
-    "backToApp": "Retour à rss4u",
-    "loading": "Chargement de LICENSE...",
-    "emptyFile": "Le fichier LICENSE est vide.",
-    "loadFailed": "Impossible de charger LICENSE ({{details}})."
+    "backToApp": "Retour à rss4u"
   }
 }

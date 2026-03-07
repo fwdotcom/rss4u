@@ -88,18 +88,13 @@
     "unnamedFeed": "Feed senza nome",
     "untitledItem": "Voce senza titolo",
     "emptyResponse": "Ricevuta una risposta vuota.",
-    "unknownError": "Errore sconosciuto",
-    "loadFailed": "Impossibile caricare il feed. Dettagli: {{details}}"
+    "unknownError": "Errore sconosciuto"
   },
   "legal": {
     "pageTitle": "Informazioni legali rss4u",
     "heading": "Informazioni legali",
-    "intro": "Il testo legale autorevole viene caricato da LICENSE.",
-    "openLicenseFile": "Apri file LICENSE",
+    "intro": "Il testo legale autorevole è riportato di seguito.",
     "mitReference": "Riferimento MIT",
-    "backToApp": "Torna a rss4u",
-    "loading": "Caricamento LICENSE...",
-    "emptyFile": "Il file LICENSE è vuoto.",
-    "loadFailed": "Impossibile caricare LICENSE ({{details}})."
+    "backToApp": "Torna a rss4u"
   }
 }
