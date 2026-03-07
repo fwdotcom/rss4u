@@ -1,8 +1,8 @@
 /**
- * Centralized proxy strategy used when a direct RSS request is blocked by CORS.
+ * Zentralisierte Proxy-Strategie, wenn eine direkte RSS-Anfrage durch CORS blockiert wird.
  *
- * The first request always targets the original URL directly. These proxy factories
- * are only used as fallback attempts and keep the fetch layer configurable.
+ * Die erste Anfrage geht immer direkt an die Original-URL. Diese Proxy-Funktionen
+ * werden nur als Fallback verwendet und halten die Fetch-Schicht konfigurierbar.
  */
 export const DEFAULT_PROXIES = [
 	(url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
@@ -14,6 +14,7 @@ const DEFAULT_RSS_MESSAGES = {
 	invalidUrl: "Invalid URL. Example: https://example.com/feed.xml",
 	invalidXml: "Feed XML could not be parsed.",
 	unnamedFeed: "Untitled feed",
+	untitledItem: "Untitled item",
 	emptyResponse: "Received an empty response.",
 	unknownError: "Unknown error",
 	loadFailed: "Feed could not be loaded. Details: {{details}}"
@@ -28,7 +29,7 @@ function formatMessage(template, values = {}) {
 }
 
 /**
- * Updates localized message texts used by this module.
+ * Aktualisiert die lokalisierten Meldungstexte dieses Moduls.
  */
 export function setRssMessages(nextMessages = {}) {
 	rssMessages = {
@@ -38,12 +39,12 @@ export function setRssMessages(nextMessages = {}) {
 }
 
 /**
- * Validates and normalizes user input into an absolute feed URL.
+ * Validiert und normalisiert Benutzereingaben zu einer absoluten Feed-URL.
  *
- * Behaviour:
- * - trims whitespace
- * - auto-adds https:// if protocol is missing
- * - throws a localized error for empty or invalid input
+ * Verhalten:
+ * - entfernt führende/nachgestellte Leerzeichen
+ * - fügt automatisch https:// hinzu, falls ein Protokoll fehlt
+ * - wirft bei leerer oder ungültiger Eingabe einen lokalisierten Fehler
  */
 export function normalizeFeedUrl(rawUrl) {
 	const candidate = (rawUrl || "").trim();
@@ -63,10 +64,10 @@ export function normalizeFeedUrl(rawUrl) {
 }
 
 /**
- * Converts an HTML fragment to readable plain text.
+ * Wandelt ein HTML-Fragment in lesbaren Klartext um.
  *
- * Many feeds place HTML markup in description/content fields. Parsing through a
- * temporary DOM node gives a predictable text output for rendering previews.
+ * Viele Feeds enthalten HTML-Markup in Beschreibungs-/Inhaltsfeldern. Das Parsen
+ * über einen temporären DOM-Knoten liefert vorhersehbaren Text für Vorschauen.
  */
 function plainTextFromHtml(html) {
 	const temp = document.createElement("div");
@@ -75,7 +76,7 @@ function plainTextFromHtml(html) {
 }
 
 /**
- * Checks if a value is a valid HTTP(S) URL.
+ * Prüft, ob ein Wert eine gültige HTTP(S)-URL ist.
  */
 function isHttpUrl(value) {
 	if (!value) return false;
@@ -88,10 +89,10 @@ function isHttpUrl(value) {
 }
 
 /**
- * Produces a normalized URL string for loose equality checks.
+ * Erzeugt einen normalisierten URL-String für lockere Gleichheitsprüfungen.
  *
- * We remove hash fragments and trailing slashes to avoid false negatives when
- * comparing URLs that point to the same resource but use slightly different forms.
+ * Hash-Fragmente und abschließende Slashes werden entfernt, um falsche Negativtreffer
+ * bei URLs auf dieselbe Ressource in leicht unterschiedlicher Form zu vermeiden.
  */
 function normalizeUrlForCompare(value) {
 	if (!isHttpUrl(value)) return "";
@@ -102,16 +103,7 @@ function normalizeUrlForCompare(value) {
 }
 
 /**
- * Detects whether a URL points to a Hacker News discussion page.
- */
-function isHackerNewsCommentsUrl(value) {
-	if (!isHttpUrl(value)) return false;
-	const parsed = new URL(value);
-	return parsed.hostname === "news.ycombinator.com" && parsed.pathname === "/item";
-}
-
-/**
- * Extracts the first http(s) URL from a text fragment.
+ * Extrahiert die erste http(s)-URL aus einem Textfragment.
  */
 function extractFirstUrl(value) {
 	const match = (value || "").match(/https?:\/\/[^\s<>")]+/i);
@@ -119,12 +111,40 @@ function extractFirstUrl(value) {
 }
 
 /**
- * Returns true when a description is essentially only a reference URL.
- *
- * Some feeds (notably HN aggregations) put only a URL in the content field.
- * In that case we suppress the preview text and let the UI show a generic fallback.
+ * Liest eine Bild-URL robust aus RSS/Atom Item-Knoten (inkl. Namespaces).
  */
-function isReferenceOnlyDescription(description, articleLink, commentsLink) {
+function extractMediaUrl(itemNode) {
+	const allElements = [...itemNode.getElementsByTagName("*")];
+
+	const mediaElement = allElements.find((element) => {
+		const localName = (element.localName || "").toLowerCase();
+		if (localName !== "content" && localName !== "thumbnail") {
+			return false;
+		}
+
+		const candidateUrl = element.getAttribute("url") || "";
+		return isHttpUrl(candidateUrl);
+	});
+
+	if (mediaElement) {
+		return mediaElement.getAttribute("url") || "";
+	}
+
+	const enclosureUrl = itemNode.querySelector("enclosure")?.getAttribute("url") || "";
+	if (isHttpUrl(enclosureUrl)) {
+		return enclosureUrl;
+	}
+
+	return "";
+}
+
+/**
+ * Liefert true, wenn eine Beschreibung im Kern nur eine Referenz-URL enthält.
+ *
+ * Einige Feeds legen nur eine URL ins Content-Feld.
+ * In diesem Fall wird der Preview-Text unterdrückt und die UI zeigt einen Fallback-Text.
+ */
+function isReferenceOnlyDescription(description, articleLink) {
 	const compact = (description || "").trim().replace(/\s+/g, " ");
 	if (!compact) return true;
 
@@ -135,11 +155,10 @@ function isReferenceOnlyDescription(description, articleLink, commentsLink) {
 
 	const normalizedDescriptionUrl = normalizeUrlForCompare(extractFirstUrl(withoutLabel));
 	const normalizedArticle = normalizeUrlForCompare(articleLink);
-	const normalizedComments = normalizeUrlForCompare(commentsLink);
 
 	if (
 		normalizedDescriptionUrl &&
-		(normalizedDescriptionUrl === normalizedArticle || normalizedDescriptionUrl === normalizedComments)
+		normalizedDescriptionUrl === normalizedArticle
 	) {
 		return true;
 	}
@@ -148,26 +167,7 @@ function isReferenceOnlyDescription(description, articleLink, commentsLink) {
 }
 
 /**
- * Attempts to discover a Hacker News comments URL from multiple RSS sources.
- */
-function extractCommentsLink(itemNode, rawDescription, currentLink) {
-	const candidates = [
-		itemNode.querySelector("comments")?.textContent?.trim() || "",
-		itemNode.querySelector('link[rel="replies"]')?.getAttribute("href") || "",
-		currentLink
-	];
-
-	const fromDescription =
-		rawDescription.match(/https?:\/\/news\.ycombinator\.com\/item\?id=\d+/i)?.[0] || "";
-	if (fromDescription) {
-		candidates.push(fromDescription);
-	}
-
-	return candidates.find((candidate) => isHackerNewsCommentsUrl(candidate)) || "";
-}
-
-/**
- * Reads a channel-level website URL from RSS or Atom metadata.
+ * Liest eine Website-URL auf Kanalebene aus RSS- oder Atom-Metadaten.
  */
 function extractChannelLink(doc) {
 	const rssLink = doc.querySelector("channel > link")?.textContent?.trim() || "";
@@ -195,12 +195,54 @@ function extractChannelLink(doc) {
 }
 
 /**
- * Parses RSS or Atom XML into the UI-facing data structure.
+ * Liest eine optionale Thumbnail-/Logo-URL auf Kanalebene.
+ */
+function extractChannelImage(doc) {
+	const rssImageUrl = doc.querySelector("channel > image > url")?.textContent?.trim() || "";
+	if (isHttpUrl(rssImageUrl)) {
+		return rssImageUrl;
+	}
+
+	const atomLogo = doc.querySelector("feed > logo")?.textContent?.trim() || "";
+	if (isHttpUrl(atomLogo)) {
+		return atomLogo;
+	}
+
+	const atomIcon = doc.querySelector("feed > icon")?.textContent?.trim() || "";
+	if (isHttpUrl(atomIcon)) {
+		return atomIcon;
+	}
+
+	const channelLevelMedia = [...doc.getElementsByTagName("*")].find((element) => {
+		const localName = (element.localName || "").toLowerCase();
+		if (localName !== "thumbnail" && localName !== "content") {
+			return false;
+		}
+
+		const parentName = (element.parentElement?.localName || "").toLowerCase();
+		if (parentName !== "channel" && parentName !== "feed") {
+			return false;
+		}
+
+		const candidateUrl = element.getAttribute("url") || "";
+		return isHttpUrl(candidateUrl);
+	});
+
+	if (channelLevelMedia) {
+		return channelLevelMedia.getAttribute("url") || "";
+	}
+
+	return "";
+}
+
+/**
+ * Parst RSS- oder Atom-XML in die für die UI verwendete Datenstruktur.
  *
- * Output shape:
+ * Ausgabestruktur:
  * {
  *   channelTitle: string,
  *   channelDescription: string,
+ *   channelImageUrl: string,
  *   items: Array<{ title, link, description, pubDate, mediaUrl }>
  * }
  */
@@ -224,6 +266,7 @@ export function parseFeed(xmlText) {
 		"";
 
 	const channelLink = extractChannelLink(doc);
+	const channelImageUrl = extractChannelImage(doc);
 
 	const rssItems = [...doc.querySelectorAll("item")];
 	const atomEntries = [...doc.querySelectorAll("entry")];
@@ -231,7 +274,7 @@ export function parseFeed(xmlText) {
 
 	const items = rawItems
 		.map((itemNode) => {
-			const title = itemNode.querySelector("title")?.textContent?.trim() || "Ohne Titel";
+			const title = itemNode.querySelector("title")?.textContent?.trim() || rssMessages.untitledItem;
 
 			let link = itemNode.querySelector("link")?.textContent?.trim() || "";
 			if (!link) {
@@ -248,21 +291,9 @@ export function parseFeed(xmlText) {
 				"";
 
 			const plainDescription = plainTextFromHtml(rawDescription);
-			const firstDescriptionUrl = extractFirstUrl(plainDescription);
-			let commentsLink = extractCommentsLink(itemNode, rawDescription, link);
+			const safeArticleLink = isHttpUrl(link) ? link : "";
 
-			// HN feeds can invert links: "link" points to discussion, while
-			// description carries the outbound article URL.
-			if (
-				isHackerNewsCommentsUrl(link) &&
-				isHttpUrl(firstDescriptionUrl) &&
-				!isHackerNewsCommentsUrl(firstDescriptionUrl)
-			) {
-				commentsLink = link;
-				link = firstDescriptionUrl;
-			}
-
-			const description = isReferenceOnlyDescription(plainDescription, link, commentsLink)
+			const description = isReferenceOnlyDescription(plainDescription, safeArticleLink)
 				? ""
 				: plainDescription;
 
@@ -272,15 +303,11 @@ export function parseFeed(xmlText) {
 				itemNode.querySelector("updated")?.textContent ||
 				"";
 
-			const mediaUrl =
-				itemNode.querySelector("media\\:content")?.getAttribute("url") ||
-				itemNode.querySelector("media\\:thumbnail")?.getAttribute("url") ||
-				itemNode.querySelector("enclosure")?.getAttribute("url") ||
-				"";
+			const mediaUrl = extractMediaUrl(itemNode);
 
 			return {
 				title,
-				link,
+				link: safeArticleLink,
 				description,
 				pubDate,
 				mediaUrl
@@ -292,15 +319,16 @@ export function parseFeed(xmlText) {
 		channelTitle,
 		channelDescription,
 		channelLink,
+		channelImageUrl,
 		items
 	};
 }
 
 /**
- * Fetches raw XML from the feed URL using direct request + proxy fallbacks.
+ * Holt rohes XML von der Feed-URL via Direktanfrage + Proxy-Fallbacks.
  *
- * Throws a single error that combines a few unique failure reasons to make
- * troubleshooting easier in the UI.
+ * Wirft einen einzelnen Fehler, der einige eindeutige Fehlergründe kombiniert,
+ * damit die Fehlersuche in der UI einfacher wird.
  */
 export async function fetchFeedXml(url, proxyFactories = DEFAULT_PROXIES) {
 	const attempts = [url, ...proxyFactories.map((proxy) => proxy(url))];
@@ -334,7 +362,7 @@ export async function fetchFeedXml(url, proxyFactories = DEFAULT_PROXIES) {
 }
 
 /**
- * High-level helper that performs network fetch + XML parsing in one call.
+ * High-Level-Helper, der Network-Fetch + XML-Parsing in einem Aufruf ausführt.
  */
 export async function loadFeed(url, options = {}) {
 	const xmlText = await fetchFeedXml(url, options.proxies || DEFAULT_PROXIES);

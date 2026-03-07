@@ -11,6 +11,9 @@
   "placeholders": {
     "feedUrl": "https://example.com/feed.xml"
   },
+  "formats": {
+    "dateLocale": "nl-NL"
+  },
   "buttons": {
     "load": "Laden",
     "website": "Website",
@@ -36,6 +39,9 @@
     "languageSelect": "Selecteer taal",
     "saveFavorite": "Opslaan als favoriet",
     "removeFavorite": "Verwijder favoriet",
+    "importFavorites": "Favorieten importeren uit JSON",
+    "exportFavorites": "Favorieten exporteren als JSON",
+    "favoritesActions": "Favorietenacties",
     "quickFeeds": "Snelle selectie en opgeslagen feeds",
     "controls": "Feed-bediening",
     "results": "Feed-inhoud",
@@ -60,6 +66,11 @@
     "themeChanged": "Thema gewijzigd: {{theme}}.",
     "favoriteSaved": "Favoriet opgeslagen.",
     "favoriteRemoved": "Favoriet verwijderd.",
+    "favoritesExported": "Favorieten geëxporteerd: {{count}} items.",
+    "favoritesImported": "Favorieten geïmporteerd: {{count}} items ({{invalid}} overgeslagen).",
+    "importInvalidJson": "Importbestand is geen geldige JSON.",
+    "importInvalidFormat": "Importbestand moet een array met favorieten zijn.",
+    "importNoValidEntries": "Geen geldige favorieten gevonden in het importbestand.",
     "feedRemoved": "Feed verwijderd uit de lijst.",
     "resetDone": "App hersteld. Standaardfeeds worden geladen...",
     "languageChanged": "Taal gewijzigd: {{language}}.",
@@ -74,6 +85,7 @@
     "invalidUrl": "Ongeldige URL. Voorbeeld: https://example.com/feed.xml",
     "invalidXml": "Feed-XML kon niet worden verwerkt.",
     "unnamedFeed": "Naamloze feed",
+    "untitledItem": "Item zonder titel",
     "emptyResponse": "Leeg antwoord ontvangen.",
     "unknownError": "Onbekende fout",
     "loadFailed": "Feed kon niet worden geladen. Details: {{details}}"

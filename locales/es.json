@@ -11,6 +11,9 @@
   "placeholders": {
     "feedUrl": "https://example.com/feed.xml"
   },
+  "formats": {
+    "dateLocale": "es-ES"
+  },
   "buttons": {
     "load": "Cargar",
     "website": "Sitio web",
@@ -36,6 +39,9 @@
     "languageSelect": "Seleccionar idioma",
     "saveFavorite": "Guardar como favorito",
     "removeFavorite": "Quitar de favoritos",
+    "importFavorites": "Importar favoritos desde JSON",
+    "exportFavorites": "Exportar favoritos como JSON",
+    "favoritesActions": "Acciones de favoritos",
     "quickFeeds": "Selección rápida y feeds guardados",
     "controls": "Controles del feed",
     "results": "Contenido del feed",
@@ -60,6 +66,11 @@
     "themeChanged": "Tema cambiado: {{theme}}.",
     "favoriteSaved": "Favorito guardado.",
     "favoriteRemoved": "Favorito eliminado.",
+    "favoritesExported": "Favoritos exportados: {{count}} entradas.",
+    "favoritesImported": "Favoritos importados: {{count}} entradas ({{invalid}} omitidas).",
+    "importInvalidJson": "El archivo de importación no es JSON válido.",
+    "importInvalidFormat": "El archivo de importación debe ser un array de favoritos.",
+    "importNoValidEntries": "No se encontraron favoritos válidos en el archivo de importación.",
     "feedRemoved": "Feed eliminado de la lista.",
     "resetDone": "Aplicación restablecida. Cargando feeds predeterminados...",
     "languageChanged": "Idioma cambiado: {{language}}.",
@@ -74,6 +85,7 @@
     "invalidUrl": "URL no válida. Ejemplo: https://example.com/feed.xml",
     "invalidXml": "No se pudo analizar el XML del feed.",
     "unnamedFeed": "Feed sin nombre",
+    "untitledItem": "Entrada sin título",
     "emptyResponse": "Se recibió una respuesta vacía.",
     "unknownError": "Error desconocido",
     "loadFailed": "No se pudo cargar el feed. Detalles: {{details}}"

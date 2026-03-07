@@ -156,7 +156,7 @@ h1 {
 }
 
 .main-input-row {
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr auto auto auto;
 }
 
 input[type="url"],
@@ -223,6 +223,59 @@ button {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 14px;
+}
+
+.quick-feeds-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feed-toolbar-btn {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--text) 50%, #ffffff),
+    color-mix(in srgb, var(--text) 62%, #ffffff)
+  );
+  color: #f7fbfb;
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--text) 34%, transparent);
+}
+
+.feed-toolbar-btn:hover {
+  transform: translateY(-1px);
+}
+
+body[data-theme="dark"] .feed-toolbar-btn {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--line) 68%, var(--text) 32%),
+    color-mix(in srgb, var(--surface) 82%, var(--line) 18%)
+  );
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--line) 40%, transparent);
+}
+
+.feed-toolbar-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .feed-pill {
@@ -378,6 +431,23 @@ button {
   gap: 10px;
 }
 
+.feed-meta-title-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.feed-meta-thumb {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  background: var(--surface-soft);
+  flex-shrink: 0;
+}
+
 .feed-meta h2 {
   margin: 0;
   font-size: clamp(1.2rem, 2.1vw, 1.65rem);
@@ -479,6 +549,22 @@ button {
     grid-template-columns: 1fr;
   }
 
+  .main-input-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+  }
+
+  .main-input-row > #feed-url,
+  .main-input-row > #load-btn {
+    grid-column: 1 / -1;
+  }
+
+  .main-input-row > #favorite-btn {
+    grid-column: 1;
+    width: 100%;
+    height: 48px;
+  }
+
   #load-btn,
   #favorite-btn {
     width: 100%;
@@ -486,6 +572,19 @@ button {
 
   .feed-chip {
     max-width: none;
+  }
+
+  .quick-feeds-toolbar {
+    grid-column: 2 / span 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .feed-toolbar-btn {
+    width: 100%;
+    height: 48px;
   }
 
   .site-footer {

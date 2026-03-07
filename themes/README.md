@@ -38,7 +38,7 @@ A theme template is plain HTML with placeholders. Supported placeholders:
 - `{{headline}}`: escaped article title
 - `{{description}}`: escaped article excerpt
 - `{{date}}`: localized date string or fallback text
-- `{{link}}`: escaped article URL
+- `{{link}}`: escaped and validated article URL (`http`/`https` only)
 - `{{article_label}}`: localized label text for the article link
 
 Important expectations:
@@ -86,6 +86,11 @@ The tile template and theme CSS work together through these selectors:
 
 `tile-meta` is intended for layout only (flex alignment and spacing). Text styling should be done on `.tile-date` and `.tile-link`.
 
+## Feed Header Thumbnail
+
+When available, a channel thumbnail/logo is rendered in the feed meta header (left of the feed title).
+The value is parsed from channel-level RSS/Atom image fields and exposed as `channelImageUrl`.
+
 ## Creating a New Theme
 
 1. Create a folder under `themes/`, for example `themes/newspaper/`.
@@ -100,6 +105,10 @@ The tile template and theme CSS work together through these selectors:
 - Renamed CSS classes without matching CSS updates: card layout will break.
 - Using unsupported placeholder names: they will stay unreplaced.
 - Serving over `file://`: dynamic template loading may fail in some environments.
+
+Date formatting note:
+
+- The locale used for `{{date}}` is configured in each translation file via `formats.dateLocale`.
 
 ## Testing Checklist
 

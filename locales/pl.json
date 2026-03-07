@@ -11,6 +11,9 @@
   "placeholders": {
     "feedUrl": "https://example.com/feed.xml"
   },
+  "formats": {
+    "dateLocale": "pl-PL"
+  },
   "buttons": {
     "load": "Załaduj",
     "website": "Strona",
@@ -36,6 +39,9 @@
     "languageSelect": "Wybierz język",
     "saveFavorite": "Zapisz jako ulubione",
     "removeFavorite": "Usuń z ulubionych",
+    "importFavorites": "Importuj ulubione z JSON",
+    "exportFavorites": "Eksportuj ulubione do JSON",
+    "favoritesActions": "Akcje ulubionych",
     "quickFeeds": "Szybki wybór i zapisane kanały",
     "controls": "Sterowanie kanałem",
     "results": "Zawartość kanału",
@@ -60,6 +66,11 @@
     "themeChanged": "Zmieniono motyw: {{theme}}.",
     "favoriteSaved": "Zapisano ulubione.",
     "favoriteRemoved": "Usunięto z ulubionych.",
+    "favoritesExported": "Ulubione wyeksportowano: {{count}} wpisów.",
+    "favoritesImported": "Ulubione zaimportowano: {{count}} wpisów ({{invalid}} pominięto).",
+    "importInvalidJson": "Plik importu nie jest poprawnym JSON-em.",
+    "importInvalidFormat": "Plik importu musi być tablicą ulubionych.",
+    "importNoValidEntries": "Nie znaleziono poprawnych ulubionych w pliku importu.",
     "feedRemoved": "Kanał usunięto z listy.",
     "resetDone": "Aplikacja zresetowana. Ładowanie domyślnych kanałów...",
     "languageChanged": "Zmieniono język: {{language}}.",
@@ -74,6 +85,7 @@
     "invalidUrl": "Nieprawidłowy URL. Przykład: https://example.com/feed.xml",
     "invalidXml": "Nie można przetworzyć XML kanału.",
     "unnamedFeed": "Kanał bez nazwy",
+    "untitledItem": "Wpis bez tytułu",
     "emptyResponse": "Otrzymano pustą odpowiedź.",
     "unknownError": "Nieznany błąd",
     "loadFailed": "Nie można załadować kanału. Szczegóły: {{details}}"

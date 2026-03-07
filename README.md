@@ -25,12 +25,14 @@ See [LICENSE](./LICENSE).
 ## Features
 
 - Load RSS and Atom feeds from a URL input
-- Quick feed buttons for common sources
+- Save/remove favorites and load them from quick-feed chips
+- Import/export favorites as JSON
 - Theme support
 - Language support
+- Locale-driven date formatting via translation files
 - Per-theme tile templates with placeholders (`{{headline}}`, `{{description}}`, `{{date}}`, `{{link}}`, `{{image}}`, `{{theme}}`, `{{article_label}}`)
 - CORS fallback strategy via proxy attempts
-- Feed sanitization for URL-only descriptions (for example common Hacker News feed edge cases)
+- Feed sanitization for URL-only descriptions
 
 ## Screenshots
 
@@ -51,6 +53,7 @@ See [LICENSE](./LICENSE).
 - `locales/`: translation files (`en`, `de`, `fr`, `es`, `it`, `pl`, `cs`, `nl`)
 - `themes/`: theme-specific CSS, templates, and theme documentation
 - `themes/README.md`: detailed theming guide
+- `tests/`: lightweight Node test suite for locale consistency and source guards
 
 ## Run Locally
 
@@ -61,6 +64,16 @@ Example with VS Code Live Server:
 1. Open the project in VS Code
 2. Start `Live Server` on `index.html`
 3. Open the shown local URL in your browser
+
+## Run Tests
+
+The project includes lightweight regression tests for localization consistency and key source guards.
+
+Run from the project root:
+
+```bash
+node --test tests/*.test.mjs
+```
 
 ## Theming
 
@@ -78,4 +91,5 @@ For full details, see `themes/README.md`.
 - Default language is English (`en`).
 - Available languages: `en`, `de`, `fr`, `es`, `it`, `pl`, `cs`, `nl`.
 - Translation resources live in `locales/*.json`.
+- Date formatting locale is configured per language in `formats.dateLocale`.
 

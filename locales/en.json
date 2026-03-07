@@ -11,6 +11,9 @@
   "placeholders": {
     "feedUrl": "https://example.com/feed.xml"
   },
+  "formats": {
+    "dateLocale": "en-US"
+  },
   "buttons": {
     "load": "Load",
     "website": "Website",
@@ -36,6 +39,9 @@
     "languageSelect": "Select language",
     "saveFavorite": "Save as favorite",
     "removeFavorite": "Remove favorite",
+    "importFavorites": "Import favorites from JSON",
+    "exportFavorites": "Export favorites as JSON",
+    "favoritesActions": "Favorites actions",
     "quickFeeds": "Quick selection and saved feeds",
     "controls": "Feed controls",
     "results": "Feed content",
@@ -60,6 +66,11 @@
     "themeChanged": "Theme switched: {{theme}}.",
     "favoriteSaved": "Favorite saved.",
     "favoriteRemoved": "Favorite removed.",
+    "favoritesExported": "Favorites exported: {{count}} entries.",
+    "favoritesImported": "Favorites imported: {{count}} entries ({{invalid}} skipped).",
+    "importInvalidJson": "Import file is not valid JSON.",
+    "importInvalidFormat": "Import file must be an array of favorites.",
+    "importNoValidEntries": "No valid favorites found in import file.",
     "feedRemoved": "Feed removed from the list.",
     "resetDone": "App reset. Loading default feeds...",
     "languageChanged": "Language switched: {{language}}.",
@@ -74,6 +85,7 @@
     "invalidUrl": "Invalid URL. Example: https://example.com/feed.xml",
     "invalidXml": "Feed XML could not be parsed.",
     "unnamedFeed": "Untitled feed",
+    "untitledItem": "Untitled item",
     "emptyResponse": "Received an empty response.",
     "unknownError": "Unknown error",
     "loadFailed": "Feed could not be loaded. Details: {{details}}"

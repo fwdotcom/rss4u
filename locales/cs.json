@@ -11,6 +11,9 @@
   "placeholders": {
     "feedUrl": "https://example.com/feed.xml"
   },
+  "formats": {
+    "dateLocale": "cs-CZ"
+  },
   "buttons": {
     "load": "Načíst",
     "website": "Web",
@@ -36,6 +39,9 @@
     "languageSelect": "Vyber jazyk",
     "saveFavorite": "Uložit do oblíbených",
     "removeFavorite": "Odebrat z oblíbených",
+    "importFavorites": "Importovat oblíbené z JSON",
+    "exportFavorites": "Exportovat oblíbené do JSON",
+    "favoritesActions": "Akce oblíbených",
     "quickFeeds": "Rychlý výběr a uložené feedy",
     "controls": "Ovládání feedu",
     "results": "Obsah feedu",
@@ -60,6 +66,11 @@
     "themeChanged": "Motiv změněn: {{theme}}.",
     "favoriteSaved": "Oblíbené uloženo.",
     "favoriteRemoved": "Odebráno z oblíbených.",
+    "favoritesExported": "Oblíbené exportováno: {{count}} položek.",
+    "favoritesImported": "Oblíbené importováno: {{count}} položek ({{invalid}} přeskočeno).",
+    "importInvalidJson": "Importovaný soubor není platné JSON.",
+    "importInvalidFormat": "Importovaný soubor musí být pole oblíbených.",
+    "importNoValidEntries": "V importovaném souboru nebyly nalezeny platné položky.",
     "feedRemoved": "Feed odebrán ze seznamu.",
     "resetDone": "Aplikace byla obnovena. Načítám výchozí feedy...",
     "languageChanged": "Jazyk změněn: {{language}}.",
@@ -74,6 +85,7 @@
     "invalidUrl": "Neplatná URL. Příklad: https://example.com/feed.xml",
     "invalidXml": "XML feedu se nepodařilo zpracovat.",
     "unnamedFeed": "Feed bez názvu",
+    "untitledItem": "Položka bez názvu",
     "emptyResponse": "Byla přijata prázdná odpověď.",
     "unknownError": "Neznámá chyba",
     "loadFailed": "Feed se nepodařilo načíst. Podrobnosti: {{details}}"

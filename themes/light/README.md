@@ -11,7 +11,7 @@ Screenshot:
 - `{{headline}}`: escaped article title
 - `{{description}}`: escaped article excerpt
 - `{{date}}`: localized publication date or fallback text
-- `{{link}}`: escaped article URL
+- `{{link}}`: escaped and validated article URL (`http`/`https` only)
 - `{{article_label}}`: localized label text for the article link
 
 ## Notes

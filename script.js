@@ -11,6 +11,10 @@ const themeSelect = document.getElementById("theme-select");
 const languageSelect = document.getElementById("language-select");
 const themeStylesheet = document.getElementById("theme-stylesheet");
 const quickFeedsEl = document.getElementById("quick-feeds");
+const quickFeedsToolbar = document.querySelector(".quick-feeds-toolbar");
+const importFavoritesBtn = document.getElementById("import-favorites-btn");
+const exportFavoritesBtn = document.getElementById("export-favorites-btn");
+const favoritesFileInput = document.getElementById("favorites-file-input");
 const resetAppBtn = document.getElementById("reset-app-btn");
 const appTitleText = document.getElementById("app-title-text");
 const appSubtitle = document.getElementById("app-subtitle");
@@ -46,10 +50,10 @@ const INITIAL_FEEDS = [
 ];
 
 /**
- * Theme registry for both stylesheet and per-theme tile template.
+ * Theme-Registry für Stylesheet und Theme-spezifisches Card-Template.
  *
- * Keeping paths in one map makes it easy to add future themes without touching
- * render logic or event handlers.
+ * Wenn Pfade in einer Map liegen, lassen sich neue Themes hinzufügen,
+ * ohne Render-Logik oder Event-Handler anzufassen.
  */
 const THEMES = {
 	light: {
@@ -63,9 +67,9 @@ const THEMES = {
 };
 
 /**
- * Fallback card template used whenever a theme template fails to load.
+ * Fallback-Card-Template, falls ein Theme-Template nicht geladen werden kann.
  *
-	* Mustache-style placeholders are replaced at runtime in renderFeed().
+	* Platzhalter im Mustache-Stil werden zur Laufzeit in renderFeed() ersetzt.
  */
 const FALLBACK_TEMPLATE = `
 <article class="tile">
@@ -87,6 +91,7 @@ let activeLocale = {};
 let currentTileTemplate = FALLBACK_TEMPLATE;
 let lastParsedFeed = null;
 let currentLoadedUrl = "";
+let latestFeedRequestId = 0;
 
 const STAR_OUTLINE_ICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath d='M12 3.7l2.6 5.2 5.7.8-4.1 4 1 5.7-5.2-2.7-5.2 2.7 1-5.7-4.1-4 5.7-.8z' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E";
 const STAR_FILLED_ICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath d='M12 3.7l2.6 5.2 5.7.8-4.1 4 1 5.7-5.2-2.7-5.2 2.7 1-5.7-4.1-4 5.7-.8z' fill='%23ffffff'/%3E%3C/svg%3E";
@@ -104,6 +109,18 @@ function formatTranslation(template, replacements = {}) {
 	return Object.entries(replacements).reduce((text, [key, value]) => {
 		return text.replaceAll(`{{${key}}}`, String(value));
 	}, template);
+}
+
+function getDateLocaleTag() {
+	const configuredLocale =
+		getNestedValue(activeLocale, "formats.dateLocale") ||
+		getNestedValue(localeCache[DEFAULT_LANGUAGE], "formats.dateLocale");
+
+	if (typeof configuredLocale === "string" && configuredLocale.trim()) {
+		return configuredLocale;
+	}
+
+	return "en-US";
 }
 
 function t(key, replacements = {}) {
@@ -157,6 +174,9 @@ function applyStaticTranslations() {
 	themeSelect.setAttribute("aria-label", t("aria.themeSelect"));
 	languageSelect.setAttribute("aria-label", t("aria.languageSelect"));
 	quickFeedsEl.setAttribute("aria-label", t("aria.quickFeeds"));
+	if (quickFeedsToolbar) {
+		quickFeedsToolbar.setAttribute("aria-label", t("aria.favoritesActions"));
+	}
 	controlsSection.setAttribute("aria-label", t("aria.controls"));
 	resultsSection.setAttribute("aria-label", t("aria.results"));
 	siteFooter.setAttribute("aria-label", t("aria.footer"));
@@ -165,6 +185,14 @@ function applyStaticTranslations() {
 	footerWebsiteLink.textContent = t("buttons.website");
 	footerLicenseLink.textContent = t("buttons.license");
 	resetAppBtn.textContent = t("buttons.reset");
+	if (importFavoritesBtn) {
+		importFavoritesBtn.setAttribute("title", t("aria.importFavorites"));
+		importFavoritesBtn.setAttribute("aria-label", t("aria.importFavorites"));
+	}
+	if (exportFavoritesBtn) {
+		exportFavoritesBtn.setAttribute("title", t("aria.exportFavorites"));
+		exportFavoritesBtn.setAttribute("aria-label", t("aria.exportFavorites"));
+	}
 	favoriteIcon.alt = t("aria.favoriteIcon");
 
 	const lightOption = themeSelect.querySelector('option[value="light"]');
@@ -205,7 +233,7 @@ async function applyLanguage(languageCode, options = {}) {
 }
 
 /**
- * Creates a short pill label from URL data.
+ * Erzeugt ein kurzes Chip-Label aus URL-Daten.
  */
 function createFeedLabel(url) {
 	try {
@@ -223,7 +251,7 @@ function createFeedLabel(url) {
 }
 
 /**
- * Normalizes a feed label and falls back to URL-derived text if needed.
+ * Normalisiert ein Feed-Label und fällt bei Bedarf auf URL-Text zurück.
  */
 function getSafeFeedLabel(label, url) {
 	const trimmed = (label || "").trim();
@@ -231,7 +259,7 @@ function getSafeFeedLabel(label, url) {
 }
 
 /**
- * Reads saved feed entries from localStorage and validates structure.
+ * Liest gespeicherte Feed-Einträge aus localStorage und validiert die Struktur.
  */
 function getSavedFeeds() {
 	const raw = localStorage.getItem(SAVED_FEEDS_KEY);
@@ -257,14 +285,96 @@ function getSavedFeeds() {
 }
 
 /**
- * Writes saved feed entries to localStorage.
+ * Schreibt gespeicherte Feed-Einträge in localStorage.
  */
 function setSavedFeeds(feeds) {
 	localStorage.setItem(SAVED_FEEDS_KEY, JSON.stringify(feeds));
 }
 
 /**
- * Seeds example feeds into storage exactly once, then never auto-readds them.
+ * Bereinigt importiertes Favoriten-JSON und verwirft fehlerhafte Einträge.
+ */
+function sanitizeImportedFeeds(rawEntries) {
+	if (!Array.isArray(rawEntries)) {
+		throw new Error(t("status.importInvalidFormat"));
+	}
+
+	const byUrl = new Map();
+	let invalidCount = 0;
+
+	rawEntries.forEach((entry) => {
+		if (!entry || typeof entry.url !== "string") {
+			invalidCount += 1;
+			return;
+		}
+
+		try {
+			const normalized = normalizeFeedUrl(entry.url);
+			const label = getSafeFeedLabel(typeof entry.label === "string" ? entry.label : "", normalized);
+			byUrl.set(normalized, {
+				url: normalized,
+				label
+			});
+		} catch {
+			invalidCount += 1;
+		}
+	});
+
+	return {
+		feeds: Array.from(byUrl.values()),
+		invalidCount
+	};
+}
+
+/**
+ * Lädt aktuelle Favoriten als JSON-Datei herunter.
+ */
+function exportFavoritesAsJson() {
+	const savedFeeds = getSavedFeeds();
+	const payload = JSON.stringify(savedFeeds, null, 2);
+	const blob = new Blob([payload], { type: "application/json" });
+	const blobUrl = URL.createObjectURL(blob);
+	const dateStamp = new Date().toISOString().slice(0, 10);
+	const linkEl = document.createElement("a");
+	linkEl.href = blobUrl;
+	linkEl.download = `rss4u-favorites-${dateStamp}.json`;
+	document.body.appendChild(linkEl);
+	linkEl.click();
+	linkEl.remove();
+	URL.revokeObjectURL(blobUrl);
+
+	setStatus(t("status.favoritesExported", { count: savedFeeds.length }));
+}
+
+/**
+ * Importiert Favoriten aus JSON-Text und merged sie per URL.
+ */
+function importFavoritesFromJsonText(jsonText) {
+	let parsed;
+	try {
+		parsed = JSON.parse(jsonText);
+	} catch {
+		throw new Error(t("status.importInvalidJson"));
+	}
+
+	const { feeds: importedFeeds, invalidCount } = sanitizeImportedFeeds(parsed);
+	if (!importedFeeds.length) {
+		throw new Error(t("status.importNoValidEntries"));
+	}
+
+	const mergedByUrl = new Map(getSavedFeeds().map((entry) => [entry.url, entry]));
+	importedFeeds.forEach((entry) => {
+		mergedByUrl.set(entry.url, entry);
+	});
+
+	setSavedFeeds(Array.from(mergedByUrl.values()));
+	renderFeedPills();
+	updateFavoriteButtonState();
+	setStatus(t("status.favoritesImported", { count: importedFeeds.length, invalid: invalidCount }));
+}
+
+/**
+ * Legt Beispiel-Feeds genau einmal im Storage an und fügt sie nie erneut automatisch hinzu.
  */
 function seedInitialFeedsIfNeeded() {
 	if (localStorage.getItem(FEED_SEED_DONE_KEY) === "1") {
@@ -286,7 +396,7 @@ function seedInitialFeedsIfNeeded() {
 }
 
 /**
- * Inserts a feed or updates its label when already stored.
+ * Fügt einen Feed ein oder aktualisiert sein Label, wenn er bereits gespeichert ist.
  */
 function upsertSavedFeed(url, label) {
 	const savedFeeds = getSavedFeeds();
@@ -319,7 +429,7 @@ function upsertSavedFeed(url, label) {
 }
 
 /**
- * Removes one URL from saved feeds.
+ * Entfernt eine URL aus den gespeicherten Feeds.
  */
 function removeFeed(url) {
 	const savedFeeds = getSavedFeeds();
@@ -328,14 +438,14 @@ function removeFeed(url) {
 }
 
 /**
- * Checks if a URL currently exists in saved feeds.
+ * Prüft, ob eine URL aktuell in den gespeicherten Feeds existiert.
  */
 function isSavedFeed(url) {
 	return getSavedFeeds().some((entry) => entry.url === url);
 }
 
 /**
- * Updates the favorite button icon based on the current URL input.
+ * Aktualisiert das Favoriten-Symbol basierend auf der aktuellen URL-Eingabe.
  */
 function updateFavoriteButtonState() {
 	const rawInput = feedUrlInput.value.trim();
@@ -360,7 +470,7 @@ function updateFavoriteButtonState() {
 }
 
 /**
- * Renders default and user-saved feeds as clickable pills.
+ * Rendert Standard- und benutzerdefinierte Feeds als klickbare Chips.
  */
 function renderFeedPills() {
 	const savedFeeds = getSavedFeeds();
@@ -380,7 +490,7 @@ function renderFeedPills() {
 }
 
 /**
- * Updates the status area and applies error color when needed.
+ * Aktualisiert den Statusbereich und setzt bei Bedarf die Fehlerfarbe.
  */
 function setStatus(message, isError = false) {
 	statusEl.textContent = message;
@@ -388,7 +498,7 @@ function setStatus(message, isError = false) {
 }
 
 /**
- * Escapes user/content strings before interpolating into HTML templates.
+ * Maskiert Benutzer-/Inhalts-Strings vor dem Einsetzen in HTML-Vorlagen.
  */
 function escapeHtml(value) {
 	if (value == null) return "";
@@ -402,13 +512,13 @@ function escapeHtml(value) {
 }
 
 /**
- * Formats feed dates for a German audience.
+ * Formatiert Feed-Daten für die jeweilige Sprache.
  */
 function formatDate(value) {
 	if (!value) return "";
 	const date = new Date(value);
 	if (Number.isNaN(date.getTime())) return "";
-	const localeTag = currentLanguage === "de" ? "de-DE" : "en-US";
+	const localeTag = getDateLocaleTag();
 	return new Intl.DateTimeFormat(localeTag, {
 		day: "2-digit",
 		month: "2-digit",
@@ -417,7 +527,7 @@ function formatDate(value) {
 }
 
 /**
- * Generates image HTML only when the feed entry provides media.
+ * Erzeugt Bild-HTML nur dann, wenn der Feed-Eintrag Mediendaten enthält.
  */
 function buildImageMarkup(mediaUrl) {
 	if (!mediaUrl) {
@@ -428,7 +538,7 @@ function buildImageMarkup(mediaUrl) {
 }
 
 /**
- * Replaces all {{placeholder}} markers in a template string.
+ * Ersetzt alle {{placeholder}}-Marker in einem Template-String.
  */
 function fillTemplate(template, replacements) {
 	let output = template;
@@ -439,7 +549,7 @@ function fillTemplate(template, replacements) {
 }
 
 /**
- * Loads a template file from disk/network.
+ * Lädt ein Template-File von Datenträger oder Netzwerk.
  */
 async function loadThemeTemplate(templatePath) {
 	const response = await fetch(templatePath, { cache: "no-store" });
@@ -456,7 +566,7 @@ async function loadThemeTemplate(templatePath) {
 }
 
 /**
- * Applies a selected theme and rerenders the currently loaded feed.
+ * Wendet ein ausgewähltes Theme an und rendert den geladenen Feed erneut.
  */
 async function applyTheme(themeName) {
 	const safeTheme = THEMES[themeName] ? themeName : "light";
@@ -481,17 +591,23 @@ async function applyTheme(themeName) {
 }
 
 /**
- * Renders parsed RSS data into cards using the active tile template.
+ * Rendert geparste RSS-Daten als Karten mit dem aktiven Card-Template.
  */
 function renderFeed(feed) {
 	lastParsedFeed = feed;
 	const channelLinkMarkup = feed.channelLink
 		? `<a class="feed-meta-site-link" href="${escapeHtml(feed.channelLink)}" target="_blank" rel="noopener noreferrer">${escapeHtml(t("feed.websiteLink"))}</a>`
 		: "";
+	const channelImageMarkup = feed.channelImageUrl
+		? `<img class="feed-meta-thumb" src="${escapeHtml(feed.channelImageUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer" />`
+		: "";
 
 	feedMetaEl.innerHTML = `
 		<div class="feed-meta-top-row">
-			<h2>${escapeHtml(feed.channelTitle)}</h2>
+			<div class="feed-meta-title-wrap">
+				${channelImageMarkup}
+				<h2>${escapeHtml(feed.channelTitle)}</h2>
+			</div>
 			${channelLinkMarkup}
 		</div>
 		<p>${escapeHtml(feed.channelDescription || t("feed.noDescription"))}</p>
@@ -529,15 +645,20 @@ function renderFeed(feed) {
 }
 
 /**
- * Loads and renders a feed URL through the RSS module.
+ * Lädt und rendert eine Feed-URL über das RSS-Modul.
  */
 async function loadAndRenderFeed(url) {
+	const requestId = ++latestFeedRequestId;
 	setStatus(t("status.loadingFeed"));
 	itemsEl.innerHTML = "";
 	feedMetaEl.innerHTML = "";
 
 	try {
 		const parsed = await loadRssFeed(url);
+		if (requestId !== latestFeedRequestId) {
+			return null;
+		}
+
 		currentLoadedUrl = url;
 		if (isSavedFeed(url)) {
 			upsertSavedFeed(url, parsed.channelTitle);
@@ -548,13 +669,17 @@ async function loadAndRenderFeed(url) {
 		setStatus(t("status.feedLoaded", { count: parsed.items.length }));
 		return parsed;
 	} catch (error) {
+		if (requestId !== latestFeedRequestId) {
+			return null;
+		}
+
 		setStatus(`${t("status.errorPrefix")} ${error.message}`, true);
 		return null;
 	}
 }
 
 /**
- * Normalizes the URL currently typed into the input field.
+ * Normalisiert die aktuell im Eingabefeld eingegebene URL.
  */
 function getNormalizedInputUrl() {
 	const normalized = normalizeFeedUrl(feedUrlInput.value);
@@ -563,7 +688,7 @@ function getNormalizedInputUrl() {
 }
 
 /**
- * Returns a preferred label when adding a favorite.
+ * Liefert beim Hinzufügen eines Favoriten ein bevorzugtes Label.
  */
 function getFavoriteLabelForUrl(url) {
 	if (url === currentLoadedUrl && lastParsedFeed?.channelTitle) {
@@ -573,7 +698,7 @@ function getFavoriteLabelForUrl(url) {
 }
 
 /**
- * Form submit: normalize user input and trigger feed loading.
+ * Form-Submit: Eingabe normalisieren und Feed-Load auslösen.
  */
 form.addEventListener("submit", (event) => {
 	event.preventDefault();
@@ -586,7 +711,7 @@ form.addEventListener("submit", (event) => {
 });
 
 /**
- * Save-and-load button stores the feed and then loads it.
+ * Favoriten-Button speichert den Feed und lädt ihn danach.
  */
 favoriteBtn.addEventListener("click", () => {
 	try {
@@ -610,7 +735,7 @@ favoriteBtn.addEventListener("click", () => {
 });
 
 /**
- * Handles load and delete actions for default/saved feed pills.
+ * Behandelt Load- und Delete-Aktionen für Feed-Chips.
  */
 quickFeedsEl.addEventListener("click", (event) => {
 	const target = event.target;
@@ -656,7 +781,7 @@ quickFeedsEl.addEventListener("click", (event) => {
 });
 
 /**
- * Theme change updates styles and rerenders the currently shown cards.
+ * Theme-Wechsel aktualisiert Stile und rendert sichtbare Karten neu.
  */
 themeSelect.addEventListener("change", async () => {
 	await applyTheme(themeSelect.value);
@@ -664,16 +789,47 @@ themeSelect.addEventListener("change", async () => {
 });
 
 languageSelect.addEventListener("change", async () => {
-	await applyLanguage(languageSelect.value);
-	setStatus(t("status.languageChanged", { language: t(`languages.${currentLanguage}`) }));
+	try {
+		await applyLanguage(languageSelect.value);
+		setStatus(t("status.languageChanged", { language: t(`languages.${currentLanguage}`) }));
+	} catch (error) {
+		setStatus(`${t("status.errorPrefix")} ${error.message}`, true);
+	}
 });
 
 feedUrlInput.addEventListener("input", () => {
 	updateFavoriteButtonState();
 });
 
+if (importFavoritesBtn && favoritesFileInput) {
+	importFavoritesBtn.addEventListener("click", () => {
+		favoritesFileInput.value = "";
+		favoritesFileInput.click();
+	});
+
+	favoritesFileInput.addEventListener("change", async () => {
+		const selectedFile = favoritesFileInput.files?.[0];
+		if (!selectedFile) {
+			return;
+		}
+
+		try {
+			const content = await selectedFile.text();
+			importFavoritesFromJsonText(content);
+		} catch (error) {
+			setStatus(`${t("status.errorPrefix")} ${error.message}`, true);
+		}
+	});
+}
+
+if (exportFavoritesBtn) {
+	exportFavoritesBtn.addEventListener("click", () => {
+		exportFavoritesAsJson();
+	});
+}
+
 /**
- * Clears persisted app data and restores the initial state.
+ * Löscht persistierte App-Daten und stellt den Initialzustand wieder her.
  */
 async function handleResetApp() {
 	const confirmed = window.confirm(
@@ -702,6 +858,8 @@ async function handleResetApp() {
 
 	try {
 		await initializeApp();
+	} catch (error) {
+		setStatus(`${t("status.errorPrefix")} ${error.message}`, true);
 	} finally {
 		if (resetAppBtn) {
 			resetAppBtn.disabled = false;
@@ -716,7 +874,7 @@ if (resetAppBtn) {
 }
 
 /**
- * Bootstraps the app: restore theme preference and load default feed.
+ * Initialisiert die App: Theme-Präferenz wiederherstellen und Start-Feed laden.
  */
 async function initializeApp() {
 	await applyLanguage(getPreferredLanguage(), { persist: false });
@@ -733,4 +891,6 @@ async function initializeApp() {
 	loadAndRenderFeed(feedUrlInput.value);
 }
 
-initializeApp();
+initializeApp().catch((error) => {
+	setStatus(`${t("status.errorPrefix")} ${error.message}`, true);
+});

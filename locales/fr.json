@@ -11,6 +11,9 @@
   "placeholders": {
     "feedUrl": "https://example.com/feed.xml"
   },
+  "formats": {
+    "dateLocale": "fr-FR"
+  },
   "buttons": {
     "load": "Charger",
     "website": "Site web",
@@ -36,6 +39,9 @@
     "languageSelect": "Sélectionner la langue",
     "saveFavorite": "Enregistrer comme favori",
     "removeFavorite": "Supprimer des favoris",
+    "importFavorites": "Importer les favoris depuis JSON",
+    "exportFavorites": "Exporter les favoris en JSON",
+    "favoritesActions": "Actions des favoris",
     "quickFeeds": "Sélection rapide et flux enregistrés",
     "controls": "Contrôles du flux",
     "results": "Contenu du flux",
@@ -60,6 +66,11 @@
     "themeChanged": "Thème changé : {{theme}}.",
     "favoriteSaved": "Favori enregistré.",
     "favoriteRemoved": "Favori supprimé.",
+    "favoritesExported": "Favoris exportés : {{count}} entrées.",
+    "favoritesImported": "Favoris importés : {{count}} entrées ({{invalid}} ignorées).",
+    "importInvalidJson": "Le fichier d'import n'est pas un JSON valide.",
+    "importInvalidFormat": "Le fichier d'import doit être un tableau de favoris.",
+    "importNoValidEntries": "Aucun favori valide trouvé dans le fichier d'import.",
     "feedRemoved": "Flux supprimé de la liste.",
     "resetDone": "Application réinitialisée. Chargement des flux par défaut...",
     "languageChanged": "Langue changée : {{language}}.",
@@ -74,6 +85,7 @@
     "invalidUrl": "URL invalide. Exemple : https://example.com/feed.xml",
     "invalidXml": "Le XML du flux n'a pas pu être analysé.",
     "unnamedFeed": "Flux sans titre",
+    "untitledItem": "Entrée sans titre",
     "emptyResponse": "Réponse vide reçue.",
     "unknownError": "Erreur inconnue",
     "loadFailed": "Le flux n'a pas pu être chargé. Détails : {{details}}"

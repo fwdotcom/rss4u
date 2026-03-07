@@ -75,11 +75,36 @@
                 src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath d='M12 3.7l2.6 5.2 5.7.8-4.1 4 1 5.7-5.2-2.7-5.2 2.7 1-5.7-4.1-4 5.7-.8z' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E"
               />
             </button>
+            <div class="quick-feeds-toolbar" aria-label="Favorites actions">
+              <button id="import-favorites-btn" class="feed-toolbar-btn" type="button" aria-label="Import favorites from JSON">
+                <img
+                  class="feed-toolbar-icon"
+                  alt=""
+                  aria-hidden="true"
+                  src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath d='M12 4v9' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M8.5 10.5L12 14l3.5-3.5' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M5 18h14' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"
+                />
+              </button>
+              <button id="export-favorites-btn" class="feed-toolbar-btn" type="button" aria-label="Export favorites as JSON">
+                <img
+                  class="feed-toolbar-icon"
+                  alt=""
+                  aria-hidden="true"
+                  src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath d='M12 20v-9' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M8.5 13.5L12 10l3.5 3.5' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M5 6h14' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"
+                />
+              </button>
+              <input
+                id="favorites-file-input"
+                type="file"
+                accept="application/json,.json"
+                class="visually-hidden"
+                aria-hidden="true"
+                tabindex="-1"
+              />
+            </div>
           </div>
         </form>
 
-        <div id="quick-feeds" class="quick-feeds" aria-label="Quick selection and saved feeds">
-        </div>
+        <div id="quick-feeds" class="quick-feeds" aria-label="Quick selection and saved feeds"></div>
 
         <p id="status" class="status" role="status" aria-live="polite"></p>
       </section>
