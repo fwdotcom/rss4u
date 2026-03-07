@@ -1,4 +1,4 @@
-import { loadFeed as loadRssFeed, normalizeFeedUrl, setRssMessages } from "./rss.js";
+import { loadFeed as loadRssFeed, normalizeFeedUrl, setRssMessages } from "./rss.js?v=20260307b";
 
 const form = document.getElementById("feed-form");
 const feedUrlInput = document.getElementById("feed-url");
@@ -29,7 +29,7 @@ const footerWebsiteLink = document.getElementById("footer-website-link");
 const footerLicenseLink = document.getElementById("footer-license-link");
 
 const SAVED_FEEDS_KEY = "rss-saved-feeds";
-const FEED_SEED_DONE_KEY = "rss-feeds-seeded-v1";
+const FEED_SEED_DONE_KEY = "rss-feeds-seeded-v2";
 const LANGUAGE_KEY = "rss-language";
 const DEFAULT_LANGUAGE = "en";
 const LOCALE_PATHS = {
@@ -47,6 +47,10 @@ const STATIC_INITIAL_FEEDS = [
 	{ label: "Mozilla Blog", url: "https://blog.mozilla.org/feed/" },
 	{ label: "BlenderNation", url: "https://www.blendernation.com/feed/" }
 ];
+const LEGACY_DEFAULT_FEED_URLS = new Set([
+	"https://xkcd.com/atom.xml",
+	"https://hnrss.org/frontpage"
+]);
 
 /**
  * Theme-Registry für Stylesheet und Theme-spezifisches Card-Template.
@@ -111,6 +115,24 @@ function getInitialFeeds() {
 	}).filter(Boolean);
 
 	return [...STATIC_INITIAL_FEEDS, ...fixtureFeeds];
+}
+
+/**
+ * Entfernt veraltete Legacy-Standardfeeds, behält aber benutzerdefinierte Feeds.
+ */
+function removeLegacyDefaultFeeds(feeds) {
+	return feeds.filter((entry) => {
+		if (!entry?.url) {
+			return false;
+		}
+
+		try {
+			const normalized = normalizeFeedUrl(entry.url);
+			return !LEGACY_DEFAULT_FEED_URLS.has(normalized);
+		} catch {
+			return true;
+		}
+	});
 }
 
 const STAR_OUTLINE_ICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath d='M12 3.7l2.6 5.2 5.7.8-4.1 4 1 5.7-5.2-2.7-5.2 2.7 1-5.7-4.1-4 5.7-.8z' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E";
@@ -401,7 +423,7 @@ function seedInitialFeedsIfNeeded() {
 		return;
 	}
 
-	const existingFeeds = getSavedFeeds();
+	const existingFeeds = removeLegacyDefaultFeeds(getSavedFeeds());
 	const existingUrls = new Set(existingFeeds.map((entry) => entry.url));
 	const seededFeeds = [
 		...getInitialFeeds().filter((entry) => !existingUrls.has(entry.url)),
