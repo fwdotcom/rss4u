@@ -426,7 +426,7 @@ body[data-theme="dark"] .feed-toolbar-btn {
 
 .feed-meta-top-row {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 10px;
 }

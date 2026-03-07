@@ -32,6 +32,7 @@ See [LICENSE](./LICENSE).
 - Locale-driven date formatting via translation files
 - Per-theme tile templates with placeholders (`{{headline}}`, `{{description}}`, `{{date}}`, `{{image}}`, `{{theme}}`, `{{article_action}}`)
 - CORS fallback strategy via proxy attempts
+- Faster feed loading via parallel fallback attempts, per-request timeout, and short in-memory XML cache
 - Feed sanitization for URL-only descriptions
 
 ## Screenshots

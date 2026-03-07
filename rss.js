@@ -9,6 +9,10 @@ export const DEFAULT_PROXIES = [
 	(url) => `https://corsproxy.io/?${encodeURIComponent(url)}`
 ];
 
+const FEED_REQUEST_TIMEOUT_MS = 6500;
+const FEED_XML_CACHE_TTL_MS = 120000;
+const feedXmlCache = new Map();
+
 const DEFAULT_RSS_MESSAGES = {
 	emptyUrl: "Please enter a feed URL.",
 	invalidUrl: "Invalid URL. Example: https://example.com/feed.xml",
@@ -26,6 +30,41 @@ function formatMessage(template, values = {}) {
 	return Object.entries(values).reduce((output, [key, value]) => {
 		return output.replaceAll(`{{${key}}}`, String(value));
 	}, template);
+}
+
+function getCachedFeedXml(url) {
+	const cached = feedXmlCache.get(url);
+	if (!cached) {
+		return "";
+	}
+
+	if (cached.expiresAt <= Date.now()) {
+		feedXmlCache.delete(url);
+		return "";
+	}
+
+	return cached.xmlText;
+}
+
+function setCachedFeedXml(url, xmlText) {
+	feedXmlCache.set(url, {
+		xmlText,
+		expiresAt: Date.now() + FEED_XML_CACHE_TTL_MS
+	});
+}
+
+async function fetchWithTimeout(resource, options = {}, timeoutMs = FEED_REQUEST_TIMEOUT_MS) {
+	const controller = new AbortController();
+	const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+	try {
+		return await fetch(resource, {
+			...options,
+			signal: controller.signal
+		});
+	} finally {
+		window.clearTimeout(timeoutId);
+	}
 }
 
 /**
@@ -389,34 +428,51 @@ export function parseFeed(xmlText, options = {}) {
  * damit die Fehlersuche in der UI einfacher wird.
  */
 export async function fetchFeedXml(url, proxyFactories = DEFAULT_PROXIES) {
-	const attempts = [url, ...proxyFactories.map((proxy) => proxy(url))];
-	const attemptErrors = [];
-
-	for (const attempt of attempts) {
-		try {
-			const response = await fetch(attempt, {
-				headers: {
-					Accept: "application/rss+xml, application/xml, text/xml, application/atom+xml"
-				}
-			});
-
-			if (!response.ok) {
-				throw new Error(`HTTP ${response.status}`);
-			}
-
-			const text = await response.text();
-			if (!text.trim()) {
-				throw new Error(rssMessages.emptyResponse);
-			}
-
-			return text;
-		} catch (error) {
-			attemptErrors.push(error?.message || rssMessages.unknownError);
-		}
+	const cachedXml = getCachedFeedXml(url);
+	if (cachedXml) {
+		return cachedXml;
 	}
 
-	const compactErrors = [...new Set(attemptErrors)].slice(0, 3).join(" | ");
-	throw new Error(formatMessage(rssMessages.loadFailed, { details: compactErrors || rssMessages.unknownError }));
+	const attempts = [...new Set([url, ...proxyFactories.map((proxy) => proxy(url))])];
+
+	try {
+		const xmlText = await Promise.any(
+			attempts.map(async (attemptUrl) => {
+				try {
+					const response = await fetchWithTimeout(attemptUrl, {
+						headers: {
+							Accept: "application/rss+xml, application/xml, text/xml, application/atom+xml"
+						}
+					});
+
+					if (!response.ok) {
+						throw new Error(`HTTP ${response.status}`);
+					}
+
+					const text = await response.text();
+					if (!text.trim()) {
+						throw new Error(rssMessages.emptyResponse);
+					}
+
+					return text;
+				} catch (error) {
+					if (error?.name === "AbortError") {
+						throw new Error(`${attemptUrl}: timeout`);
+					}
+					throw new Error(`${attemptUrl}: ${error?.message || rssMessages.unknownError}`);
+				}
+			})
+		);
+
+		setCachedFeedXml(url, xmlText);
+		return xmlText;
+	} catch (aggregateError) {
+		const attemptErrors = Array.isArray(aggregateError?.errors)
+			? aggregateError.errors.map((error) => error?.message || rssMessages.unknownError)
+			: [aggregateError?.message || rssMessages.unknownError];
+		const compactErrors = [...new Set(attemptErrors)].slice(0, 3).join(" | ");
+		throw new Error(formatMessage(rssMessages.loadFailed, { details: compactErrors || rssMessages.unknownError }));
+	}
 }
 
 /**
