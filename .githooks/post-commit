@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "commit=$(git log -1 --format=%h)" > version.txt
+echo "date=$(date -u +"%Y-%m-%d %H:%M:%S")" >> version.txt
