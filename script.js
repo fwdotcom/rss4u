@@ -871,6 +871,11 @@ async function handleResetApp() {
 		resetAppBtn.disabled = true;
 	}
 
+	// Remove all app-owned keys to avoid stale state across deployments.
+	Object.keys(localStorage)
+		.filter((key) => key.startsWith("rss-"))
+		.forEach((key) => localStorage.removeItem(key));
+
 	localStorage.removeItem(SAVED_FEEDS_KEY);
 	localStorage.removeItem(FEED_SEED_DONE_KEY);
 	localStorage.removeItem("rss-theme");
@@ -883,15 +888,8 @@ async function handleResetApp() {
 
 	setStatus(t("status.resetDone"));
 
-	try {
-		await initializeApp();
-	} catch (error) {
-		setStatus(`${t("status.errorPrefix")} ${error.message}`, true);
-	} finally {
-		if (resetAppBtn) {
-			resetAppBtn.disabled = false;
-		}
-	}
+	// Full reload guarantees a clean runtime state and reseeds defaults reliably.
+	window.location.reload();
 }
 
 if (resetAppBtn) {
