@@ -131,7 +131,7 @@ h1 {
 
 .subtitle {
   margin: 0;
-  max-width: 65ch;
+  max-width: none;
   font-size: 1rem;
   line-height: 1.45;
   color: var(--muted);
@@ -546,6 +546,14 @@ body[data-theme="dark"] .feed-toolbar-btn {
 
   .header-pickers {
     justify-content: flex-start;
+  }
+
+  .subtitle {
+    margin: 16px 0;
+  }
+
+  .controls {
+    margin-top: 0;
   }
 
   .input-row {
