@@ -133,6 +133,24 @@ On each push to `main`, the workflow:
 
 In repository settings, set **Pages Source** to **GitHub Actions**.
 
+## PWA Install
+
+rss4u ships with a web app manifest and service worker so it can be installed as a Progressive Web App (PWA).
+
+Deploy:
+
+- Push to `main` (GitHub Pages deploys `public/` as usual).
+- Open the live page via HTTPS (`https://fwdotcom.github.io/rss4u/`).
+
+Install:
+
+- In Chrome/Edge desktop: use the install icon in the address bar.
+- On mobile: use browser menu action like `Add to Home Screen`.
+
+Note:
+
+- Browser/OS decide exact window chrome behavior, but `display: standalone` requests an app-like window.
+
 ## Theming
 
 Theme definitions are in `public/themes/<theme-name>/` and are registered in `public/script.js`.
