@@ -55,7 +55,7 @@ See [LICENSE](./LICENSE).
 - `public/locales/`: translation files (`en`, `de`, `fr`, `es`, `it`, `pl`, `cs`, `nl`)
 - `public/themes/`: theme-specific CSS, templates, and theme documentation
 - `public/themes/README.md`: detailed theming guide
-- `build/background.js`: extension click handler (opens app in tab)
+- `build/configs/extensions/background.js`: extension click handler (opens app in tab)
 - `tests/`: lightweight Node test suite for locale consistency and source guards
 
 ## Run Locally
@@ -78,19 +78,50 @@ Run from the project root:
 node --test tests/*.test.mjs
 ```
 
-## Browser Extension Packaging
+## Build and Packaging
 
 Build artifacts are created in `build/dist/`.
 
 For the detailed packaging guide, see `build/README.md`.
 
-Recommended one-command build:
+Build requirements:
+
+- PowerShell (`powershell` or `pwsh`) for all build scripts
+- Go (1.21 or newer) for standalone binaries
+
+Recommended one-command build (extensions + standalone):
 
 ```bat
-build\build-browser-extensions.bat
+build\scripts\common\package-all.bat
 ```
 
 Browser-specific commands and packaging details are documented in `build/README.md`.
+
+PowerShell extension-only build:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ./build/scripts/common/package-all.ps1 -ExtensionsOnly
+```
+
+Standalone-only build:
+
+```bat
+build\scripts\standalone\build-standalone-all.bat
+```
+
+GitHub release build:
+
+- Create/push a tag like `v1.0.2`.
+- Workflow `.github/workflows/release-standalone.yml` builds standalone binaries on GitHub Actions and uploads `rss4u-*` files as release assets.
+- Do not commit standalone binaries to the repository.
+
+Optional pre-commit hook setup to keep website footer version in sync with `VERSION`:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+The hook executes `build/scripts/common/pre-build.ps1`.
 
 ## GitHub Pages Deployment
 

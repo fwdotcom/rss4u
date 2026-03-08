@@ -1,13 +1,20 @@
 $ErrorActionPreference = "Stop"
 
+. (Join-Path $PSScriptRoot "..\common\_helpers.ps1")
+
+if ($env:RSS4U_PREBUILD_DONE -ne "1") {
+  & (Join-Path $PSScriptRoot "..\common\pre-build.ps1")
+}
+
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
-$repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
-$distRoot = Join-Path $PSScriptRoot "dist"
+$repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..\..")
+$distRoot = Join-Path $repoRoot "build\dist\extensions"
 $tempRoot = Join-Path $env:TEMP "rss4u-packaging"
-$stagingRoot = Join-Path $tempRoot "chromium"
-$zipPath = Join-Path $distRoot "rss4u-chromium.zip"
+$stagingRoot = Join-Path $tempRoot "firefox"
+$version = Get-AppVersion -RepoRoot $repoRoot
+$zipPath = Join-Path $distRoot ("rss4u-firefox-" + $version + ".zip")
 
 if (!(Test-Path $distRoot)) {
   New-Item -ItemType Directory -Path $distRoot -Force | Out-Null
@@ -36,19 +43,22 @@ foreach ($item in $copyItems) {
   }
 }
 
-$backgroundSource = Join-Path $repoRoot "build\background.js"
+$backgroundSource = Join-Path $repoRoot "build\configs\extensions\background.js"
 $backgroundTarget = Join-Path $stagingRoot "background.js"
 if (!(Test-Path $backgroundSource)) {
-  throw "Missing build/background.js"
+  throw "Missing build/configs/extensions/background.js"
 }
 Copy-Item -Path $backgroundSource -Destination $backgroundTarget -Force
 
-$manifestSource = Join-Path $repoRoot "build\manifests\manifest.chrome.json"
+$manifestSource = Join-Path $repoRoot "build\configs\extensions\manifest.firefox.json"
 $manifestTarget = Join-Path $stagingRoot "manifest.json"
 if (!(Test-Path $manifestSource)) {
-  throw "Missing build/manifests/manifest.chrome.json"
+  throw "Missing build/configs/extensions/manifest.firefox.json"
 }
 Copy-Item -Path $manifestSource -Destination $manifestTarget -Force
+
+Set-ManifestVersion -ManifestPath $manifestTarget -Version $version
+Set-IndexFooterVersion -HtmlPath (Join-Path $stagingRoot "public\index.html") -Version $version
 
 function New-ZipFromFolderWithUnixPaths {
   param(

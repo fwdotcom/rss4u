@@ -1,0 +1,33 @@
+name: Release Standalone Binaries
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release-standalone:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: standalone/go.mod
+
+      - name: Build standalone binaries
+        shell: pwsh
+        run: ./build/scripts/standalone/build-standalone-all.ps1
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/dist/standalone/rss4u-*
+          generate_release_notes: true

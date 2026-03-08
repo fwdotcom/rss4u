@@ -1,7 +1,7 @@
 @echo off
 setlocal
 
-rem Run from the build directory regardless of where the .bat is launched.
+rem Run from this script directory regardless of where the .bat is launched.
 pushd "%~dp0"
 
 powershell -NoProfile -ExecutionPolicy Bypass -File ".\package-all.ps1"
