@@ -78,7 +78,13 @@
     "resetDone": "Aplikacja zresetowana. Ładowanie domyślnych kanałów...",
     "languageChanged": "Zmieniono język: {{language}}.",
     "templateLoadFailed": "Nie można załadować szablonu (HTTP {{status}}).",
-    "templateEmpty": "Plik szablonu jest pusty."
+    "templateEmpty": "Plik szablonu jest pusty.",
+    "installBannerHint": "Zainstaluj rss4u jako aplikację, aby uzyskać szybszy dostęp.",
+    "installUnavailable": "Instalacja aplikacji jest obecnie niedostępna w tym oknie przeglądarki.",
+    "installManualHint": "Użyj menu przeglądarki (Zainstaluj aplikację / Dodaj do ekranu głównego), aby zainstalować rss4u.",
+    "installAccepted": "Instalacja rozpoczęta.",
+    "installDismissed": "Instalacja anulowana.",
+    "installSuccess": "rss4u zostało pomyślnie zainstalowane."
   },
   "confirm": {
     "reset": "Zresetować wszystko? Zapisane kanały oraz ustawienia motywu/języka zostaną usunięte."

@@ -78,7 +78,13 @@
     "resetDone": "App hersteld. Standaardfeeds worden geladen...",
     "languageChanged": "Taal gewijzigd: {{language}}.",
     "templateLoadFailed": "Template kon niet worden geladen (HTTP {{status}}).",
-    "templateEmpty": "Template-bestand is leeg."
+    "templateEmpty": "Template-bestand is leeg.",
+    "installBannerHint": "Installeer rss4u als app voor snellere toegang.",
+    "installUnavailable": "App-installatie is momenteel niet beschikbaar in dit browservenster.",
+    "installManualHint": "Gebruik het browsermenu (App installeren / Toevoegen aan beginscherm) om rss4u te installeren.",
+    "installAccepted": "Installatie gestart.",
+    "installDismissed": "Installatie geannuleerd.",
+    "installSuccess": "rss4u is succesvol geïnstalleerd."
   },
   "confirm": {
     "reset": "Alles herstellen? Opgeslagen feeds en thema-/taalinstellingen worden verwijderd."

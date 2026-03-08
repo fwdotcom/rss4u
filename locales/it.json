@@ -78,7 +78,13 @@
     "resetDone": "App reimpostata. Caricamento feed predefiniti...",
     "languageChanged": "Lingua cambiata: {{language}}.",
     "templateLoadFailed": "Impossibile caricare il template (HTTP {{status}}).",
-    "templateEmpty": "Il file template è vuoto."
+    "templateEmpty": "Il file template è vuoto.",
+    "installBannerHint": "Installa rss4u come app per un accesso più rapido.",
+    "installUnavailable": "L'installazione dell'app non è attualmente disponibile in questa finestra del browser.",
+    "installManualHint": "Usa il menu del browser (Installa app / Aggiungi alla schermata Home) per installare rss4u.",
+    "installAccepted": "Installazione avviata.",
+    "installDismissed": "Installazione annullata.",
+    "installSuccess": "rss4u è stato installato con successo."
   },
   "confirm": {
     "reset": "Reimpostare tutto? I feed salvati e le impostazioni tema/lingua verranno eliminati."

@@ -78,7 +78,13 @@
     "resetDone": "Application réinitialisée. Chargement des flux par défaut...",
     "languageChanged": "Langue changée : {{language}}.",
     "templateLoadFailed": "Le template n'a pas pu être chargé (HTTP {{status}}).",
-    "templateEmpty": "Le fichier de template est vide."
+    "templateEmpty": "Le fichier de template est vide.",
+    "installBannerHint": "Installez rss4u comme application pour un accès plus rapide.",
+    "installUnavailable": "L'installation de l'application n'est actuellement pas disponible dans cette fenêtre du navigateur.",
+    "installManualHint": "Utilisez le menu du navigateur (Installer l'application / Ajouter à l'écran d'accueil) pour installer rss4u.",
+    "installAccepted": "Installation démarrée.",
+    "installDismissed": "Installation annulée.",
+    "installSuccess": "rss4u a été installé avec succès."
   },
   "confirm": {
     "reset": "Tout réinitialiser ? Les flux enregistrés et les paramètres de thème/langue seront supprimés."

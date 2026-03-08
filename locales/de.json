@@ -78,7 +78,13 @@
     "resetDone": "App wurde zurückgesetzt. Standardfeeds werden geladen...",
     "languageChanged": "Sprache gewechselt: {{language}}.",
     "templateLoadFailed": "Template konnte nicht geladen werden (HTTP {{status}}).",
-    "templateEmpty": "Template-Datei ist leer."
+    "templateEmpty": "Template-Datei ist leer.",
+    "installBannerHint": "Installiere rss4u als App für schnelleren Zugriff.",
+    "installUnavailable": "Die App-Installation ist in diesem Browserfenster derzeit nicht verfügbar.",
+    "installManualHint": "Nutze das Browser-Menü (App installieren / Zum Startbildschirm hinzufügen), um rss4u zu installieren.",
+    "installAccepted": "Installation gestartet.",
+    "installDismissed": "Installation abgebrochen.",
+    "installSuccess": "rss4u wurde erfolgreich installiert."
   },
   "confirm": {
     "reset": "Wirklich alles zurücksetzen? Gespeicherte Feeds und Theme-/Spracheinstellung werden gelöscht."

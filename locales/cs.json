@@ -78,7 +78,13 @@
     "resetDone": "Aplikace byla obnovena. Načítám výchozí feedy...",
     "languageChanged": "Jazyk změněn: {{language}}.",
     "templateLoadFailed": "Šablonu se nepodařilo načíst (HTTP {{status}}).",
-    "templateEmpty": "Soubor šablony je prázdný."
+    "templateEmpty": "Soubor šablony je prázdný.",
+    "installBannerHint": "Nainstalujte rss4u jako aplikaci pro rychlejší přístup.",
+    "installUnavailable": "Instalace aplikace v tomto okně prohlížeče momentálně není dostupná.",
+    "installManualHint": "Pro instalaci rss4u použijte nabídku prohlížeče (Nainstalovat aplikaci / Přidat na plochu).",
+    "installAccepted": "Instalace spuštěna.",
+    "installDismissed": "Instalace zrušena.",
+    "installSuccess": "rss4u bylo úspěšně nainstalováno."
   },
   "confirm": {
     "reset": "Obnovit vše? Uložené feedy a nastavení motivu/jazyka budou smazány."

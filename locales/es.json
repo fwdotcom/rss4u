@@ -78,7 +78,13 @@
     "resetDone": "Aplicación restablecida. Cargando feeds predeterminados...",
     "languageChanged": "Idioma cambiado: {{language}}.",
     "templateLoadFailed": "No se pudo cargar la plantilla (HTTP {{status}}).",
-    "templateEmpty": "El archivo de plantilla está vacío."
+    "templateEmpty": "El archivo de plantilla está vacío.",
+    "installBannerHint": "Instala rss4u como app para un acceso más rápido.",
+    "installUnavailable": "La instalación de la app no está disponible actualmente en esta ventana del navegador.",
+    "installManualHint": "Usa el menú del navegador (Instalar app / Añadir a la pantalla de inicio) para instalar rss4u.",
+    "installAccepted": "Instalación iniciada.",
+    "installDismissed": "Instalación cancelada.",
+    "installSuccess": "rss4u se instaló correctamente."
   },
   "confirm": {
     "reset": "¿Restablecer todo? Se eliminarán los feeds guardados y la configuración de tema/idioma."
