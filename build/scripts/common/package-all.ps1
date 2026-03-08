@@ -6,6 +6,8 @@ $ErrorActionPreference = "Stop"
 
 $commonRoot = Resolve-Path $PSScriptRoot
 $extensionsRoot = Resolve-Path (Join-Path $PSScriptRoot "..\extensions")
+$repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..\..")
+$extensionsDistRoot = Join-Path $repoRoot "build\dist\extensions"
 
 if ($env:RSS4U_PREBUILD_DONE -ne "1") {
   Write-Output "Running pre-build..."
@@ -15,10 +17,15 @@ if ($env:RSS4U_PREBUILD_DONE -ne "1") {
 }
 
 Write-Output "Building Chromium package..."
-& (Join-Path $extensionsRoot "package-chromium.ps1")
+if (Test-Path $extensionsDistRoot) {
+  Remove-Item $extensionsDistRoot -Recurse -Force
+}
+New-Item -ItemType Directory -Path $extensionsDistRoot -Force | Out-Null
+
+& (Join-Path $extensionsRoot "package-chromium.ps1") -SkipDistClean
 
 Write-Output "Building Firefox package..."
-& (Join-Path $extensionsRoot "package-firefox.ps1")
+& (Join-Path $extensionsRoot "package-firefox.ps1") -SkipDistClean
 
 if ($ExtensionsOnly) {
   Write-Output "All extension packages built successfully."

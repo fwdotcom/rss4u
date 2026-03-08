@@ -1,3 +1,7 @@
+param(
+  [switch]$SkipDistClean
+)
+
 $ErrorActionPreference = "Stop"
 
 . (Join-Path $PSScriptRoot "..\common\_helpers.ps1")
@@ -16,6 +20,10 @@ $stagingRoot = Join-Path $tempRoot "firefox"
 $version = Get-AppVersion -RepoRoot $repoRoot
 $zipPath = Join-Path $distRoot ("rss4u-firefox-" + $version + ".zip")
 
+if (-not $SkipDistClean -and (Test-Path $distRoot)) {
+  Remove-Item $distRoot -Recurse -Force
+}
+
 if (!(Test-Path $distRoot)) {
   New-Item -ItemType Directory -Path $distRoot -Force | Out-Null
 }
@@ -26,10 +34,6 @@ $copyItems = @(
 
 if (Test-Path $stagingRoot) {
   Remove-Item $stagingRoot -Recurse -Force
-}
-
-if (Test-Path $zipPath) {
-  Remove-Item $zipPath -Force
 }
 
 New-Item -ItemType Directory -Path $stagingRoot -Force | Out-Null
