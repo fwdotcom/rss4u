@@ -1,4 +1,22 @@
+/**
+ * Haupteinstieg für die rss4u-Startseite.
+ *
+ * Verantwortlichkeiten:
+ * - UI initialisieren (Theme, Sprache, Footer-Version)
+ * - Feeds laden, rendern und im Statusbereich rückmelden
+ * - Favoriten verwalten (CRUD + Import/Export)
+ * - PWA-Funktionen anbinden (Service Worker, Install Prompt)
+ */
+
 import { loadFeed as loadRssFeed, normalizeFeedUrl, setRssMessages } from "./rss.js?v=20260307b";
+import {
+	DEFAULT_LANGUAGE,
+	LOCALE_PATHS,
+	PLACEHOLDER_KEYS,
+	replaceLocalizedPlaceholders,
+	loadLocaleMessages,
+	setFooterYear
+} from "./common.js";
 
 const form = document.getElementById("feed-form");
 const feedUrlInput = document.getElementById("feed-url");
@@ -28,23 +46,13 @@ const siteFooter = document.getElementById("site-footer");
 const footerWebsiteLink = document.getElementById("footer-website-link");
 const footerLicenseLink = document.getElementById("footer-license-link");
 const copyrightYearEl = document.getElementById("copyright-year");
+const appVersionValueEl = document.getElementById("app-version-value");
 const installAppBtn = document.getElementById("install-app-btn");
 
 const SAVED_FEEDS_KEY = "rss4u-saved-feeds";
 const FEED_SEED_DONE_KEY = "rss4u-feeds-seeded";
 const LANGUAGE_KEY = "rss4u-language";
 const THEME_KEY = "rss4u-theme";
-const DEFAULT_LANGUAGE = "en";
-const LOCALE_PATHS = {
-	en: "./locales/en.json",
-	de: "./locales/de.json",
-	fr: "./locales/fr.json",
-	es: "./locales/es.json",
-	it: "./locales/it.json",
-	pl: "./locales/pl.json",
-	cs: "./locales/cs.json",
-	nl: "./locales/nl.json"
-};
 const localeCache = {};
 const STATIC_INITIAL_FEEDS = [
 	{ label: "Mozilla Blog", url: "https://blog.mozilla.org/feed/" },
@@ -75,7 +83,7 @@ const THEMES = {
 /**
  * Fallback-Card-Template, falls ein Theme-Template nicht geladen werden kann.
  *
-	* Platzhalter im Mustache-Stil werden zur Laufzeit in renderFeed() ersetzt.
+ * Platzhalter im Mustache-Stil werden zur Laufzeit in renderFeed() ersetzt.
  */
 const FALLBACK_TEMPLATE = `
 <article class="tile">
@@ -151,12 +159,27 @@ function getNestedValue(obj, dottedPath) {
 	}, obj);
 }
 
+/**
+ * Ersetzt lokalisierte Platzhalter in einem Translation-String.
+ *
+ * @param {string} template - Lokalisierte Vorlage.
+ * @param {Record<string, string|number|boolean>} [replacements={}] - Werte für Platzhalter.
+ * @returns {string}
+ */
 function formatTranslation(template, replacements = {}) {
-	return Object.entries(replacements).reduce((text, [key, value]) => {
-		return text.replaceAll(`{{${key}}}`, String(value));
-	}, template);
+	return replaceLocalizedPlaceholders(template, replacements);
 }
 
+/**
+ * Liefert das Locale-Tag für Datumsformatierung.
+ *
+ * Reihenfolge:
+ * 1. Aktive Locale (`formats.dateLocale`)
+ * 2. Default-Locale (`formats.dateLocale`)
+ * 3. harter Fallback `en-US`
+ *
+ * @returns {string}
+ */
 function getDateLocaleTag() {
 	const configuredLocale =
 		getNestedValue(activeLocale, "formats.dateLocale") ||
@@ -169,6 +192,13 @@ function getDateLocaleTag() {
 	return "en-US";
 }
 
+/**
+ * Übersetzt einen Dot-Key mit Fallback auf Default-Locale.
+ *
+ * @param {string} key - Übersetzungspfad, z. B. `status.feedLoaded`.
+ * @param {Record<string, string|number|boolean>} [replacements={}] - Platzhalterwerte.
+ * @returns {string}
+ */
 function t(key, replacements = {}) {
 	const translated =
 		getNestedValue(activeLocale, key) ||
@@ -182,30 +212,32 @@ function t(key, replacements = {}) {
 	return formatTranslation(translated, replacements);
 }
 
+/**
+ * Lädt Locale-Daten, aktualisiert globalen Zustand und synchronisiert RSS-Meldungen.
+ *
+ * @param {string} languageCode - Gewünschter Sprachcode.
+ * @returns {Promise<void>}
+ */
 async function loadLocale(languageCode) {
-	const safeLanguage = LOCALE_PATHS[languageCode] ? languageCode : DEFAULT_LANGUAGE;
-	if (!localeCache[safeLanguage]) {
-		const response = await fetch(LOCALE_PATHS[safeLanguage], { cache: "no-store" });
-		if (!response.ok) {
-			throw new Error(`Locale could not be loaded (HTTP ${response.status}).`);
-		}
+	const { language, messages } = await loadLocaleMessages(languageCode, {
+		defaultLanguage: DEFAULT_LANGUAGE,
+		localePaths: LOCALE_PATHS,
+		cache: localeCache
+	});
 
-		localeCache[safeLanguage] = await response.json();
-	}
-
-	if (!localeCache[DEFAULT_LANGUAGE]) {
-		const fallbackResponse = await fetch(LOCALE_PATHS[DEFAULT_LANGUAGE], { cache: "no-store" });
-		if (fallbackResponse.ok) {
-			localeCache[DEFAULT_LANGUAGE] = await fallbackResponse.json();
-		}
-	}
-
-	activeLocale = localeCache[safeLanguage] || localeCache[DEFAULT_LANGUAGE] || {};
-	currentLanguage = safeLanguage;
-	document.documentElement.lang = safeLanguage;
+	activeLocale = messages;
+	currentLanguage = language;
+	document.documentElement.lang = language;
 	setRssMessages(activeLocale.rss || {});
 }
 
+/**
+ * Schreibt alle statischen UI-Texte mit aktuellen Locale-Daten in den DOM.
+ *
+ * Schließt Labels, Buttons, ARIA-Texte, Footer-Links und Select-Optionen ein.
+ *
+ * @returns {void}
+ */
 function applyStaticTranslations() {
 	document.title = t("app.name");
 	appTitleText.textContent = t("app.name");
@@ -230,9 +262,7 @@ function applyStaticTranslations() {
 
 	footerWebsiteLink.textContent = t("buttons.website");
 	footerLicenseLink.textContent = t("buttons.license");
-	if (copyrightYearEl) {
-		copyrightYearEl.textContent = String(new Date().getFullYear());
-	}
+	setFooterYear(copyrightYearEl);
 	resetAppBtn.textContent = t("buttons.reset");
 	if (installAppBtn) {
 		installAppBtn.textContent = t("buttons.installApp");
@@ -266,6 +296,11 @@ function applyStaticTranslations() {
 	}
 }
 
+/**
+ * Prüft, ob die App als installierte PWA (Standalone) läuft.
+ *
+ * @returns {boolean}
+ */
 function isStandaloneDisplayMode() {
 	if (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) {
 		return true;
@@ -274,6 +309,13 @@ function isStandaloneDisplayMode() {
 	return window.navigator.standalone === true;
 }
 
+/**
+ * Prüft, ob die Umgebung grundsätzlich installierbar ist.
+ *
+ * HTTPS-Kontexte gelten als installierbar; localhost wird zusätzlich erlaubt.
+ *
+ * @returns {boolean}
+ */
 function isInstallCapableContext() {
 	if (window.isSecureContext) {
 		return true;
@@ -283,6 +325,11 @@ function isInstallCapableContext() {
 	return host === "localhost" || host === "127.0.0.1";
 }
 
+/**
+ * Blendet den Install-Button abhängig von Kontext und Prompt-Verfügbarkeit ein/aus.
+ *
+ * @returns {void}
+ */
 function updateInstallButtonVisibility() {
 	if (!installAppBtn) {
 		return;
@@ -292,6 +339,36 @@ function updateInstallButtonVisibility() {
 	installAppBtn.hidden = !shouldShow;
 }
 
+/**
+ * Lädt die aktuelle App-Version aus `VERSION` in den Footer.
+ *
+ * @returns {Promise<void>}
+ */
+async function syncAppVersionFromFile() {
+	if (!appVersionValueEl) {
+		return;
+	}
+
+	try {
+		const response = await fetch(`./VERSION?v=${Date.now()}`, { cache: "no-store" });
+		if (!response.ok) {
+			return;
+		}
+
+		const version = (await response.text()).trim();
+		if (version) {
+			appVersionValueEl.textContent = version;
+		}
+	} catch {
+		// Keep the footer fallback value from index.html when VERSION cannot be fetched.
+	}
+}
+
+/**
+ * Liest bevorzugte Sprache aus Storage und validiert gegen verfügbare Locale-Dateien.
+ *
+ * @returns {string}
+ */
 function getPreferredLanguage() {
 	const stored = (localStorage.getItem(LANGUAGE_KEY) || "").toLowerCase();
 	if (LOCALE_PATHS[stored]) {
@@ -301,6 +378,13 @@ function getPreferredLanguage() {
 	return DEFAULT_LANGUAGE;
 }
 
+/**
+ * Wendet eine Sprache an, inklusive optionaler Persistierung.
+ *
+ * @param {string} languageCode - Gewünschter Sprachcode.
+ * @param {{ persist?: boolean }} [options={}]
+ * @returns {Promise<void>}
+ */
 async function applyLanguage(languageCode, options = {}) {
 	const { persist = true } = options;
 	await loadLocale(languageCode);
@@ -423,7 +507,9 @@ function exportFavoritesAsJson() {
 	linkEl.remove();
 	URL.revokeObjectURL(blobUrl);
 
-	setStatus(t("status.favoritesExported", { count: savedFeeds.length }));
+	setStatus(t("status.favoritesExported", {
+		[PLACEHOLDER_KEYS.common.count]: savedFeeds.length
+	}));
 }
 
 /**
@@ -450,7 +536,10 @@ function importFavoritesFromJsonText(jsonText) {
 	setSavedFeeds(Array.from(mergedByUrl.values()));
 	renderFeedPills();
 	updateFavoriteButtonState();
-	setStatus(t("status.favoritesImported", { count: importedFeeds.length, invalid: invalidCount }));
+	setStatus(t("status.favoritesImported", {
+		[PLACEHOLDER_KEYS.common.count]: importedFeeds.length,
+		[PLACEHOLDER_KEYS.common.invalid]: invalidCount
+	}));
 }
 
 /**
@@ -635,9 +724,16 @@ function formatDate(value) {
 /**
  * Erzeugt Bild-HTML nur dann, wenn der Feed-Eintrag Mediendaten enthält.
  */
-function buildImageMarkup(mediaUrl) {
+function buildMediaMarkup(item) {
+	const mediaUrl = item?.mediaUrl || "";
 	if (!mediaUrl) {
 		return "";
+	}
+
+	const mediaType = item?.mediaType || "";
+	if (mediaType === "video") {
+		const posterAttr = item?.mediaPoster ? ` poster="${escapeHtml(item.mediaPoster)}"` : "";
+		return `<video class="tile-image" src="${escapeHtml(mediaUrl)}"${posterAttr} controls preload="metadata" playsinline referrerpolicy="no-referrer"></video>`;
 	}
 
 	return `<img class="tile-image" src="${escapeHtml(mediaUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer" />`;
@@ -660,7 +756,9 @@ function fillTemplate(template, replacements) {
 async function loadThemeTemplate(templatePath) {
 	const response = await fetch(templatePath, { cache: "no-store" });
 	if (!response.ok) {
-		throw new Error(t("status.templateLoadFailed", { status: response.status }));
+		throw new Error(t("status.templateLoadFailed", {
+			[PLACEHOLDER_KEYS.common.status]: response.status
+		}));
 	}
 
 	const text = await response.text();
@@ -687,7 +785,9 @@ async function applyTheme(themeName) {
 	} catch {
 		templateLoaded = false;
 		currentTileTemplate = FALLBACK_TEMPLATE;
-		setStatus(t("status.themeTemplateFallback", { theme: safeTheme }), true);
+		setStatus(t("status.themeTemplateFallback", {
+			[PLACEHOLDER_KEYS.common.theme]: safeTheme
+		}), true);
 	}
 
 	currentTheme = safeTheme;
@@ -752,19 +852,19 @@ function renderFeed(feed) {
 	const itemNodes = feed.items
 		.slice(0, 24)
 		.map((item, index) => {
-			const imageMarkup = buildImageMarkup(item.mediaUrl);
+			const imageMarkup = buildMediaMarkup(item);
 			const excerpt = escapeHtml(item.description.slice(0, 190) || t("feed.noPreview"));
 			const formattedDate = formatDate(item.pubDate) || t("feed.noDate");
 			const articleActionMarkup = item.link
 				? `<a class="tile-link" href="${escapeHtml(item.link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(t("feed.articleLink"))}</a>`
 				: `<span class="tile-link tile-link-disabled" aria-disabled="true">${escapeHtml(t("feed.noArticleLink"))}</span>`;
 			const tileMarkup = fillTemplate(currentTileTemplate, {
-				"{{date}}": formattedDate,
-				"{{headline}}": escapeHtml(item.title),
-				"{{description}}": excerpt,
-				"{{image}}": imageMarkup,
-				"{{theme}}": escapeHtml(currentTheme),
-				"{{article_action}}": articleActionMarkup
+				[`{{${PLACEHOLDER_KEYS.indexTile.date}}}`]: formattedDate,
+				[`{{${PLACEHOLDER_KEYS.indexTile.headline}}}`]: escapeHtml(item.title),
+				[`{{${PLACEHOLDER_KEYS.indexTile.description}}}`]: excerpt,
+				[`{{${PLACEHOLDER_KEYS.indexTile.image}}}`]: imageMarkup,
+				[`{{${PLACEHOLDER_KEYS.indexTile.theme}}}`]: escapeHtml(currentTheme),
+				[`{{${PLACEHOLDER_KEYS.indexTile.articleAction}}}`]: articleActionMarkup
 			});
 
 			const listItem = document.createElement("li");
@@ -799,7 +899,9 @@ async function loadAndRenderFeed(url) {
 		renderFeed(parsed);
 		renderFeedPills();
 		updateFavoriteButtonState();
-		setStatus(t("status.feedLoaded", { count: parsed.items.length }));
+		setStatus(t("status.feedLoaded", {
+			[PLACEHOLDER_KEYS.common.count]: parsed.items.length
+		}));
 		return parsed;
 	} catch (error) {
 		if (requestId !== latestFeedRequestId) {
@@ -919,14 +1021,18 @@ quickFeedsEl.addEventListener("click", (event) => {
 themeSelect.addEventListener("change", async () => {
 	const didLoadThemeTemplate = await applyTheme(themeSelect.value);
 	if (didLoadThemeTemplate) {
-		setStatus(t("status.themeChanged", { theme: themeSelect.value }));
+		setStatus(t("status.themeChanged", {
+			[PLACEHOLDER_KEYS.common.theme]: themeSelect.value
+		}));
 	}
 });
 
 languageSelect.addEventListener("change", async () => {
 	try {
 		await applyLanguage(languageSelect.value);
-		setStatus(t("status.languageChanged", { language: t(`languages.${currentLanguage}`) }));
+		setStatus(t("status.languageChanged", {
+			[PLACEHOLDER_KEYS.common.language]: t(`languages.${currentLanguage}`)
+		}));
 	} catch (error) {
 		setStatus(`${t("status.errorPrefix")} ${error.message}`, true);
 	}
@@ -1005,6 +1111,7 @@ if (resetAppBtn) {
  * Initialisiert die App: Theme-Präferenz wiederherstellen und Start-Feed laden.
  */
 async function initializeApp() {
+	await syncAppVersionFromFile();
 	await applyLanguage(getPreferredLanguage(), { persist: false });
 	seedInitialFeedsIfNeeded();
 	renderFeedPills();
@@ -1019,18 +1126,28 @@ async function initializeApp() {
 	loadAndRenderFeed(feedUrlInput.value);
 }
 
+/**
+ * Registriert den Service Worker nach vollständigem Window-Load.
+ *
+ * @returns {void}
+ */
 function registerServiceWorker() {
 	if (!("serviceWorker" in navigator)) {
 		return;
 	}
 
 	window.addEventListener("load", () => {
-		navigator.serviceWorker.register("./sw.js").catch((error) => {
+		navigator.serviceWorker.register("../sw.js").catch((error) => {
 			console.warn("Service worker registration failed:", error);
 		});
 	});
 }
 
+/**
+ * Verdrahtet den PWA-Install-Flow (`beforeinstallprompt`, `appinstalled`, Button).
+ *
+ * @returns {void}
+ */
 function registerInstallPrompt() {
 	window.addEventListener("beforeinstallprompt", (event) => {
 		event.preventDefault();

@@ -1,20 +1,20 @@
 <!--
 Template contract for tile rendering (dark theme).
 
-This file is loaded dynamically by script.js and then receives token replacements.
+This file is loaded dynamically by index.js and then receives token replacements.
 Every token is optional at runtime, but the following placeholders are supported:
 
 - {{theme}}:
   The current theme key (for example: "light" or "dark").
 
 - {{image}}:
-  Full <img> markup or an empty string when the feed item has no media.
+  Full media markup (`<img>` or `<video>`) or an empty string when the feed item has no media.
 
 - {{headline}}:
   Escaped article title text.
 
 - {{description}}:
-  Escaped preview text, pre-truncated in script.js.
+  Escaped preview text, pre-truncated in index.js.
 
 - {{date}}:
   Localized publication date text (or fallback text like "Kein Datum").

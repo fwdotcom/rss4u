@@ -6,7 +6,7 @@ This folder contains all theme-specific assets for the RSS reader.
 
 The app splits styling into two layers:
 
-1. Global/base styling in `../style.css`
+1. Global/base styling in `../css/style.css`
 2. Theme styling and tile markup in `./<theme-name>/`
 
 Each theme folder currently contains:
@@ -21,9 +21,9 @@ Current themes:
 
 ## Runtime Flow
 
-1. `script.js` selects a theme key (`light` or `dark`).
+1. `js/index.js` selects a theme key (`light` or `dark`).
 2. The `<link id="theme-stylesheet">` element is updated to `./themes/<theme>/theme.css`.
-3. `script.js` loads `./themes/<theme>/tile.template.html` via `fetch`.
+3. `js/index.js` loads `./themes/<theme>/tile.template.html` via `fetch`.
 4. Feed items are rendered by replacing placeholders in the template.
 5. The selected theme is persisted in `localStorage` (`rss4u-theme`).
 
@@ -44,9 +44,9 @@ Important expectations:
 
 - Keep the CSS class names used by the current styles (`tile`, `tile-content`, `tile-headline`, etc.) unless you also update `theme.css` accordingly.
 - Do not include scripts in templates.
-- Templates should stay structural; logic stays in `script.js` and `rss.js`.
+- Templates should stay structural; logic stays in `js/index.js` and `js/rss.js`.
 
-## Base CSS Variables (defined in `../style.css`)
+## Base CSS Variables (defined in `../css/style.css`)
 
 Theme files usually override these variables in `:root`:
 
@@ -95,7 +95,7 @@ The value is parsed from channel-level RSS/Atom image fields and exposed as `cha
 1. Create a folder under `themes/`, for example `themes/newspaper/`.
 2. Add `themes/newspaper/theme.css`.
 3. Add `themes/newspaper/tile.template.html` using the documented placeholders.
-4. Register the theme in `THEMES` inside `../script.js`.
+4. Register the theme in `THEMES` inside `../js/index.js`.
 5. Add an option in the theme `<select>` in `../index.html`.
 
 ## Common Pitfalls

@@ -1,5 +1,0 @@
-build/dist/
-standalone/public/*
-!standalone/public/.gitkeep
-standalone/*.exe
-standalone/rss4u-*

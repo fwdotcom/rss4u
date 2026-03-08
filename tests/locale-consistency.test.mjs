@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDir = path.dirname(currentFilePath);
 const rootDir = path.resolve(currentDir, "..");
-const localeDir = path.join(rootDir, "public", "locales");
+const localeDir = path.join(rootDir, "locales");
 const localeFiles = ["en", "de", "fr", "es", "it", "pl", "cs", "nl"];
 
 function readLocale(code) {

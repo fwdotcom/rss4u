@@ -637,3 +637,19 @@ body[data-theme="dark"] .feed-toolbar-btn {
     pointer-events: auto;
   }
 }
+
+/* Legal page content-specific styles. Base layout comes from body/.app/h1/.subtitle. */
+
+.license-content {
+  margin: 16px 0 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+

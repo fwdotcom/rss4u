@@ -1,4 +1,15 @@
 /**
+ * RSS/Atom-Datenzugriff und Parsing.
+ *
+ * Dieses Modul kapselt:
+ * - URL-Normalisierung für Feed-Eingaben
+ * - robustes Laden mit Timeout + Proxy-Fallback
+ * - kurzlebiges XML-Caching zur Entlastung häufiger Reloads
+ * - Parsing von RSS/Atom inkl. Kanalmetadaten
+ * - heuristische Bild-/Video-Erkennung pro Item
+ */
+
+/**
  * Zentralisierte Proxy-Strategie, wenn eine direkte RSS-Anfrage durch CORS blockiert wird.
  *
  * Die erste Anfrage geht immer direkt an die Original-URL. Diese Proxy-Funktionen
@@ -26,12 +37,25 @@ const DEFAULT_RSS_MESSAGES = {
 
 let rssMessages = { ...DEFAULT_RSS_MESSAGES };
 
+/**
+ * Ersetzt Platzhalter im Stil `{{key}}` in einem Meldungstext.
+ *
+ * @param {string} template - Meldungsvorlage.
+ * @param {Record<string, string|number|boolean>} [values={}] - Einzusetzende Werte.
+ * @returns {string}
+ */
 function formatMessage(template, values = {}) {
 	return Object.entries(values).reduce((output, [key, value]) => {
 		return output.replaceAll(`{{${key}}}`, String(value));
 	}, template);
 }
 
+/**
+ * Holt XML aus dem In-Memory-Cache, sofern Eintrag noch gültig ist.
+ *
+ * @param {string} url - Feed-URL als Cache-Key.
+ * @returns {string}
+ */
 function getCachedFeedXml(url) {
 	const cached = feedXmlCache.get(url);
 	if (!cached) {
@@ -46,6 +70,13 @@ function getCachedFeedXml(url) {
 	return cached.xmlText;
 }
 
+/**
+ * Speichert XML mit Ablaufzeit in den In-Memory-Cache.
+ *
+ * @param {string} url - Feed-URL als Cache-Key.
+ * @param {string} xmlText - Rohes XML.
+ * @returns {void}
+ */
 function setCachedFeedXml(url, xmlText) {
 	feedXmlCache.set(url, {
 		xmlText,
@@ -53,6 +84,14 @@ function setCachedFeedXml(url, xmlText) {
 	});
 }
 
+/**
+ * Führt `fetch` mit AbortController-basiertem Timeout aus.
+ *
+ * @param {RequestInfo | URL} resource - Zielressource.
+ * @param {RequestInit} [options={}] - Fetch-Optionen.
+ * @param {number} [timeoutMs=FEED_REQUEST_TIMEOUT_MS] - Timeout in Millisekunden.
+ * @returns {Promise<Response>}
+ */
 async function fetchWithTimeout(resource, options = {}, timeoutMs = FEED_REQUEST_TIMEOUT_MS) {
 	const controller = new AbortController();
 	const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
@@ -96,9 +135,8 @@ export function normalizeFeedUrl(rawUrl) {
 		try {
 			const parsed = new URL(candidate);
 			const isHttp = parsed.protocol === "http:" || parsed.protocol === "https:";
-			const isExtensionLocal = parsed.protocol === "chrome-extension:" || parsed.protocol === "moz-extension:";
 
-			if (!isHttp && !isExtensionLocal) {
+			if (!isHttp) {
 				throw new Error(rssMessages.invalidUrl);
 			}
 
@@ -178,7 +216,9 @@ function plainTextFromHtml(html) {
 }
 
 const HTTP_PROTOCOLS = new Set(["http:", "https:"]);
-const MEDIA_PROTOCOLS = new Set(["http:", "https:", "chrome-extension:", "moz-extension:"]);
+const MEDIA_PROTOCOLS = new Set(["http:", "https:"]);
+const IMAGE_FILE_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif", ".bmp", ".svg", ".ico", ".tif", ".tiff", ".jfif"]);
+const VIDEO_FILE_EXTENSIONS = new Set([".mp4", ".webm", ".mov", ".m4v", ".ogv", ".m3u8", ".mkv"]);
 
 function resolveUrlByProtocols(value, baseUrl = "", allowedProtocols = HTTP_PROTOCOLS) {
 	if (!value) return "";
@@ -207,6 +247,151 @@ function resolveHttpUrl(value, baseUrl = "") {
 
 function resolveMediaUrl(value, baseUrl = "") {
 	return resolveUrlByProtocols(value, baseUrl, MEDIA_PROTOCOLS);
+}
+
+/**
+ * Extrahiert Dateiendung aus der URL-Pfadkomponente.
+ *
+ * @param {string} urlValue - Zu prüfende URL.
+ * @returns {string}
+ */
+function getUrlPathExtension(urlValue) {
+	try {
+		const parsed = new URL(urlValue);
+		const pathname = (parsed.pathname || "").toLowerCase();
+		const lastDot = pathname.lastIndexOf(".");
+		return lastDot >= 0 ? pathname.slice(lastDot) : "";
+	} catch {
+		return "";
+	}
+}
+
+/**
+ * Prüft MIME-Typ auf Bildmedien.
+ *
+ * @param {string} typeValue
+ * @returns {boolean}
+ */
+function isImageMediaType(typeValue) {
+	return /^image\//i.test((typeValue || "").trim());
+}
+
+/**
+ * Prüft MIME-Typ auf Videomedien.
+ *
+ * @param {string} typeValue
+ * @returns {boolean}
+ */
+function isVideoMediaType(typeValue) {
+	return /^video\//i.test((typeValue || "").trim());
+}
+
+/**
+ * Heuristik: erkennt Bilddatei anhand URL-Endung.
+ *
+ * @param {string} urlValue
+ * @returns {boolean}
+ */
+function isLikelyImageUrl(urlValue) {
+	const extension = getUrlPathExtension(urlValue);
+	return Boolean(extension) && IMAGE_FILE_EXTENSIONS.has(extension);
+}
+
+/**
+ * Heuristik: erkennt Videodatei anhand URL-Endung.
+ *
+ * @param {string} urlValue
+ * @returns {boolean}
+ */
+function isLikelyVideoUrl(urlValue) {
+	const extension = getUrlPathExtension(urlValue);
+	return Boolean(extension) && VIDEO_FILE_EXTENSIONS.has(extension);
+}
+
+/**
+ * Klassifiziert einen Media-Kandidaten als `image`, `video` oder `unknown`.
+ *
+ * @param {{ localName?: string, medium?: string, type?: string, url?: string }} candidate
+ * @returns {"image" | "video" | "unknown"}
+ */
+function classifyMediaCandidate({ localName = "", medium = "", type = "", url = "" }) {
+	const safeLocalName = String(localName || "").toLowerCase();
+	const safeMedium = String(medium || "").toLowerCase();
+	const safeType = String(type || "").toLowerCase();
+
+	if (safeMedium === "video" || isVideoMediaType(safeType) || isLikelyVideoUrl(url)) {
+		return "video";
+	}
+
+	if (
+		safeLocalName === "thumbnail" ||
+		safeMedium === "image" ||
+		isImageMediaType(safeType) ||
+		isLikelyImageUrl(url)
+	) {
+		return "image";
+	}
+
+	return "unknown";
+}
+
+/**
+ * Sucht in HTML-Inhalt nach erstem Bild bzw. Video inkl. Poster.
+ *
+ * @param {string} rawHtml - Unbereinigter HTML-Inhalt.
+ * @param {string} baseUrl - Basis-URL zur Auflösung relativer Medienpfade.
+ * @returns {{ imageUrl: string, videoUrl: string, posterUrl: string }}
+ */
+function extractMediaFromHtmlContent(rawHtml, baseUrl) {
+	const emptyResult = {
+		imageUrl: "",
+		videoUrl: "",
+		posterUrl: ""
+	};
+
+	if (!rawHtml) {
+		return emptyResult;
+	}
+
+	const parser = new DOMParser();
+	const doc = parser.parseFromString(String(rawHtml), "text/html");
+
+	const firstImg = doc.querySelector("img[src], img[data-src], img[srcset]");
+	if (firstImg) {
+		const imgSource =
+			firstImg.getAttribute("src") ||
+			firstImg.getAttribute("data-src") ||
+			(firstImg.getAttribute("srcset") || "").split(",")[0]?.trim().split(/\s+/)[0] ||
+			"";
+		const safeImgSource = resolveMediaUrl(imgSource, baseUrl);
+		if (safeImgSource) {
+			emptyResult.imageUrl = safeImgSource;
+			return emptyResult;
+		}
+	}
+
+	const firstVideo = doc.querySelector("video");
+	if (firstVideo) {
+		const videoPoster = resolveMediaUrl(firstVideo.getAttribute("poster") || "", baseUrl);
+		if (videoPoster) {
+			emptyResult.posterUrl = videoPoster;
+		}
+
+		const directVideoSrc = resolveMediaUrl(firstVideo.getAttribute("src") || "", baseUrl);
+		if (directVideoSrc) {
+			emptyResult.videoUrl = directVideoSrc;
+			return emptyResult;
+		}
+
+		const sourceChild = firstVideo.querySelector("source[src]");
+		const sourceVideoSrc = resolveMediaUrl(sourceChild?.getAttribute("src") || "", baseUrl);
+		if (sourceVideoSrc) {
+			emptyResult.videoUrl = sourceVideoSrc;
+			return emptyResult;
+		}
+	}
+
+	return emptyResult;
 }
 
 /**
@@ -241,30 +426,122 @@ function extractFirstUrl(value) {
 /**
  * Liest eine Bild-URL robust aus RSS/Atom Item-Knoten (inkl. Namespaces).
  */
-function extractMediaUrl(itemNode, baseUrl) {
+function extractMediaDetails(itemNode, baseUrl, rawDescription = "") {
 	const allElements = [...itemNode.getElementsByTagName("*")];
+	let fallbackUnknownCandidate = "";
+	let fallbackVideoCandidate = "";
+	let fallbackVideoPoster = "";
 
-	const mediaElement = allElements.find((element) => {
-		const localName = (element.localName || "").toLowerCase();
-		if (localName !== "content" && localName !== "thumbnail") {
-			return false;
+	const considerCandidate = ({ localName = "", medium = "", type = "", url = "", poster = "" }) => {
+		const safeUrl = resolveMediaUrl(url, baseUrl);
+		if (!safeUrl) {
+			return "";
 		}
 
-		const candidateUrl = element.getAttribute("url") || "";
-		return Boolean(resolveMediaUrl(candidateUrl, baseUrl));
-	});
+		const safePoster = resolveMediaUrl(poster, baseUrl);
 
-	if (mediaElement) {
-		return resolveMediaUrl(mediaElement.getAttribute("url") || "", baseUrl);
+		const candidateKind = classifyMediaCandidate({
+			localName,
+			medium,
+			type,
+			url: safeUrl
+		});
+
+		if (candidateKind === "image") {
+			return {
+				mediaType: "image",
+				mediaUrl: safeUrl,
+				mediaPoster: ""
+			};
+		}
+
+		if (candidateKind === "video") {
+			if (!fallbackVideoCandidate) {
+				fallbackVideoCandidate = safeUrl;
+				fallbackVideoPoster = safePoster;
+			}
+			return "";
+		}
+
+		if (candidateKind === "unknown" && !fallbackUnknownCandidate) {
+			fallbackUnknownCandidate = safeUrl;
+		}
+
+		return "";
+	};
+
+	for (const element of allElements) {
+		const localName = (element.localName || "").toLowerCase();
+		if (localName !== "content" && localName !== "thumbnail") {
+			continue;
+		}
+
+		const preferred = considerCandidate({
+			localName,
+			medium: element.getAttribute("medium") || "",
+			type: element.getAttribute("type") || "",
+			url: element.getAttribute("url") || "",
+			poster: element.getAttribute("poster") || ""
+		});
+
+		if (preferred) {
+			return preferred;
+		}
 	}
 
-	const enclosureUrl = itemNode.querySelector("enclosure")?.getAttribute("url") || "";
-	const safeEnclosureUrl = resolveMediaUrl(enclosureUrl, baseUrl);
-	if (safeEnclosureUrl) {
-		return safeEnclosureUrl;
+	const enclosures = [...itemNode.querySelectorAll("enclosure")];
+	for (const enclosure of enclosures) {
+		const preferred = considerCandidate({
+			localName: "enclosure",
+			medium: enclosure.getAttribute("medium") || "",
+			type: enclosure.getAttribute("type") || "",
+			url: enclosure.getAttribute("url") || "",
+			poster: enclosure.getAttribute("poster") || ""
+		});
+
+		if (preferred) {
+			return preferred;
+		}
 	}
 
-	return "";
+	const htmlMedia = extractMediaFromHtmlContent(rawDescription, baseUrl);
+	if (htmlMedia.imageUrl) {
+		return {
+			mediaType: "image",
+			mediaUrl: htmlMedia.imageUrl,
+			mediaPoster: ""
+		};
+	}
+
+	if (htmlMedia.videoUrl) {
+		return {
+			mediaType: "video",
+			mediaUrl: htmlMedia.videoUrl,
+			mediaPoster: htmlMedia.posterUrl
+		};
+	}
+
+	if (fallbackVideoCandidate) {
+		return {
+			mediaType: "video",
+			mediaUrl: fallbackVideoCandidate,
+			mediaPoster: fallbackVideoPoster
+		};
+	}
+
+	if (fallbackUnknownCandidate) {
+		return {
+			mediaType: "image",
+			mediaUrl: fallbackUnknownCandidate,
+			mediaPoster: ""
+		};
+	}
+
+	return {
+		mediaType: "",
+		mediaUrl: "",
+		mediaPoster: ""
+	};
 }
 
 /**
@@ -357,8 +634,17 @@ function extractChannelImage(doc, baseUrl) {
 			return false;
 		}
 
-		const candidateUrl = element.getAttribute("url") || "";
-		return Boolean(resolveMediaUrl(candidateUrl, baseUrl));
+		const candidateUrl = resolveMediaUrl(element.getAttribute("url") || "", baseUrl);
+		if (!candidateUrl) {
+			return false;
+		}
+
+		return classifyMediaCandidate({
+			localName,
+			medium: element.getAttribute("medium") || "",
+			type: element.getAttribute("type") || "",
+			url: candidateUrl
+		}) === "image";
 	});
 
 	if (channelLevelMedia) {
@@ -376,7 +662,7 @@ function extractChannelImage(doc, baseUrl) {
  *   channelTitle: string,
  *   channelDescription: string,
  *   channelImageUrl: string,
- *   items: Array<{ title, link, description, pubDate, mediaUrl }>
+ *   items: Array<{ title, link, description, pubDate, mediaUrl, mediaType, mediaPoster }>
  * }
  */
 export function parseFeed(xmlText, options = {}) {
@@ -430,14 +716,16 @@ export function parseFeed(xmlText, options = {}) {
 				itemNode.querySelector("updated")?.textContent ||
 				"";
 
-			const mediaUrl = extractMediaUrl(itemNode, baseUrl);
+			const media = extractMediaDetails(itemNode, baseUrl, rawDescription);
 
 			return {
 				title,
 				link: safeArticleLink,
 				description,
 				pubDate,
-				mediaUrl
+				mediaUrl: media.mediaUrl,
+				mediaType: media.mediaType,
+				mediaPoster: media.mediaPoster
 			};
 		})
 		.filter((item) => item.link || item.title);

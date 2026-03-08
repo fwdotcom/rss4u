@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>rss4u Legal Information</title>
+    <link rel="icon" type="image/svg+xml" href="./assets/icon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/icon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/icon-16.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/style.css" />
+    <link id="theme-stylesheet" rel="stylesheet" href="./themes/light/theme.css" />
+  </head>
+  <body data-theme="light">
+    <div class="bg-glow bg-glow-a" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow-b" aria-hidden="true"></div>
+
+    <main class="app" aria-label="Legal information">
+      <h1 id="legal-heading">Legal Information</h1>
+      <p id="legal-intro" class="subtitle">The authoritative legal text is listed below.</p>
+      <pre id="license-content" class="license-content" aria-live="polite">Loading LICENSE...</pre>
+      <footer id="site-footer" class="site-footer" aria-label="Footer links">
+        <p>Version <span id="app-version-value">1.0.3</span> <span class="footer-divider" aria-hidden="true">|</span> Copyright (C) <span id="copyright-year"></span> <a class="author-link" href="https://www.frankwinter.com" target="_blank" rel="noopener noreferrer">Frank Winter</a></p>
+        <div class="footer-links" aria-label="Footer links">
+          <a id="link-mit-reference" href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener noreferrer">MIT reference</a>
+          <span class="footer-divider" aria-hidden="true">|</span>
+          <a id="link-back" href="./index.html">Back to rss4u</a>
+        </div>
+      </footer>
+    </main>
+    <script type="module" src="./js/legal.js"></script>
+  </body>
+</html>

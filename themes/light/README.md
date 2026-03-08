@@ -1,12 +1,12 @@
-# Dark Theme
+# Light Theme
 
 Screenshot:
 
-![Dark theme screenshot](./screenshot.webp)
+![Light theme screenshot](./screenshot.webp)
 
 ## Supported Placeholders
 
-- `{{theme}}`: current theme key (for example `dark`)
+- `{{theme}}`: current theme key (for example `light`)
 - `{{image}}`: full `<img>` markup or empty string when no media exists
 - `{{headline}}`: escaped article title
 - `{{description}}`: escaped article excerpt
@@ -17,4 +17,4 @@ Screenshot:
 
 - Keep the existing `tile-*` class names unless you also update `theme.css`.
 - Keep templates presentation-only (no scripts or inline handlers).
-- Placeholder replacement is done in `../../script.js`.
+- Placeholder replacement is done in `../../js/index.js`.

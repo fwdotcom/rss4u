@@ -39,23 +39,24 @@ See [LICENSE](./LICENSE).
 
 ### Dark Theme
 
-![rss4u dark theme screenshot](./public/themes/dark/screenshot.webp)
+![rss4u dark theme screenshot](./themes/dark/screenshot.webp)
 
 ### Light Theme
 
-![rss4u light theme screenshot](./public/themes/light/screenshot.webp)
+![rss4u light theme screenshot](./themes/light/screenshot.webp)
 
 ## Project Structure
 
-- `public/`: web root for app runtime and Pages deployment
-- `public/index.html`: app shell and UI layout
-- `public/style.css`: base/global styling and shared CSS variables
-- `public/script.js`: UI behavior, theme loading, rendering
-- `public/rss.js`: RSS logic (URL normalization, fetch, parse)
-- `public/locales/`: translation files (`en`, `de`, `fr`, `es`, `it`, `pl`, `cs`, `nl`)
-- `public/themes/`: theme-specific CSS, templates, and theme documentation
-- `public/themes/README.md`: detailed theming guide
-- `build/configs/extensions/background.js`: extension click handler (opens app in tab)
+- `./`: web root for app runtime and Pages deployment
+- `assets/`: static assets (icons, manifest screenshots)
+- `js/`: JavaScript runtime files
+- `index.html`: app shell and UI layout
+- `css/style.css`: base/global styling and shared CSS variables
+- `js/index.js`: UI behavior, theme loading, rendering
+- `js/rss.js`: RSS logic (URL normalization, fetch, parse)
+- `locales/`: translation files (`en`, `de`, `fr`, `es`, `it`, `pl`, `cs`, `nl`)
+- `themes/`: theme-specific CSS, templates, and theme documentation
+- `themes/README.md`: detailed theming guide
 - `tests/`: lightweight Node test suite for locale consistency and source guards
 
 ## Run Locally
@@ -65,7 +66,7 @@ Use a local web server (recommended) so dynamic template loading and fetch calls
 Example with VS Code Live Server:
 
 1. Open the project in VS Code
-2. Start `Live Server` on `public/index.html`
+2. Start `Live Server` on `index.html`
 3. Open the shown local URL in your browser
 
 ## Run Tests
@@ -78,60 +79,13 @@ Run from the project root:
 node --test tests/*.test.mjs
 ```
 
-## Build and Packaging
+## PWA Focus
 
-Build artifacts are created in `build/dist/`.
+rss4u is distributed as a Progressive Web App (PWA).
 
-For the detailed packaging guide, see `build/README.md`.
-
-Build requirements:
-
-- PowerShell (`powershell` or `pwsh`) for all build scripts
-- Go (1.21 or newer) for standalone binaries
-
-Recommended one-command build (extensions + standalone):
-
-```bat
-build\scripts\common\package-all.bat
-```
-
-Browser-specific commands and packaging details are documented in `build/README.md`.
-
-PowerShell extension-only build:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File ./build/scripts/common/package-all.ps1 -ExtensionsOnly
-```
-
-Standalone-only build:
-
-```bat
-build\scripts\standalone\build-standalone-all.bat
-```
-
-GitHub release build:
-
-- Create/push a tag like `v1.0.2`.
-- Workflow `.github/workflows/release-standalone.yml` builds standalone binaries on GitHub Actions and uploads `rss4u-*` files as release assets.
-- Do not commit standalone binaries to the repository.
-
-Optional pre-commit hook setup to keep website footer version in sync with `VERSION`:
-
-```bash
-git config core.hooksPath .githooks
-```
-
-The hook executes `build/scripts/common/pre-build.ps1`.
-
-## GitHub Pages Deployment
-
-The repository includes `.github/workflows/deploy-pages.yml`.
-On each push to `main`, the workflow:
-
-1. Uploads `public/` as Pages artifact
-2. Deploys to GitHub Pages
-
-In repository settings, set **Pages Source** to **GitHub Actions**.
+- No browser-extension packaging is included.
+- No standalone binary packaging is included.
+- Deployment is static hosting of the repository root web files.
 
 ## PWA Install
 
@@ -139,7 +93,7 @@ rss4u ships with a web app manifest and service worker so it can be installed as
 
 Deploy:
 
-- Push to `main` (GitHub Pages deploys `public/` as usual).
+- Publish the repository root on any static host (for example GitHub Pages).
 - Open the live page via HTTPS (`https://fwdotcom.github.io/rss4u/`).
 
 Install:
@@ -153,19 +107,19 @@ Note:
 
 ## Theming
 
-Theme definitions are in `public/themes/<theme-name>/` and are registered in `public/script.js`.
+Theme definitions are in `themes/<theme-name>/` and are registered in `js/index.js`.
 
 Available themes:
 
 - `dark`
 - `light`
 
-For full details, see `public/themes/README.md`.
+For full details, see `themes/README.md`.
 
 ## Localization
 
 - Default language is English (`en`).
 - Available languages: `en`, `de`, `fr`, `es`, `it`, `pl`, `cs`, `nl`.
-- Translation resources live in `public/locales/*.json`.
+- Translation resources live in `locales/*.json`.
 - Date formatting locale is configured per language in `formats.dateLocale`.
 
