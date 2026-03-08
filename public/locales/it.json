@@ -16,6 +16,7 @@
   },
   "buttons": {
     "load": "Carica",
+    "installApp": "Installa app",
     "website": "Sito web",
     "license": "Licenza",
     "reset": "Reimposta predefiniti"
@@ -46,6 +47,7 @@
     "controls": "Controlli del feed",
     "results": "Contenuto del feed",
     "footer": "Link del footer",
+    "installApp": "Installa app",
     "deleteFeed": "Elimina feed",
     "resetToDefaults": "Reimposta predefiniti",
     "favoriteIcon": "Preferito"

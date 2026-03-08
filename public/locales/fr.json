@@ -16,6 +16,7 @@
   },
   "buttons": {
     "load": "Charger",
+    "installApp": "Installer l'application",
     "website": "Site web",
     "license": "Licence",
     "reset": "Réinitialiser par défaut"
@@ -46,6 +47,7 @@
     "controls": "Contrôles du flux",
     "results": "Contenu du flux",
     "footer": "Liens de pied de page",
+    "installApp": "Installer l'application",
     "deleteFeed": "Supprimer le flux",
     "resetToDefaults": "Réinitialiser par défaut",
     "favoriteIcon": "Favori"

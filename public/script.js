@@ -28,6 +28,7 @@ const siteFooter = document.getElementById("site-footer");
 const footerWebsiteLink = document.getElementById("footer-website-link");
 const footerLicenseLink = document.getElementById("footer-license-link");
 const copyrightYearEl = document.getElementById("copyright-year");
+const installAppBtn = document.getElementById("install-app-btn");
 
 const SAVED_FEEDS_KEY = "rss4u-saved-feeds";
 const FEED_SEED_DONE_KEY = "rss4u-feeds-seeded";
@@ -97,6 +98,7 @@ let currentTileTemplate = FALLBACK_TEMPLATE;
 let lastParsedFeed = null;
 let currentLoadedUrl = "";
 let latestFeedRequestId = 0;
+let deferredInstallPrompt = null;
 
 /**
  * Erzeugt die initiale Feedliste inkl. lokaler XML-Fixtures als absolute URLs.
@@ -232,6 +234,11 @@ function applyStaticTranslations() {
 		copyrightYearEl.textContent = String(new Date().getFullYear());
 	}
 	resetAppBtn.textContent = t("buttons.reset");
+	if (installAppBtn) {
+		installAppBtn.textContent = t("buttons.installApp");
+		installAppBtn.setAttribute("aria-label", t("aria.installApp"));
+		installAppBtn.setAttribute("title", t("aria.installApp"));
+	}
 	if (importFavoritesBtn) {
 		importFavoritesBtn.setAttribute("title", t("aria.importFavorites"));
 		importFavoritesBtn.setAttribute("aria-label", t("aria.importFavorites"));
@@ -257,6 +264,32 @@ function applyStaticTranslations() {
 	if (lastParsedFeed) {
 		renderFeed(lastParsedFeed);
 	}
+}
+
+function isStandaloneDisplayMode() {
+	if (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) {
+		return true;
+	}
+
+	return window.navigator.standalone === true;
+}
+
+function isInstallCapableContext() {
+	if (window.isSecureContext) {
+		return true;
+	}
+
+	const host = window.location.hostname;
+	return host === "localhost" || host === "127.0.0.1";
+}
+
+function updateInstallButtonVisibility() {
+	if (!installAppBtn) {
+		return;
+	}
+
+	const shouldShow = !isStandaloneDisplayMode() && (deferredInstallPrompt !== null || isInstallCapableContext());
+	installAppBtn.hidden = !shouldShow;
 }
 
 function getPreferredLanguage() {
@@ -998,7 +1031,48 @@ function registerServiceWorker() {
 	});
 }
 
+function registerInstallPrompt() {
+	window.addEventListener("beforeinstallprompt", (event) => {
+		event.preventDefault();
+		deferredInstallPrompt = event;
+		updateInstallButtonVisibility();
+	});
+
+	window.addEventListener("appinstalled", () => {
+		deferredInstallPrompt = null;
+		updateInstallButtonVisibility();
+		setStatus(t("status.installSuccess"));
+	});
+
+	if (installAppBtn) {
+		installAppBtn.addEventListener("click", async () => {
+			if (!deferredInstallPrompt) {
+				setStatus(t("status.installManualHint"));
+				return;
+			}
+
+			installAppBtn.disabled = true;
+			try {
+				deferredInstallPrompt.prompt();
+				const choice = await deferredInstallPrompt.userChoice;
+				if (choice.outcome === "accepted") {
+					setStatus(t("status.installAccepted"));
+				} else {
+					setStatus(t("status.installDismissed"));
+				}
+			} finally {
+				deferredInstallPrompt = null;
+				installAppBtn.disabled = false;
+				updateInstallButtonVisibility();
+			}
+		});
+	}
+
+	updateInstallButtonVisibility();
+}
+
 registerServiceWorker();
+registerInstallPrompt();
 
 initializeApp().catch((error) => {
 	setStatus(`${t("status.errorPrefix")} ${error.message}`, true);

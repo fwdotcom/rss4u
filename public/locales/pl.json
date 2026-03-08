@@ -16,6 +16,7 @@
   },
   "buttons": {
     "load": "Załaduj",
+    "installApp": "Zainstaluj aplikację",
     "website": "Strona",
     "license": "Licencja",
     "reset": "Przywróć domyślne"
@@ -46,6 +47,7 @@
     "controls": "Sterowanie kanałem",
     "results": "Zawartość kanału",
     "footer": "Linki stopki",
+    "installApp": "Zainstaluj aplikację",
     "deleteFeed": "Usuń kanał",
     "resetToDefaults": "Przywróć domyślne",
     "favoriteIcon": "Ulubione"

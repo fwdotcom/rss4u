@@ -16,6 +16,7 @@
   },
   "buttons": {
     "load": "Načíst",
+    "installApp": "Nainstalovat aplikaci",
     "website": "Web",
     "license": "Licence",
     "reset": "Obnovit výchozí"
@@ -46,6 +47,7 @@
     "controls": "Ovládání feedu",
     "results": "Obsah feedu",
     "footer": "Odkazy v patičce",
+    "installApp": "Nainstalovat aplikaci",
     "deleteFeed": "Smazat feed",
     "resetToDefaults": "Obnovit výchozí",
     "favoriteIcon": "Oblíbené"

@@ -16,6 +16,7 @@
   },
   "buttons": {
     "load": "Laden",
+    "installApp": "App installieren",
     "website": "Website",
     "license": "Lizenz",
     "reset": "Auf Standard zurücksetzen"
@@ -46,6 +47,7 @@
     "controls": "Feed-Steuerung",
     "results": "Feed-Inhalte",
     "footer": "Footer-Links",
+    "installApp": "App installieren",
     "deleteFeed": "Feed löschen",
     "resetToDefaults": "Auf Standard zurücksetzen",
     "favoriteIcon": "Favorit"

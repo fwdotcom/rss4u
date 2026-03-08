@@ -16,6 +16,7 @@
   },
   "buttons": {
     "load": "Load",
+    "installApp": "Install app",
     "website": "Website",
     "license": "License",
     "reset": "Reset to defaults"
@@ -46,6 +47,7 @@
     "controls": "Feed controls",
     "results": "Feed content",
     "footer": "Footer links",
+    "installApp": "Install app",
     "deleteFeed": "Delete feed",
     "resetToDefaults": "Reset to defaults",
     "favoriteIcon": "Favorite"
@@ -76,7 +78,13 @@
     "resetDone": "App reset. Loading default feeds...",
     "languageChanged": "Language switched: {{language}}.",
     "templateLoadFailed": "Template could not be loaded (HTTP {{status}}).",
-    "templateEmpty": "Template file is empty."
+    "templateEmpty": "Template file is empty.",
+    "installBannerHint": "Install rss4u as an app for faster access.",
+    "installUnavailable": "App installation is currently not available in this browser window.",
+    "installManualHint": "Use the browser menu (Install app / Add to Home Screen) to install rss4u.",
+    "installAccepted": "Installation started.",
+    "installDismissed": "Installation canceled.",
+    "installSuccess": "rss4u was installed successfully."
   },
   "confirm": {
     "reset": "Reset everything? Saved feeds and theme/language settings will be deleted."

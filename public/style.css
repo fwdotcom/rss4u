@@ -94,6 +94,24 @@ body {
   justify-content: flex-end;
 }
 
+.header-install-btn {
+  border: 1px solid color-mix(in srgb, var(--accent) 70%, #000);
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 72%, #000));
+  color: #f7fbfb;
+  font-size: 0.86rem;
+  font-weight: 600;
+  padding: 7px 10px;
+  border-radius: 10px;
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--accent) 36%, transparent);
+  min-height: 36px;
+  line-height: 1;
+  margin-top: 4px;
+}
+
+.header-install-btn:hover {
+  transform: translateY(-1px);
+}
+
 .theme-picker {
   display: inline-flex;
   align-items: center;
@@ -601,6 +619,11 @@ body[data-theme="dark"] .feed-toolbar-btn {
   .site-footer {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .header-install-btn {
+    width: auto;
+    margin-top: 0;
   }
 
   .feed-meta-top-row {

@@ -16,6 +16,7 @@
   },
   "buttons": {
     "load": "Laden",
+    "installApp": "App installeren",
     "website": "Website",
     "license": "Licentie",
     "reset": "Standaard herstellen"
@@ -46,6 +47,7 @@
     "controls": "Feed-bediening",
     "results": "Feed-inhoud",
     "footer": "Footer-links",
+    "installApp": "App installeren",
     "deleteFeed": "Feed verwijderen",
     "resetToDefaults": "Standaard herstellen",
     "favoriteIcon": "Favoriet"

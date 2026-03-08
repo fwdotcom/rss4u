@@ -1,4 +1,5 @@
-const CACHE_NAME = "rss4u-shell-v1";
+const CACHE_NAME = "rss4u-shell-v2";
+const IS_LOCAL_DEV = self.location.hostname === "localhost" || self.location.hostname === "127.0.0.1";
 
 const APP_SHELL_FILES = [
   "./",
@@ -47,6 +48,10 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
+  if (IS_LOCAL_DEV) {
+    return;
+  }
+
   if (event.request.method !== "GET") {
     return;
   }
@@ -56,16 +61,29 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (event.request.mode === "navigate") {
-    event.respondWith(
-      fetch(event.request).catch(() => caches.match("./index.html"))
-    );
-    return;
-  }
+  event.respondWith((async () => {
+    const cache = await caches.open(CACHE_NAME);
 
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      return cached || fetch(event.request);
-    })
-  );
+    try {
+      const networkResponse = await fetch(event.request);
+      if (networkResponse.ok) {
+        await cache.put(event.request, networkResponse.clone());
+      }
+      return networkResponse;
+    } catch (error) {
+      const cachedResponse = await cache.match(event.request);
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+
+      if (event.request.mode === "navigate") {
+        const fallback = await cache.match("./index.html");
+        if (fallback) {
+          return fallback;
+        }
+      }
+
+      throw error;
+    }
+  })());
 });
