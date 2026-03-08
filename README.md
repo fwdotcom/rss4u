@@ -1,12 +1,19 @@
 # rss4u
 
-A browser-based RSS reader built with plain HTML, CSS, and JavaScript.
+A PWA-first RSS/Atom reader built with plain HTML, CSS, and JavaScript.
+rss4u is a privacy-friendly Progressive Web App (PWA) for reading RSS and Atom feeds.
+It runs entirely client-side, can be installed from the browser, and only needs static hosting.
+No server-side scripts or database are required, and your data stays in your browser.
 
-## short description
+## Screenshots
 
-rss4u is a privacy-friendly RSS reader that runs entirely in the browser.
-It only needs a simple static web server and does not require server-side scripts or a database.
-Your data and feed files stay in your browser, not on some cloud service.
+### Dark Theme
+
+![rss4u dark theme screenshot](./themes/dark/screenshot.webp)
+
+### Light Theme
+
+![rss4u light theme screenshot](./themes/light/screenshot.webp)
 
 Copyright (C) 2026 Frank Winter.
 
@@ -25,6 +32,7 @@ See [LICENSE](./LICENSE).
 ## Features
 
 - Load RSS and Atom feeds from a URL input
+- Installable as a Progressive Web App (manifest + service worker)
 - Save/remove favorites and load them from quick-feed chips
 - Import/export favorites as JSON
 - Theme support
@@ -35,19 +43,9 @@ See [LICENSE](./LICENSE).
 - Faster feed loading via parallel fallback attempts, per-request timeout, and short in-memory XML cache
 - Feed sanitization for URL-only descriptions
 
-## Screenshots
-
-### Dark Theme
-
-![rss4u dark theme screenshot](./themes/dark/screenshot.webp)
-
-### Light Theme
-
-![rss4u light theme screenshot](./themes/light/screenshot.webp)
-
 ## Project Structure
 
-- `./`: web root for app runtime and Pages deployment
+- `./`: PWA web root for runtime and static deployment
 - `assets/`: static assets (icons, manifest screenshots)
 - `js/`: JavaScript runtime files
 - `index.html`: app shell and UI layout
@@ -61,7 +59,7 @@ See [LICENSE](./LICENSE).
 
 ## Run Locally
 
-Use a local web server (recommended) so dynamic template loading and fetch calls behave consistently.
+Use a local web server (recommended) so the PWA runtime (manifest/service worker/fetch/template loading) behaves consistently.
 
 Example with VS Code Live Server:
 
@@ -81,11 +79,11 @@ node --test tests/*.test.mjs
 
 ## PWA Focus
 
-rss4u is distributed as a Progressive Web App (PWA).
+rss4u is primarily distributed as a Progressive Web App (PWA).
 
-- No browser-extension packaging is included.
-- No standalone binary packaging is included.
-- Deployment is static hosting of the repository root web files.
+- No browser-extension packaging is included / needed.
+- No standalone binary packaging is included / needed.
+- Deployment model is static hosting of the repository root web files.
 
 ## PWA Install
 

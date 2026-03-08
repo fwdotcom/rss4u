@@ -43,16 +43,16 @@
   ],
   "screenshots": [
     {
-      "src": "./assets/screenshot-desktop.png",
-      "sizes": "1280x720",
-      "type": "image/png",
+      "src": "./assets/screenshot-desktop.webp",
+      "sizes": "2560x1440",
+      "type": "image/webp",
       "form_factor": "wide",
       "label": "rss4u desktop view"
     },
     {
-      "src": "./assets/screenshot-mobile.png",
-      "sizes": "720x1280",
-      "type": "image/png",
+      "src": "./assets/screenshot-mobile.webp",
+      "sizes": "1440x2560",
+      "type": "image/webp",
       "label": "rss4u mobile view"
     }
   ]

@@ -1,4 +1,4 @@
-const CACHE_NAME = "rss4u-shell-v8";
+const CACHE_NAME = "rss4u-shell-v1";
 const IS_LOCAL_DEV = self.location.hostname === "localhost" || self.location.hostname === "127.0.0.1";
 
 const APP_SHELL_FILES = [
@@ -19,8 +19,8 @@ const APP_SHELL_FILES = [
   "./assets/icon-128.png",
   "./assets/icon-192.png",
   "./assets/icon-512.png",
-  "./assets/screenshot-desktop.png",
-  "./assets/screenshot-mobile.png",
+  "./assets/screenshot-desktop.webp",
+  "./assets/screenshot-mobile.webp",
   "./themes/light/theme.css",
   "./themes/dark/theme.css",
   "./themes/light/tile.template.html",
