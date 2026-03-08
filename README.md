@@ -1,9 +1,8 @@
 # rss4u
 
-A PWA-first RSS/Atom reader built with plain HTML, CSS, and JavaScript.
-rss4u is a privacy-friendly Progressive Web App (PWA) for reading RSS and Atom feeds.
-It runs entirely client-side, can be installed from the browser, and only needs static hosting.
-No server-side scripts or database are required, and your data stays in your browser.
+rss4u is a privacy-friendly, PWA-first RSS/Atom reader built with plain HTML, CSS, and JavaScript.
+It runs entirely client-side, can be installed directly from the browser, and works with simple static hosting.
+No backend, server-side scripts, or database are required, and your data stays in your browser.
 
 ## Screenshots
 
